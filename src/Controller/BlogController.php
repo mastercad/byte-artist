@@ -82,7 +82,7 @@ class BlogController extends AbstractController
         // Remove and persist current BlogTag Request
         $blogRequest = $request->request->get('blog');
         $currentBlogTagsRequest = [];
-        
+
         if (is_array($blogRequest)
             && array_key_exists('blogTags', $blogRequest)
         ) {
@@ -90,7 +90,7 @@ class BlogController extends AbstractController
             unset($blogRequest['blogTags']);
         }
         $request->request->set('blog', $blogRequest);
-        
+
         $form = $this->createForm(BlogType::class, $blog);
         $form->handleRequest($request);
 
