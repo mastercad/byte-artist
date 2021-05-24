@@ -6,7 +6,7 @@
     "require": {
         "php": "^7.4",
         "ext-ctype": "*",
-        "ext-dom": "20031129",
+        "ext-dom": "*",
         "ext-iconv": "*",
         "ext-mbstring": "*",
         "ext-xml": "*",
