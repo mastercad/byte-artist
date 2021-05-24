@@ -1,0 +1,555 @@
+/* 
+    Document   : highlight
+    Created on : 07.04.2013, 14:57:55
+    Author     : mastercad
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/******************************************************************************/
+/****************          Globale Styles          ****************************/
+/******************************************************************************/
+.highlight_code {
+    font-family: monospace;
+}
+
+.highlight_code ol  {
+    margin: 10px 0;
+    padding-left: 25px;
+}
+
+.highlight_code ol .kw2,
+.highlight_code ol .sy1{
+    /*color: #FF0000;*/
+    /*font-weight: bold;*/
+}
+
+.highlight_code ol .sy0{
+    color: #111111;
+}
+
+.highlight_code ol .kw1{
+    color: #B1B100;
+    font-weight: bold;
+}
+
+.highlight_code ol .kw3 {
+    color: #990000;
+}
+.highlight_code ol .kw4 {
+    color: #009900;
+    font-weight: bold;
+}
+
+.highlight_code ol .st0 {
+    color: #0000FF;
+}
+
+.bash .de1, .bash .de2 {
+    background: none repeat scroll 0 0 transparent;
+    font: 1em/1.2em monospace;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+}
+.bash {
+    font-family: monospace;
+}
+.bash .imp {
+    color: red;
+    font-weight: bold;
+}
+.bash li, .bash .li1 {
+    font-weight: normal;
+    vertical-align: top;
+}
+.bash .ln {
+    margin: 0;
+    padding: 0 2px;
+    text-align: right;
+    vertical-align: top;
+    width: 1px;
+}
+.bash .li2 {
+    font-weight: bold;
+    vertical-align: top;
+}
+.bash .kw1 {
+    color: #000000;
+    font-weight: bold;
+}
+.bash .kw2 {
+    color: #C20CB9;
+    font-weight: bold;
+}
+.bash .kw3 {
+    color: #7A0874;
+    font-weight: bold;
+}
+.bash .co0 {
+    color: #666666;
+    font-style: italic;
+}
+.bash .co1 {
+    color: #800000;
+}
+.bash .co2 {
+    color: #CC0000;
+    font-style: italic;
+}
+.bash .co3 {
+    color: #000000;
+    font-weight: bold;
+}
+.bash .co4 {
+    color: #666666;
+}
+.bash .es1 {
+    color: #000099;
+    font-weight: bold;
+}
+.bash .es2 {
+    color: #007800;
+}
+.bash .es3 {
+    color: #007800;
+}
+.bash .es4 {
+    color: #007800;
+}
+.bash .es5 {
+    color: #780078;
+}
+.bash .es_h {
+    color: #000099;
+    font-weight: bold;
+}
+.bash .br0 {
+    color: #7A0874;
+    font-weight: bold;
+}
+.bash .sy0 {
+    color: #000000;
+    font-weight: bold;
+}
+.bash .st0 {
+    color: #FF0000;
+}
+.bash .st_h {
+    color: #FF0000;
+}
+.bash .nu0 {
+    color: #000000;
+}
+.bash .re0 {
+    color: #007800;
+}
+.bash .re1 {
+    color: #007800;
+}
+.bash .re2 {
+    color: #007800;
+}
+.bash .re4 {
+    color: #007800;
+}
+.bash .re5 {
+    color: #660033;
+}
+.bash .ln-xtra, .bash li.ln-xtra, .bash div.ln-xtra {
+    background-color: #FFFFCC;
+}
+.bash span.xtra {
+    display: block;
+}
+.php .de1, .php .de2 {
+    background: none repeat scroll 0 0 transparent;
+    font: 1em/1.2em monospace;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+}
+.php {
+    font-family: monospace;
+}
+.php .imp {
+    color: red;
+    font-weight: bold;
+}
+.php li, .php .li1 {
+    font-weight: normal;
+    vertical-align: top;
+}
+.php .ln {
+    margin: 0;
+    padding: 0 2px;
+    text-align: right;
+    vertical-align: top;
+    width: 1px;
+}
+.php .li2 {
+    font-weight: bold;
+    vertical-align: top;
+}
+.php .kw1 {
+    color: #B1B100;
+}
+.php .kw2 {
+    color: #000000;
+    font-weight: bold;
+}
+.php .kw3 {
+    color: #990000;
+}
+.php .kw4 {
+    color: #009900;
+    font-weight: bold;
+}
+.php .co1 {
+    color: #666666;
+    font-style: italic;
+}
+.php .co2 {
+    color: #666666;
+    font-style: italic;
+}
+.php .co3 {
+    color: #0000CC;
+    font-style: italic;
+}
+.php .co4 {
+    color: #009933;
+    font-style: italic;
+}
+.php .coMULTI {
+    color: #666666;
+    font-style: italic;
+}
+.php .es0 {
+    color: #000099;
+    font-weight: bold;
+}
+.php .es1 {
+    color: #000099;
+    font-weight: bold;
+}
+.php .es2 {
+    color: #660099;
+    font-weight: bold;
+}
+.php .es3 {
+    color: #660099;
+    font-weight: bold;
+}
+.php .es4 {
+    color: #006699;
+    font-weight: bold;
+}
+.php .es5 {
+    color: #006699;
+    font-style: italic;
+    font-weight: bold;
+}
+.php .es6 {
+    color: #009933;
+    font-weight: bold;
+}
+.php .es_h {
+    color: #000099;
+    font-weight: bold;
+}
+.php .br0 {
+    color: #009900;
+}
+.php .sy0 {
+    color: #339933;
+}
+.php .sy1 {
+    color: #000000;
+    font-weight: bold;
+}
+.php .st0 {
+    color: #0000FF;
+}
+.php .st_h {
+    color: #0000FF;
+}
+.php .nu0 {
+    color: #CC66CC;
+}
+.php .nu8 {
+    color: #208080;
+}
+.php .nu12 {
+    color: #208080;
+}
+.php .nu19 {
+    color: #800080;
+}
+.php .me1 {
+    color: #004000;
+}
+.php .me2 {
+    color: #004000;
+}
+.php .re0 {
+    color: #000088;
+}
+.php .ln-xtra, .php li.ln-xtra, .php div.ln-xtra {
+    background-color: #FFFFCC;
+}
+.php span.xtra {
+    display: block;
+}
+.html4strict .de1, .html4strict .de2 {
+    background: none repeat scroll 0 0 transparent;
+    font: 1em/1.2em monospace;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+}
+.html4strict {
+    font-family: monospace;
+}
+.html4strict .imp {
+    color: red;
+    font-weight: bold;
+}
+.html4strict li, .html4strict .li1 {
+    font-weight: normal;
+    vertical-align: top;
+}
+.html4strict .ln {
+    margin: 0;
+    padding: 0 2px;
+    text-align: right;
+    vertical-align: top;
+    width: 1px;
+}
+.html4strict .li2 {
+    font-weight: bold;
+    vertical-align: top;
+}
+.html4strict .kw2 {
+    color: #000000;
+    font-weight: bold;
+}
+.html4strict .kw3 {
+    color: #000066;
+}
+.html4strict .es0 {
+    color: #000099;
+    font-weight: bold;
+}
+.html4strict .br0 {
+    color: #66CC66;
+}
+.html4strict .sy0 {
+    color: #66CC66;
+}
+.html4strict .st0 {
+    color: #FF0000;
+}
+.html4strict .nu0 {
+    color: #CC66CC;
+}
+.html4strict .sc-2 {
+    color: #404040;
+}
+.html4strict .sc-1 {
+    color: #808080;
+    font-style: italic;
+}
+.html4strict .sc0 {
+    color: #00BBDD;
+}
+.html4strict .sc1 {
+    color: #DDBB00;
+}
+.html4strict .sc2 {
+    color: #009900;
+}
+.html4strict .ln-xtra, .html4strict li.ln-xtra, .html4strict div.ln-xtra {
+    background-color: #FFFFCC;
+}
+.html4strict span.xtra {
+    display: block;
+}
+.css .de1, .css .de2 {
+    background: none repeat scroll 0 0 transparent;
+    font: 1em/1.2em monospace;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+}
+.css {
+    font-family: monospace;
+}
+.css .imp {
+    color: red;
+    font-weight: bold;
+}
+.css li, .css .li1 {
+    font-weight: normal;
+    vertical-align: top;
+}
+.css .ln {
+    margin: 0;
+    padding: 0 2px;
+    text-align: right;
+    vertical-align: top;
+    width: 1px;
+}
+.css .li2 {
+    font-weight: bold;
+    vertical-align: top;
+}
+.css .kw1 {
+    color: #000000;
+    font-weight: bold;
+}
+.css .kw2 {
+    color: #993333;
+}
+.css .co1 {
+    color: #A1A100;
+}
+.css .co2 {
+    color: #FF0000;
+    font-style: italic;
+}
+.css .coMULTI {
+    color: #808080;
+    font-style: italic;
+}
+.css .es0 {
+    color: #000099;
+    font-weight: bold;
+}
+.css .es2 {
+    color: #000099;
+    font-weight: bold;
+}
+.css .br0 {
+    color: #00AA00;
+}
+.css .sy0 {
+    color: #00AA00;
+}
+.css .st0 {
+    color: #FF0000;
+}
+.css .nu0 {
+    color: #CC66CC;
+}
+.css .re0 {
+    color: #CC00CC;
+}
+.css .re1 {
+    color: #6666FF;
+}
+.css .re2 {
+    color: #3333FF;
+}
+.css .re3 {
+    color: #993333;
+}
+.css .ln-xtra, .css li.ln-xtra, .css div.ln-xtra {
+    background-color: #FFFFCC;
+}
+.css span.xtra {
+    display: block;
+}
+.java .de1, .java .de2 {
+    background: none repeat scroll 0 0 transparent;
+    font: 1em/1.2em monospace;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+}
+.java {
+    font-family: monospace;
+}
+.java .imp {
+    color: red;
+    font-weight: bold;
+}
+.java li, .java .li1 {
+    font-weight: normal;
+    vertical-align: top;
+}
+.java .ln {
+    margin: 0;
+    padding: 0 2px;
+    text-align: right;
+    vertical-align: top;
+    width: 1px;
+}
+.java .li2 {
+    font-weight: bold;
+    vertical-align: top;
+}
+.java .kw1 {
+    color: #000000;
+    font-weight: bold;
+}
+.java .kw2 {
+    color: #000066;
+    font-weight: bold;
+}
+.java .kw3 {
+    color: #003399;
+}
+.java .kw4 {
+    color: #000066;
+    font-weight: bold;
+}
+.java .co1 {
+    color: #666666;
+    font-style: italic;
+}
+.java .co2 {
+    color: #006699;
+}
+.java .co3 {
+    color: #008000;
+    font-style: italic;
+    font-weight: bold;
+}
+.java .coMULTI {
+    color: #666666;
+    font-style: italic;
+}
+.java .es0 {
+    color: #000099;
+    font-weight: bold;
+}
+.java .br0 {
+    color: #009900;
+}
+.java .sy0 {
+    color: #339933;
+}
+.java .st0 {
+    color: #0000FF;
+}
+.java .nu0 {
+    color: #CC66CC;
+}
+.java .me1 {
+    color: #006633;
+}
+.java .me2 {
+    color: #006633;
+}
+.java .ln-xtra, .java li.ln-xtra, .java div.ln-xtra {
+    background-color: #FFFFCC;
+}
+.java span.xtra {
+    display: block;
+}
+
+.code_header h3 {
+    font-size: 1.1em;
+
+}

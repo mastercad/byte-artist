@@ -1,0 +1,150 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create Blog Entry{% endblock %}
+
+{% block body %}
+{% form_theme form 'bootstrap_4_horizontal_layout.html.twig' %}
+
+<div class="container mt-5">
+    {{ form(form) }}
+    <div id="tags_container">
+        <h3>
+            Tags:
+        </h3>
+        <div id="tags_container_clear" style="clear: both;"></div>
+    </div>
+
+    <button class="btn btn-primary btn-save">Speichern</button>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" language="javascript">
+        let tags = [];
+        let currentTags = {};
+        let autocompleteTags = [];
+
+        /** add current blog tags */
+        {% for blogTag in form.vars.value.blogTags %}
+            {% if blogTag.tag and blogTag.tag.name %}
+                currentTags["{{ blogTag.tag.id}}"] = {"name": "{{ blogTag.tag.name}}", "id": "{{ blogTag.id }}"};
+            {% endif %}
+        {% endfor %}
+
+        /** persist all available tags */
+        {% for availableTag in availableTags %}
+            if (currentTags[{{ availableTag.id }}] != undefined) {
+                addTag("{{ availableTag.name }}", "{{ availableTag.id }}", currentTags[{{ availableTag.id }}]['id']);
+            }
+            tags["{{ availableTag.id }}"] = "{{ availableTag.name }}";
+            autocompleteTags.push("{{ availableTag.name }}");
+        {% endfor %}
+
+        function addTag(name, tagId, blogTagId, target) {
+            let tagSpan = $('<span class="tag badge badge-large badge-primary ml-1 mb-1 float-left" data-blog-tag-id="'+blogTagId+'" data-id="'+tagId+'">'+name+'<i class="btn-remove ml-2 fas fa-trash-alt"></i></span>');
+
+            if (undefined == target) {
+                target = $('#tags_container_clear');
+            }
+            $(tagSpan).insertBefore(target);
+            $(tagSpan).on('click', '.btn-remove', function() {
+                $(this).parent().remove();
+                return false;
+            });
+        }
+
+        function initAutocomplete() {
+            $("#tags").on("keydown", function(event) {
+                switch (event.keyCode) {
+                    case $.ui.keyCode.ESCAPE:
+                        $(event.target).parent().remove();
+                        break;
+                    case $.ui.keyCode.ENTER:
+                        // no proposals found
+                        if (!$(this).autocomplete("instance").menu.active) {
+                            addTag($(this).val(), undefined, undefined, $(this).parent());
+                            $(this).val("");
+                        }
+                        break;
+                    case $.ui.keyCode.TAB:
+                        if ($(this).autocomplete("instance").menu.active) {
+                            event.preventDefault();
+                        }
+                        break;
+                }
+            })
+
+            .autocomplete({
+                minLength: 0,
+                source: autocompleteTags,
+                focus: function() {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                select: function(event, ui) {
+                    let self = this;
+                    tags.forEach(function(tag, id) {
+                        if (tag == ui.item.value) {
+                            let existingTag = $("#tags_container").find("[data-id='"+id+"']");
+                            if (0 == existingTag.length) {
+                                addTag(tag, id, undefined, $(self).parent());
+                                $(self).val("");
+                                addAutoCompleteForTags();
+                            }
+                        }
+                    });
+
+                    return false;
+                }
+            });
+        }
+
+        function addAutoCompleteForTags() {
+            $('#tags_container').unbind('click').on('click', function() {
+                let existingTagsInput = $('#tags_container #tags');
+                if (0 == existingTagsInput.length) {
+                    let tagAutocomplete = $('<div class="ui-widget float-left"><input id="tags"></div>');
+                    tagAutocomplete.on('focusout', function() {
+                        tagAutocomplete.remove();
+                    });
+                    $(tagAutocomplete).insertBefore('#tags_container_clear');
+                    $(tagAutocomplete).find('#tags').focus();
+                    initAutocomplete();
+                }
+            });
+        }
+
+        function save() {
+            let data = $('form').serializeArray();
+            data = extendDataWithTagBlogs(data);
+
+            $.post('/blog/create/{{ form.vars.value.id }}', data, function(response) {
+            });
+        }
+
+        function extendDataWithTagBlogs(data) {
+            let counter = 0;
+
+            /** orig content :
+             * [] = {name : 'blog[blogTags][]': value: tagId}
+             */
+            $('#tags_container .tag').each(function() {
+                data.push({name: 'blog[blogTags]['+counter+'][id]', value: $(this).data('blog-tag-id')});
+                data.push({name: 'blog[blogTags]['+counter+'][tagId]', value: $(this).data('id')});
+                data.push({name: 'blog[blogTags]['+counter+'][tagName]', value: $(this).text()});
+                ++counter;
+            });
+
+            return data;
+        }
+
+        $(function() {
+            $('#blog_blogTags').parent().parent().remove();
+            $('.btn-save').unbind('click').on('click', function() {
+                save();
+            });
+            addAutoCompleteForTags();
+        });
+    </script>
+{% endblock %}

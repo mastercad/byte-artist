@@ -1,0 +1,82 @@
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+    {% for image in images %}
+            <div class="col-lg-4 col-6 ">
+                <img class="img-thumbnail img-fluid" src="{{ image }}" alt="">
+            </div>
+    {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" language="javascript">
+        document.ondragover = (event) => {
+            console.log(event);
+            event.preventDefault();
+        }
+
+        document.ondrop = (event) => {
+            event.stopPropagation();
+            event.preventDefault();
+
+            var selectedFiles = event.dataTransfer.files;
+
+            var reader = [];
+            var xhttp = [];
+            var senddata = [];
+
+            for (var i = 0, file; file = selectedFiles[i]; i++) {
+                sendFile(file);
+            }
+        }
+
+        function sendFile(file) {
+                var reader = new FileReader();
+                var senddata = new Object();
+
+                senddata.name = file.name;
+                senddata.date = file.lastModified;
+                senddata.size = file.size;
+                senddata.type = file.type;
+
+                reader.onload = function(theFileData) {
+                    senddata.fileData = theFileData.target.result;
+
+                    var xhttp = new XMLHttpRequest();
+
+                    xhttp.onreadystatechange = function () {
+                        if (4 != this.readyState) return;
+
+                        if (200 == this.status) {
+                            var data = JSON.parse(this.responseText);
+                            var container = document.createElement('DIV');
+                            container.classList.add('col-lg-4');
+                            container.classList.add('col-6');
+                            var image = document.createElement('IMG');
+                            image.classList.add('img-thumbnail');
+                            image.classList.add('img-fluid');
+                            image.setAttribute("src", window.location.protocol+'//'+window.location.hostname+data.url);
+                            container.appendChild(image);
+                            document.querySelector('.row').appendChild(container);
+                        }
+                    };
+
+                    xhttp.open('POST', '/project/upload', true);
+                    xhttp.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+                    xhttp.send(JSON.stringify(senddata));
+                }
+                reader.readAsDataURL(file);
+        }
+
+        function htmlEntities(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+{% endblock %}
