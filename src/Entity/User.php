@@ -41,7 +41,7 @@ class User implements UserInterface
     private $username;
 
     /**
-     * @var json
+     * @var []
      *
      * @ORM\Column(name="roles", type="json", nullable=false)
      */
@@ -64,7 +64,7 @@ class User implements UserInterface
 
     public function __construct()
     {
-        $this->salt = md5(uniqid(null, true));
+        $this->salt = md5(uniqid('null', true));
     }
 
     public function getUsername(): ?string

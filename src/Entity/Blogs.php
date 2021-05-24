@@ -59,14 +59,14 @@ class Blogs
     private $shortDescription;
 
     /**
-     * @var string
+     * @var ?string
      *
      * @ORM\Column(name="preview_picture", type="string", length=250, nullable=true)
      */
     private $previewPicture;
 
     /**
-     * @var int
+     * @var ?int
      *
      * @ORM\Column(name="group_order", type="integer", nullable=true)
      */
@@ -97,7 +97,7 @@ class Blogs
     private $creator;
 
     /**
-     * @var BlogGroups
+     * @var ?BlogGroups
      *
      * @ORM\ManyToOne(targetEntity="BlogGroups")
      * @ORM\JoinColumns({
@@ -107,7 +107,7 @@ class Blogs
     private $group;
 
     /**
-     * @var User
+     * @var ?User
      *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({
@@ -246,7 +246,7 @@ class Blogs
 
     public function setGroup(?BlogGroups $group): self
     {
-        $this->groupFk = $group;
+        $this->group = $group;
 
         return $this;
     }

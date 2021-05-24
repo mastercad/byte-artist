@@ -85,7 +85,7 @@ class BlogComments
     private $creator;
 
     /**
-     * @var User
+     * @var ?User
      *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({
@@ -95,7 +95,7 @@ class BlogComments
     private $modifier;
 
     /**
-     * @var BlogComments
+     * @var ?BlogComments
      *
      * @ORM\ManyToOne(targetEntity="BlogComments")
      * @ORM\JoinColumns({

@@ -14,7 +14,6 @@
 
 class DomTree
 {
-
     /**
      * @static
      * @param array|DOMNode|DOMNodeList $nodeOrNodes
