@@ -37,6 +37,8 @@ jobs:
       run: composer install --prefer-dist --no-progress
       
     - name: provide secrets
+      env:
+        SYMFONY_DECRYPTION_SECRET: os.getenv("SYMFONY_DECRYPTION_SECRET")
       run: php bin/console secrets:decrypt-to-local --force --env=prod
 
     - name: php-codesniffer
