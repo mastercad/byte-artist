@@ -2,10 +2,8 @@
 
 namespace App\Command;
 
-use App\Entity\Projects;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use PHP_CodeSniffer\Util\Common;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -40,7 +38,11 @@ class FixPreviewPathsCommand extends Command
     {
         $this
             ->setDescription(self::$defaultDescription)
-            ->addArgument('table', InputArgument::REQUIRED, 'Argument for Table ('.implode('/', $this->possibleTables).')')
+            ->addArgument(
+                'table',
+                InputArgument::REQUIRED,
+                'Argument for Table ('.implode('/', $this->possibleTables).')'
+            )
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Only check if entries invalid')
         ;
     }
@@ -99,7 +101,8 @@ class FixPreviewPathsCommand extends Command
     {
         $publicProjectPath = '/images/content/dynamisch/'.$this->tableName.'/'.$entity->getId().'/';
 
-        if (preg_match('/\/images\/upload\/([0-9]{1,})\/'.$this->tableName.'\/(.*?)$/i', $entity->getPreviewPicture(), $matches)) {
+        $regex = '/\/images\/upload\/([0-9]{1,})\/'.$this->tableName.'\/(.*?)$/i';
+        if (preg_match($regex, $entity->getPreviewPicture(), $matches)) {
             $publicPath = $publicProjectPath.$matches[2];
             $expectedPath = $this->publicPath.$publicPath;
             if (file_exists($expectedPath)
@@ -124,7 +127,10 @@ class FixPreviewPathsCommand extends Command
             }
         }
 
-        if (preg_match('/^\/var\/www\/.*?\/public\/images\/content\/dynamisch\/'.$this->tableName.'\/[0-9]{1,}\/([^\/]+\.[0-9a-z]+)$/i', $entity->getPreviewPicture(), $matches)) {
+        $regex = '/^\/var\/www\/.*?\/public\/images\/content\/dynamisch\/'.
+            $this->tableName.'\/[0-9]{1,}\/([^\/]+\.[0-9a-z]+)$/i';
+
+        if (preg_match($regex, $entity->getPreviewPicture(), $matches)) {
             $publicPath = $publicProjectPath.$matches[1];
             $expectedPath = $this->publicPath.$publicPath;
             if (file_exists($expectedPath)

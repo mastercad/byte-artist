@@ -34,8 +34,10 @@ final class Version20190807115636 extends AbstractMigration
             KEY `fk_tag_modifier` (`modifier`),
             KEY `fk_tag_parent_fk` (`parent_fk`),
             CONSTRAINT `FK_6FBC9426655DCB2E` FOREIGN KEY (`parent_fk`) REFERENCES `tags` (`id`),
-            CONSTRAINT `fk_tag_creator` FOREIGN KEY (`creator`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-            CONSTRAINT `fk_tag_modifier` FOREIGN KEY (`modifier`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+            CONSTRAINT `fk_tag_creator` FOREIGN KEY (`creator`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON ".
+                "UPDATE RESTRICT,
+            CONSTRAINT `fk_tag_modifier` FOREIGN KEY (`modifier`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON ".
+                "UPDATE RESTRICT
            ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     }
 

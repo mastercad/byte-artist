@@ -10,7 +10,6 @@ use App\Service\DOM\TagMerge;
  */
 class Extender
 {
-
     /**
      * string
      */
@@ -24,14 +23,14 @@ class Extender
     /**
      * @var array enhält alle erlaubten tags, die replaced werden sollen
      */
-    protected $_aAllowdTags = array(
+    protected $aAllowdTags = array(
         '[VIDEO]' => ['[VIDEO]', '[/VIDEO]'],
     );
 
     /**
      * @var array enthält das Tag und dazu den regex sowie den funktionsaufruf
      */
-    protected $_aMapTagToFunction = array(
+    protected $aMapTagToFunction = array(
         '[VIDEO]' => array(
 //            self::REGEX => '/(\[VIDEO\])(.*?)(\[\/VIDEO\])/i',
             self::REGEX => '/(\[(VIDEO:|VIDEO=)([^\]]*)\]|\[VIDEO\])([^(\[\\)]*)\[\/(VIDEO)\]/i',
@@ -53,9 +52,9 @@ class Extender
      */
     public function filter($sText)
     {
-        foreach ($this->_aAllowdTags as $sAllowedTag => $params) {
-            if (array_key_exists($sAllowedTag, $this->_aMapTagToFunction)) {
-                $aCurrentMap = $this->_aMapTagToFunction[$sAllowedTag];
+        foreach ($this->aAllowdTags as $sAllowedTag => $params) {
+            if (array_key_exists($sAllowedTag, $this->aMapTagToFunction)) {
+                $aCurrentMap = $this->aMapTagToFunction[$sAllowedTag];
 
                 $sText = preg_replace_callback(
                     $aCurrentMap[self::REGEX],
@@ -84,13 +83,17 @@ class Extender
     {
         if (true === is_array($matches) && array_key_exists(4, $matches)
         ) {
-            if (preg_match('/^http[s]{0,1}:\/\/www\.youtu.*/i', $matches[4]) || preg_match('/^http[s]{0,1}:\/\/youtu.*/i', $matches[4])
+            if (preg_match('/^http[s]{0,1}:\/\/www\.youtu.*/i', $matches[4])
+                || preg_match('/^http[s]{0,1}:\/\/youtu.*/i', $matches[4])
             ) {
                 $tagName = $matches[5] . ':';
                 $name = $this->retrieveYoutubeVideoInformation($this->parseYoutubeVideoUrl($matches[4]));
                 $options = [];
                 // options already exists
-                if (array_key_exists(2, $matches) && 0 < strlen(trim($matches[2])) && array_key_exists(3, $matches) && 0 < strlen(trim($matches[3]))
+                if (array_key_exists(2, $matches)
+                    && 0 < strlen(trim($matches[2]))
+                    && array_key_exists(3, $matches)
+                    && 0 < strlen(trim($matches[3]))
                 ) {
                     $tagName = $matches[2];
                     $options = $this->parseOptions($matches[3]);
@@ -132,7 +135,9 @@ class Extender
     {
         $sVideoId = $videoUrl;
 
-        if (preg_match('/youtu\.be\/(.*)/i', $videoUrl, $aMatches) || preg_match('/youtube.*[\?|\&]v=([\-\_A-Za-z0-9]{1,})/i', $videoUrl, $aMatches) || preg_match('/youtube.*?v=(.*?)/i', $videoUrl, $aMatches)
+        if (preg_match('/youtu\.be\/(.*)/i', $videoUrl, $aMatches)
+            || preg_match('/youtube.*[\?|\&]v=([\-\_A-Za-z0-9]{1,})/i', $videoUrl, $aMatches)
+            || preg_match('/youtube.*?v=(.*?)/i', $videoUrl, $aMatches)
         ) {
             $sVideoId = $aMatches[1];
         }

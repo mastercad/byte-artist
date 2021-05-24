@@ -72,7 +72,7 @@ class Replace
 //        '[TABLE]' => ['[TABLE]', '[/TABLE]'],
 //        '[LEGEND]' => ['[LEGEND]'],
 //    );
-    
+
     protected $allowdTags = array(
         '[QUOTE=]',
         '[QUOTE]',
@@ -125,7 +125,7 @@ class Replace
     /**
      * @var array enthält das Tag und dazu den regex sowie den funktionsaufruf
      */
-    protected $_aMapTagToFunction = array(
+    protected $aMapTagToFunction = array(
         '[QUOTE=]' => array(
             self::REGEX => '/(\[QUOTE=)(.*?)(\])(.*?)(\[\/QUOTE\])/is',
             self::REPLACE_FUNCTION => "generateQuote"
@@ -373,8 +373,8 @@ class Replace
 //        foreach ($this->allowdTags as $sAllowedTag => $params) {
         $tagsFound = false;
         foreach ($this->allowdTags as $sAllowedTag) {
-            if (array_key_exists($sAllowedTag, $this->_aMapTagToFunction)) {
-                $aCurrentMap = $this->_aMapTagToFunction[$sAllowedTag];
+            if (array_key_exists($sAllowedTag, $this->aMapTagToFunction)) {
+                $aCurrentMap = $this->aMapTagToFunction[$sAllowedTag];
                 $sTempText = $sText;
                 $sText = preg_replace_callback(
                     $aCurrentMap[self::REGEX],
@@ -401,7 +401,7 @@ class Replace
 //
         $sText = preg_replace_callback("/([\t])/", array(&$this, "replaceTab"), $sText);
 
-//        $sText = $this->_smileyReplace($sText);
+//        $sText = $this->smileyReplace($sText);
 
         $oCadMerge = new TagMerge();
 
@@ -517,7 +517,7 @@ class Replace
      */
     public function replaceColor($mInput)
     {
-        $sRegEx = $this->_aMapTagToFunction["[COLOR=]"][self::REGEX];
+        $sRegEx = $this->aMapTagToFunction["[COLOR=]"][self::REGEX];
 
         if (is_array($mInput)) {
             $mInput = '<span style="color: ' . $mInput[2] . ';">' . $mInput[4] . '</span>';
@@ -530,7 +530,7 @@ class Replace
      */
     public function replaceBackgroundColor($mInput)
     {
-        $sRegEx = $this->_aMapTagToFunction["[BGCOLOR=]"][self::REGEX];
+        $sRegEx = $this->aMapTagToFunction["[BGCOLOR=]"][self::REGEX];
 
         if (is_array($mInput)) {
             $mInput = '<span style="background-color: ' . $mInput[2] . ';">' . $mInput[4] . '</span>';
@@ -543,7 +543,7 @@ class Replace
      */
     public function replaceBold($mInput)
     {
-        $sRegEx = $this->_aMapTagToFunction["[B]"][self::REGEX];
+        $sRegEx = $this->aMapTagToFunction["[B]"][self::REGEX];
 
         if (is_array($mInput)) {
             $mInput = '<span style="font-weight: bold;">' . $mInput[2] . '</span>';
@@ -556,7 +556,7 @@ class Replace
      */
     public function replaceItalic($mInput)
     {
-        $sRegEx = $this->_aMapTagToFunction["[I]"][self::REGEX];
+        $sRegEx = $this->aMapTagToFunction["[I]"][self::REGEX];
 
         if (is_array($mInput)) {
             $mInput = '<span style="font-style: italic;">' . $mInput[2] . '</span>';
@@ -569,7 +569,7 @@ class Replace
      */
     public function replaceUnderlined($mInput)
     {
-        $sRegEx = $this->_aMapTagToFunction["[U]"][self::REGEX];
+        $sRegEx = $this->aMapTagToFunction["[U]"][self::REGEX];
 
         if (is_array($mInput)) {
             $mInput = '<span style="text-decoration: underline;">' . $mInput[2] . '</span>';
@@ -582,7 +582,7 @@ class Replace
      */
     public function replaceCode($mInput)
     {
-        $sRegEx = $this->_aMapTagToFunction["[CODE=]"][self::REGEX];
+        $sRegEx = $this->aMapTagToFunction["[CODE=]"][self::REGEX];
 
         if (is_array($mInput)) {
             $mInput = $this->codeString($mInput[2], $mInput[4]);
@@ -595,7 +595,7 @@ class Replace
      */
     public function replacePhpCode($mInput)
     {
-        $sRegEx = $this->_aMapTagToFunction["[PHP]"][self::REGEX];
+        $sRegEx = $this->aMapTagToFunction["[PHP]"][self::REGEX];
 
         if (is_array($mInput)) {
             $mInput = $this->codeString('php', $mInput[2]);
@@ -608,7 +608,7 @@ class Replace
      */
     public function replaceFont($mInput)
     {
-        $sRegEx = $this->_aMapTagToFunction["[FONT=]"][self::REGEX];
+        $sRegEx = $this->aMapTagToFunction["[FONT=]"][self::REGEX];
 
         if (is_array($mInput)) {
             $mInput = '<span style="font-family: ' . $mInput[2] . ';">' . $mInput[4] . '</span>';
@@ -621,7 +621,7 @@ class Replace
      */
     public function replaceSize($mInput)
     {
-        $sRegEx = $this->_aMapTagToFunction["[SIZE=]"][self::REGEX];
+        $sRegEx = $this->aMapTagToFunction["[SIZE=]"][self::REGEX];
 
         if (is_array($mInput)) {
             $mInput = '<span style="font-size: ' . $mInput[2] . 'px;">' . $mInput[4] . '</span>';
@@ -634,7 +634,7 @@ class Replace
      */
     public function replaceGlow($mInput)
     {
-        $sRegEx = $this->_aMapTagToFunction["[GLOW]"][self::REGEX];
+        $sRegEx = $this->aMapTagToFunction["[GLOW]"][self::REGEX];
 
         if (is_array($mInput)) {
             $mInput = '<GLOW>' . $mInput[2] . '</GLOW>';
@@ -647,7 +647,7 @@ class Replace
      */
     public function replaceWave($mInput)
     {
-        $sRegEx = $this->_aMapTagToFunction["[WAVE]"][self::REGEX];
+        $sRegEx = $this->aMapTagToFunction["[WAVE]"][self::REGEX];
 
         if (is_array($mInput)) {
             $mInput = '<WAVE>' . $mInput[2] . '</WAVE>';
@@ -660,7 +660,7 @@ class Replace
      */
     public function replaceShadow($mInput)
     {
-        $sRegEx = $this->_aMapTagToFunction["[SHADOW=]"][self::REGEX];
+        $sRegEx = $this->aMapTagToFunction["[SHADOW=]"][self::REGEX];
 
         if (is_array($mInput)) {
             $mInput = '<span style="box-shadow: 5px 5px 15px ' . $mInput[2] . ';">' . $mInput[4] . '</span>';
@@ -710,7 +710,7 @@ class Replace
             $content .= '</tr>';
         }
         $content .= '</table>';
-        
+
         return $content;
     }
 
@@ -731,7 +731,8 @@ class Replace
      */
     public function generateLine($aMatches)
     {
-        return '<hr style="width: 100%; height: 2px; color: '.$aMatches[2].'; background: '.$aMatches[2]. '; margin: 10px 0px; border: 0;" />';
+        return '<hr style="width: 100%; height: 2px; color: '.$aMatches[2].'; background: '.$aMatches[2].
+            '; margin: 10px 0px; border: 0;" />';
     }
 
     /**
@@ -759,8 +760,9 @@ class Replace
      */
     public function generateGallery($aMatches)
     {
-        if (preg_match_all($this->_aMapTagToFunction['[IMG=]'][static::REGEX], $aMatches[2], $thumbs)) {
-            $content = '<div class="cad-gallery" style="width: 100%; height: 200px; font-size: 0; padding-top: 5px; padding-left: 5px;">';
+        if (preg_match_all($this->aMapTagToFunction['[IMG=]'][static::REGEX], $aMatches[2], $thumbs)) {
+            $content = '<div class="cad-gallery" style="width: 100%; height: 200px; font-size: 0; padding-top: 5px; '.
+                'padding-left: 5px;">';
             foreach ($thumbs[0] as $thumbNumber => $thumb) {
                 $content .= $this->imageEinfuegenNeu($thumbs[4][$thumbNumber], $thumbs[2][$thumbNumber], false);
             }
@@ -776,13 +778,11 @@ class Replace
         $legend = '';
         if (preg_match_all('/(\<H([0-6])\>)(.*?)(\<\/H\2\>)/i', $content, $headings)) {
             $legend = '<div style="margin: 15px;"><p><strong>Legende :</strong></p>';
-            $tempLevel = null;
             foreach ($headings[0] as $pos => $baseHeading) {
                 $currentLevel = $headings[2][$pos];
                 $anchorName = preg_replace('/\s/', '', $headings[3][$pos]);
-                $legend .= '<a href="#' . $anchorName . '" style="margin-left: ' . (($currentLevel + 1) * 5) . 'px;">' .
-                        $headings[3][$pos] .
-                        '</a><br />';
+                $legend .= '<a href="#'.$anchorName.'" style="margin-left: '.(($currentLevel + 1) * 5).'px;">'.
+                    $headings[3][$pos].'</a><br />';
                 $anchor = '<a name="' . $anchorName . '"></a>';
                 $regex = str_replace(
                     ['<', '>', '/', '(', ')', '[', ']', '{', '}', '*', ':', '.'],
@@ -822,10 +822,11 @@ class Replace
             } elseif (preg_match('/^http[s]{0,1}:\/\/youtu\..*/i', $sVideoUrl)) {
                 return $this->addYoutubeVideo($sVideoUrl, isset($aMatches[3]) ? $aMatches[3] : null);
             } else {
-                return '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>' .
-                        '<script type="text/javascript" src="/js/jwplayer.js"></script>' .
-                        '<embed flashvars="file=$1&autostart=false" allowfullscreen="true" ' .
-                        'allowscripaccess="always" id="player1" name="player1" src="' . $sVideoUrl . '" ' .
+                return '<script type="text/javascript" '.
+                            'src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>'.
+                        '<script type="text/javascript" src="/js/jwplayer.js"></script>'.
+                        '<embed flashvars="file=$1&autostart=false" allowfullscreen="true" '.
+                        'allowscripaccess="always" id="player1" name="player1" src="'.$sVideoUrl.'" '.
                         'width="480" height="270"/>';
             }
         };
@@ -837,16 +838,19 @@ class Replace
      */
     public function addYoutubeVideo($videoUrl, $options = null)
     {
-        $videoId = $this->_parseYoutubeVideoUrl($videoUrl);
+        $videoId = $this->parseYoutubeVideoUrl($videoUrl);
         $videoOptions = $this->parseOptions($options);
 
-        $videoContent = '<div style="text-align:center; width: 100%;">' .
-                '<iframe width="560" height="315" src="https://www.youtube.com/embed/' . $videoId . '" ' .
+        $videoContent = '<div style="text-align:center; width: 100%;">'.
+                '<iframe width="560" height="315" src="https://www.youtube.com/embed/'.$videoId.'" '.
                 ' frameborder="0" allowfullscreen ></iframe>';
 
-        if (is_array($videoOptions) && array_key_exists('name', $videoOptions) && 0 < strlen(trim($videoOptions['name']))
+        if (is_array($videoOptions)
+            && array_key_exists('name', $videoOptions)
+            && 0 < strlen(trim($videoOptions['name']))
         ) {
-            $videoContent .= '<p style="clear: both; margin-top: 15px; font-style: italic;">Quelle: Youtube, Titel: ' . trim($videoOptions['name']) . ' </p>';
+            $videoContent .= '<p style="clear: both; margin-top: 15px; font-style: italic;">Quelle: Youtube, Titel: '.
+                trim($videoOptions['name']).' </p>';
         }
         $videoContent .= '</div>';
 
@@ -872,7 +876,7 @@ class Replace
     /**
      *
      */
-    private function _parseYoutubeVideoUrl($sVideoUrl)
+    private function parseYoutubeVideoUrl($sVideoUrl)
     {
         $sVideoId = $sVideoUrl;
 
@@ -969,7 +973,8 @@ class Replace
         return $link;
     }
 
-    // function, die checkt, ob das user ein mitglied des forums ist, wenn ja wird text angezeigt, wenn nein, der register link
+    // function, die checkt, ob das user ein mitglied des forums ist, wenn ja wird text angezeigt,
+    // wenn nein, der register link
 
     /**
      *
@@ -986,7 +991,11 @@ class Replace
         if (isset($_SESSION['mitglieder_id'])) {
             return $text;
         } else {
-            return '<span style="color: red;">Bitte einloggen, oder <a style="color: red;" href="?seite=registrieren&amp;forumid=' . $iForumId . '&amp;subforumid=' . $iSubForumId . '&amp;threadid=' . $iThreadId . '&amp;aktuelle_seite=' . $iAktuelleSeite . '&amp;anzahl_posts=' . $iAnzahlPosts . '" title="Nicht die benötigten Rechte um diesen Text zu sehen" >registrieren</a>, damit der Text angezeigt wird !</span>';
+            return '<span style="color: red;">Bitte einloggen, oder <a style="color: red;" '.
+                'href="?seite=registrieren&amp;forumid='.$iForumId.'&amp;subforumid='.$iSubForumId.'&amp;threadid='.
+                $iThreadId.'&amp;aktuelle_seite='.$iAktuelleSeite.'&amp;anzahl_posts='.$iAnzahlPosts.
+                '" title="Nicht die benötigten Rechte um diesen Text zu sehen" >registrieren</a>,'.
+                ' damit der Text angezeigt wird !</span>';
         }
     }
 
@@ -1008,16 +1017,19 @@ class Replace
         $sSource = preg_replace('/^\n/', '', $sSource);
         $sSource = preg_replace('/\n$/', '', $sSource);
 
-        $header_content = '<div class="code_header" style="position: relative; padding: 2px 5px; font-weight: bold; background-color: #CCCCCC; color: #333333;">';
+        $header_content = '<div class="code_header" style="position: relative; padding: 2px 5px; font-weight: bold; '.
+            'background-color: #CCCCCC; color: #333333;">';
         $header_content .= '<span class="highlight_minimize fas fa-plus" style="cursor: pointer;"></span>';
 
         if (strlen(trim($sLanguage)) > 0) {
-            $header_content .= '<h3 style="position: absolute; top: 0px; left: 20px; padding: 2px 5px; background-color: #FFFFFF; border: 1px solid #CCCCCC;">' . $sLanguage . ' code</h3>';
+            $header_content .= '<h3 style="position: absolute; top: 0px; left: 20px; padding: 2px 5px; '.
+            'background-color: #FFFFFF; border: 1px solid #CCCCCC;">'.$sLanguage.' code</h3>';
         }
 
-//        $header_content .= '<img src="#" alt="copy to clipboard" style="position: absolute; top: 2px; right: 5px;" />';
+//     $header_content .= '<img src="#" alt="copy to clipboard" style="position: absolute; top: 2px; right: 5px;" />';
         $header_content .= '</div>';
-        $footer_content = '<div class="code_footer" style="height: 10px; background-color: #CCCCCC; color: #333333;"></div>';
+        $footer_content = '<div class="code_footer" style="height: 10px; background-color: #CCCCCC; '.
+            'color: #333333;"></div>';
 
         if (true === class_exists("GeSHi")) {
             $oGeshi = new GeSHi($sSource, $sLanguage);
@@ -1092,7 +1104,7 @@ class Replace
     /**
      *
      */
-    function erstelleListe($text)
+    public function erstelleListe($text)
     {
         $text = stripslashes($text);
 
@@ -1151,13 +1163,15 @@ class Replace
             $name_array = chunk_split($name, 20, "<br />");
             $anhang .= '<div style="display: block; padding: 5px;">' . $name_array . '</div>';
             if (false === $this->getWithoutLinks()) {
-                $anhang .= '<a href="/' . $pfad . $text . '" title="' . $text . '" target="_blank" >';
+                $anhang .= '<a href="/'.$pfad.$text.'" title="'.$text.'" target="_blank" >';
             }
-            $anhang .= '<img src="/butler/create-thumb/file/' . $pfad . $text . '" alt="Bild ' . $text . ' nicht gefunden !" title="' . $text . '" />';
+            $anhang .= '<img src="/butler/create-thumb/file/'.$pfad.$text.'" alt="Bild '.$text.
+                ' nicht gefunden !" title="'.$text.'" />';
             if (false === $this->getWithoutLinks()) {
                 $anhang .= '</a>';
             }
-            $anhang .= '<div style="width: 140px; height: 20px; background: #FFF; text-align: center;">' . $bild_array[0] . ' x ' . $bild_array[1] . '</div>';
+            $anhang .= '<div style="width: 140px; height: 20px; background: #FFF; text-align: center;">'.
+                $bild_array[0].' x '.$bild_array[1].'</div>';
             $anhang .= '</div>';
 
             $_SESSION['post_bilder'][] = $text;
@@ -1196,9 +1210,11 @@ class Replace
 
         if ($name) {
             $name = addslashes($name);
-            $bild_link .= '<p style="clear: both; float: left; display: inline; padding: 5px 0 2px 0; margin: 5px 0 0 0;">' . $name . '</p>';
+            $bild_link .= '<p style="clear: both; float: left; display: inline; padding: 5px 0 2px 0; '.
+                'margin: 5px 0 0 0;">'.$name.'</p>';
         }
-        $bild_link .= '<img style="float: left; display: inline;" src="' . $bild . '" alt="Bild ' . $bild . ' nicht gefunden !" title="' . $bild . '" />';
+        $bild_link .= '<img style="float: left; display: inline;" src="'.$bild.'" alt="Bild '.$bild.
+            ' nicht gefunden !" title="'.$bild.'" />';
 
         return $bild_link;
     }
@@ -1223,7 +1239,8 @@ class Replace
 
         foreach ($a_params as $a_param) {
             $a_style = explode("=", $a_param);
-            if (1 === count($a_style) && 0 == strlen($name)
+            if (1 === count($a_style)
+                && 0 == strlen($name)
             ) {
                 $name = addslashes($a_style[0]);
                 break;
@@ -1233,8 +1250,10 @@ class Replace
             }
         }
         $name = $imagePathName;
-//        $returnContent .= '<img class="blog_pic lazyload" data-src="'.$imageContent.'" src="load.jpg" alt="Bild ' . $name . ' nicht gefunden !" title="' . $name . '" />';
-        $returnContent .= '<img class="blog_pic lazyload" data-mfp-src="'.$imageContent.'" data-src="'.$imageContent.'" src="low_pic.png" alt="Bild ' . $name . ' nicht gefunden !" title="' . $name . '" />';
+//        $returnContent .= '<img class="blog_pic lazyload" data-src="'.$imageContent.'" src="load.jpg" alt="Bild '
+//           . $name . ' nicht gefunden !" title="' . $name . '" />';
+        $returnContent .= '<img class="blog_pic lazyload" data-mfp-src="'.$imageContent.'" data-src="'.$imageContent.
+            '" src="low_pic.png" alt="Bild ' . $name . ' nicht gefunden !" title="' . $name . '" />';
 /*
         if ($name
             && true === $generateWithContainer
@@ -1277,15 +1296,17 @@ class Replace
                 is_file(getcwd() . $this->getTempBilderPfad() . $imagePathName) &&
                 is_readable(getcwd() . $this->getTempBilderPfad() . $imagePathName)
         ) {
-            $imagePathNameFormatted = 'https://' . $localHostName . '/butler/create-thumb/file/' . base64_encode(getcwd() . $this->getTempBilderPfad() . $imagePathNameFormatted);
-        } elseif (file_exists(getcwd() . $this->getBilderPfad() . $imagePathName)
-            && is_file(getcwd() . $this->getBilderPfad() . $imagePathName)
-            && is_readable(getcwd() . $this->getBilderPfad() . $imagePathName)
+            $imagePathNameFormatted = 'https://'.$localHostName.'/butler/create-thumb/file/'.
+                base64_encode(getcwd().$this->getTempBilderPfad().$imagePathNameFormatted);
+        } elseif (file_exists(getcwd().$this->getBilderPfad().$imagePathName)
+            && is_file(getcwd().$this->getBilderPfad().$imagePathName)
+            && is_readable(getcwd().$this->getBilderPfad().$imagePathName)
         ) {
-//            $imagePathNameFormatted = 'https://' . $localHostName . '/butler/create-thumb/file/' . base64_encode(getcwd() . $this->getBilderPfad() . $imagePathNameFormatted);
-            $imagePathNameFormatted = 'http://' . $localHostName . $this->getBilderPfad() . $imagePathNameFormatted;
+//            $imagePathNameFormatted = 'https://'.$localHostName.'/butler/create-thumb/file/'.
+//              base64_encode(getcwd().$this->getBilderPfad().$imagePathNameFormatted);
+            $imagePathNameFormatted = 'http://'.$localHostName.$this->getBilderPfad().$imagePathNameFormatted;
         } else {
-            $imagePathNameFormatted = 'https://' . $localHostName . $this->getBilderPfad() . $imagePathName;
+            $imagePathNameFormatted = 'https://'.$localHostName.$this->getBilderPfad().$imagePathName;
         }
 
         $a_params = explode(":", $params);
@@ -1395,7 +1416,7 @@ class Replace
     /**
      *
      */
-    private function _detectUTF8($string)
+    private function detectUTF8($string)
     {
         return (bool) preg_match('%(?:
             [\xC2-\xDF][\x80-\xBF]        # non-overlong 2-byte
@@ -1411,10 +1432,10 @@ class Replace
     /**
      *
      */
-    private function _smileyReplace($sText)
+    private function smileyReplace($sText)
     {
 
-        $this->_prepareSmileys();
+        $this->prepareSmileys();
 
         $sText = preg_replace(array_keys(self::$replaceSmilies), array_values(self::$replaceSmilies), $sText);
 
@@ -1424,7 +1445,7 @@ class Replace
     /**
      *
      */
-    private function _prepareSmileys()
+    private function prepareSmileys()
     {
         $sTheme = 'standart';
 
@@ -1439,7 +1460,7 @@ class Replace
             $oSmileysRowSet = $oSmileysDbTable->findSmileys($sTheme, $sCategory = null);
 
             foreach ($oSmileysRowSet as $oSmileyRow) {
-                $sRegEx = '/' . $this->_escapeRegEx($oSmileyRow->smile_short) . '/i';
+                $sRegEx = '/' . $this->escapeRegEx($oSmileyRow->smile_short) . '/i';
 
                 $sPicturePath = '<img src="/images/content/statisch/grafiken/smileys/' . $sTheme . '/' .
                         $oSmileyRow->smile_picture . '" alt="' . $oSmileyRow->smile_short . '" title="' .
@@ -1453,7 +1474,7 @@ class Replace
     /**
      *
      */
-    private function _escapeRegEx($sText)
+    private function escapeRegEx($sText)
     {
         return preg_replace('/([\-|\.|\(|\)|\/|\?|\\\])/', "\\\\$1", $sText);
     }
@@ -1512,7 +1533,7 @@ class Replace
      */
     public function getMapTagToFunction()
     {
-        return $this->_aMapTagToFunction;
+        return $this->aMapTagToFunction;
     }
 
     /**
@@ -1520,7 +1541,7 @@ class Replace
      */
     public function setMapTagToFunction($aMapTagToFunction)
     {
-        $this->_aMapTagToFunction = $aMapTagToFunction;
+        $this->aMapTagToFunction = $aMapTagToFunction;
     }
 
     /**

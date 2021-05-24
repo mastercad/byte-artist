@@ -19,7 +19,11 @@ class IndexController extends AbstractController
         /** @var $blogRepository BlogRepository */
         $blogRepository = $this->getDoctrine()->getRepository(Blogs::class);
         $blogs = $blogRepository->findLatest(0, 3);
-        $projects = $this->getDoctrine()->getRepository(Projects::class)->findBy([], ['modified' => 'DESC', 'created' => 'DESC'], 3);
+        $projects = $this->getDoctrine()->getRepository(Projects::class)->findBy(
+            [],
+            ['modified' => 'DESC', 'created' => 'DESC'],
+            3
+        );
 
         return $this->render('index/index.html.twig', [
             'controller_name' => 'IndexController',

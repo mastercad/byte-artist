@@ -37,48 +37,11 @@ final class Version20190815083124 extends AbstractMigration
             KEY `fk_blog_comment_parent_fk` (`parent_fk`),
             CONSTRAINT `FK_2BC3B20D655DCB2E` FOREIGN KEY (`parent_fk`) REFERENCES `blog_comments` (`id`),
             CONSTRAINT `FK_2BC3B20DCDC77FC9` FOREIGN KEY (`blog_fk`) REFERENCES `blog` (`id`),
-            CONSTRAINT `fk_blog_comment_creator` FOREIGN KEY (`creator`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-            CONSTRAINT `fk_blog_comment_modifier` FOREIGN KEY (`modifier`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+            CONSTRAINT `fk_blog_comment_creator` FOREIGN KEY (`creator`) REFERENCES `user` (`id`) ON DELETE '.
+                'RESTRICT ON UPDATE RESTRICT,
+            CONSTRAINT `fk_blog_comment_modifier` FOREIGN KEY (`modifier`) REFERENCES `user` (`id`) ON '.
+                'DELETE RESTRICT ON UPDATE RESTRICT
            ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
-
-        /** Schema */
-        /*
-        $this->addSql('CREATE TABLE `blog_comments` (
-            `id` int(11) UNSIGNED NOT NULL,
-            `user_name` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-            `user_email` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-            `text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-            `parent_fk` int(11) UNSIGNED DEFAULT NULL,
-            `blog_fk` int(11) UNSIGNED NOT NULL,
-            `created` datetime NOT NULL,
-            `creator` int(11) UNSIGNED NOT NULL,
-            `modified` datetime DEFAULT NULL,
-            `modifier` int(11) UNSIGNED DEFAULT NULL
-          ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;');
-        */
-        /** Indizes */
-        /*
-        $this->addSql('ALTER TABLE `blog_comments`
-            ADD PRIMARY KEY (`id`),
-            ADD KEY `fk_blog_comment_parent_fk` (`parent_fk`),
-            ADD KEY `fk_blog_comment_blog_fk` (`blog_fk`),
-            ADD KEY `fk_blog_comment_creator` (`creator`),
-            ADD KEY `fk_blog_comment_modifier` (`modifier`);');
-        */
-        /** AUTO_INCREMENT */
-        /*
-        $this->addSql('ALTER TABLE `blog_comments`
-            MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;');
-        */
-        /** Constraints */
-        /*
-        $this->addSql('ALTER TABLE `blog_comments`
-            ADD CONSTRAINT `fk_blog_comment_blog_fk` FOREIGN KEY (`blog_fk`) REFERENCES `blog` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-            ADD CONSTRAINT `fk_blog_comment_creator` FOREIGN KEY (`creator`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-            ADD CONSTRAINT `fk_blog_comment_modifier` FOREIGN KEY (`modifier`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-            ADD CONSTRAINT `fk_blog_comment_parent_fk` FOREIGN KEY (`parent_fk`) REFERENCES `blog_comments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-        COMMIT;');
-        */
     }
 
     public function down(Schema $schema) : void

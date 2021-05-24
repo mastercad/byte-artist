@@ -8,16 +8,15 @@ use Twig\Source;
 
 /**
  * @class DatabaseTwigLoader
- * 
+ *
  * @see https://twig.symfony.com/doc/2.x/recipes.html
- * 
+ *
  * Loader to load content by column direct from database in twig template
  */
 class DatabaseTwigLoader # implements LoaderInterface
 {
     protected $dbh;
 
-#    public function __construct(PDO $dbh)
     public function __construct(Connection $dbh)
     {
         $this->dbh = $dbh;
