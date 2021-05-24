@@ -39,7 +39,7 @@ jobs:
     - name: provide secrets
       env:
         SYMFONY_DECRYPTION_SECRET: ${{ secrets.SYMFONY_DECRYPTION_SECRET }}
-      run: env && php bin/console secrets:decrypt-to-local --force --env=prod
+      run: php bin/console secrets:decrypt-to-local --force --env=prod
 
     - name: prepare php-cs-fixer config
       run: cp .php-cs-fixer.dist.php .php-cs-fixer.php
@@ -107,9 +107,15 @@ jobs:
         # Path to composer.lock
 #        composer-lock: # optional, default is ./composer.lock
 
+    - name: PHPUnit for Symfony
+      # You may pin to the exact commit or the version.
+      # uses: chindit/actions-phpunit-symfony@c02bff1f84d757d030c15e2985be601cdba3039e
+      uses: chindit/actions-phpunit-symfony@1.0.0
+
     - name: SonarCloud Scan
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # You may pin to the exact commit or the version.
       # uses: SonarSource/sonarcloud-github-action@de2e56b42aa84d0b1c5b622644ac17e505c9a049
       uses: SonarSource/sonarcloud-github-action@v1.6
@@ -118,8 +124,3 @@ jobs:
 #        args: # optional
         # Set the sonar.projectBaseDir analysis property
 #        projectBaseDir: # optional, default is .
-
-    - name: PHPUnit for Symfony
-      # You may pin to the exact commit or the version.
-      # uses: chindit/actions-phpunit-symfony@c02bff1f84d757d030c15e2985be601cdba3039e
-      uses: chindit/actions-phpunit-symfony@1.0.0
