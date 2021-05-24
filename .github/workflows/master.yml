@@ -45,9 +45,9 @@ jobs:
       # You may pin to the exact commit or the version.
       # uses: pipeline-components/php-codesniffer@e3341450afba37fab4275b31f041646a26b2da9d
       uses: pipeline-components/php-codesniffer@v0.12.3
-#      with:
+      with:
         # Directory to check
-#        directory: # optional, default is .
+        directory: src
         # Additional options
 #        options: # optional, default is -s -p --colors --extensions=php
         # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
@@ -92,9 +92,9 @@ jobs:
       # You may pin to the exact commit or the version.
       # uses: StephaneBour/actions-php-cs-fixer@51db30c2569c3a6e4ebf68d63d2bdb65a5b914e6
       uses: StephaneBour/actions-php-cs-fixer@8.0-v3
-#      with:
+      with:
         # Folder to check code style
-#        dir: # optional, default is .
+        dir: src
 
     - name: PHP Security Checker
       # You may pin to the exact commit or the version.
