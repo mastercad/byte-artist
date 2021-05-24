@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | projekt{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('tag-cloud') }}
+
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function() {
+            
+            if(!$('#tag_cloud').tagcanvas({
+            textColour: '#00f',
+            outlineColour: '#00f',
+            shadow: '#CCC',
+            shadowBlur: 4,
+            reverse: true,
+            clickToFront: 600,
+            freezeActive: false,
+            hideTags: false,
+            noSelect: false,
+            initial: [0.05, -0.05],
+    //          dragControl: true,
+            depth: 0.8,
+            maxSpeed: 0.05,
+            minSpeed: 0.002
+            },'tags')) {
+            // something went wrong, hide the canvas container
+                $('#tag_cloud_container').hide();
+            }
+      });
+    </script>
+{% endblock %}
+
+{% block body %}
+<div class="container-float" role="main">
+    <div class="row p-3">
+        <div class="col-12">
+            <h1>Projekte Übersicht</h1>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-12">
+            {{ include('fragment/pagination.html.twig')}}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-9">
+            {% set count = 0 %}
+            {% for project in projects %}
+                {% if count % 2 %}
+                    {{ include('projects/preview_template_right.html.twig', { 'project': project }) }}
+                {% else %}
+                    {{ include('projects/preview_template_left.html.twig', { 'project': project }) }}
+                {% endif %}
+                {% set count = count + 1 %}
+            {% endfor %}
+
+      </div>
+      <div class="col-md-2">
+        <div id="tag_cloud_container">
+            <canvas width="300" height="300" id="tag_cloud"></canvas>
+        </div>
+        <div id="tags">
+          <ul>
+          {% for projectTag in projectTags %}
+            <li>
+                <a class="badge badge-primary" href="/project/tag/{{ projectTag.tag.seoLink }}" target="_blank">
+                    {{ projectTag.tag.name }}
+                </a>
+            </li>
+          {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+        
+    <div class="row mt-3">
+      <div class="col-md-12">
+        {{ include('fragment/pagination.html.twig')}}
+      </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+<article>
+    <div class="row">
+        <h2 class="col-sm-12">
+            {{ project.name }}
+            {% if is_granted('edit', project) %}<a class="btn btn-primary" href="/project/create/{{ project.id }}">Edit</a>{% endif %}
+            {% if is_granted('delete', project) %} <a class="btn btn-primary" href="/project/delete/{{ project.id }}">Delete</a> {% endif %}
+        </h2>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-sm-12 text-left">
+            {{ project.creator.username }}
+        </div>
+        <div class="col-md-6 col-sm-12 text-right">
+            {{ project.created|date("d.m.Y H:i:s", "Europe/Berlin") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+        {{ project.description|replace({'%projectId%': project.id })|ubb(project.id) }}
+        </div>
+    </div>
+    {% if project.projectTags|length %}
+    <div class="row">
+        <div class="col-sm-12">
+            <p>
+                Tags:
+            </p>
+            {% for projectTag in project.projectTags %}
+                <a href="/project/tag/{{ projectTag.tag.seoLink }}" class="badge badge-primary">
+                    {{ projectTag.tag.name }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</article>

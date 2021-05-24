@@ -1,0 +1,27 @@
+<article class="row m-3 shadow-sm rounded p-3">
+    <div class="col-md-12">
+        <h2>
+            {{ blog.name }}
+        </h2>
+    </div>
+    <div class="col-md-5 d-flex flex-column">
+        <p>
+            {{ blog.shortDescription }}
+        </p>
+        <div>
+            {% for blogTag in blog.blogTags %}
+                <a href="/blog/tag/{{ blogTag.tag.seoLink }}" class="badge badge-primary">{{ blogTag.tag.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-7">
+        <a href="#">
+            <img class="img-fluid rounded mb-3 mb-md-0" src="/images/content/dynamisch/blogs/{{ blog.id}}/{{ blog.previewPicture }}" alt="{{ blog.previewPicture }} not found.">
+        </a>
+    </div>
+    <div class="col-md-12">
+        <a class="btn btn-primary mt-auto" href="/blog/{{ blog.seoLink}}">
+            View Blog Entry
+        </a>
+    </div>
+</article>

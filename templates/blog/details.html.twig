@@ -1,0 +1,33 @@
+<article>
+    <div class="row">
+        <h2 class="col-sm-12">
+            {{ blog.name }} {% if is_granted('edit', blog) %} <a class="btn btn-primary" href="/blog/create/{{ blog.id }}">Edit</a> {% endif %}
+        </h2>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-sm-12 text-left">
+            {{ blog.creator.username }}
+        </div>
+        <div class="col-md-6 col-sm-12 text-right">
+            {{ blog.created | date("d.m.Y H:i:s", "Europe/Paris") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            {{ blog.content | ubb(blog.id) }}
+        </div>
+    </div>
+    
+    {% if blog.blogTags | length %}
+        <div class="row">
+            <div class="col-sm-12">
+                <p>
+                    Tags:
+                </p>
+                {% for blogTag in blog.blogTags %}
+                    <a href="/blog/tag/{{ blogTag.tag.seoLink }}" class="badge badge-primary">{{ blogTag.tag.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</article>

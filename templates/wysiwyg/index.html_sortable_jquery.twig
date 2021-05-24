@@ -1,0 +1,731 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | WYSIWYG{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        input, textarea {
+            border: 0;
+            background-color: transparent;
+        }
+
+        .placeholder {
+            color: gray;
+        }
+        
+        .headline {
+            text-align: center;
+        }
+
+        .headline1 {
+            font-size: 2.5em;
+        }
+
+        .headline textarea {
+            text-align: center;
+        }
+
+        .resize-height {
+            z-index: 1000;
+            cursor: row-resize;
+        }
+
+        .resize-width {
+            z-index: 1000;
+            cursor: col-resize;
+        }
+
+        .cad-editor-container {
+            padding: 20px;
+        }
+
+        .content {
+            display: flex;
+            position: relative;
+        }
+
+        .box:hover > .box-options,
+        .box > .box:hover .box-options {
+            display: block;
+        }
+
+        .box {
+            border-radius: 2px;
+            white-space: pre;/*pre-wrap*/
+            display: -webkit-flex; /* Safari */
+            -webkit-flex-direction: column; /* Safari 6.1+ */
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            position: relative;
+            border: 1px dashed lightgrey;
+        }
+/*
+        .box .box {
+            min-height: 10px;
+            margin: 2px;
+/*            background-color: #45FF41;*/
+/*            border: 1px solid #04B200;*/
+/*            display: block;*//*
+        }
+*/
+        .item {
+            margin: 2px;
+            position: relative;
+            background-color: #FFCB44;
+            border: 1px solid #B2840C;
+            border-radius: 2px;
+            flex: 1;
+        }
+
+        .item:empty {
+            padding: 20px;
+        }
+
+        .ui-sortable-placeholder {
+            border: 1px dotted black;
+            visibility: visible !important;
+            background-color: inherit;
+        }
+
+        .box-options {
+            position: absolute;
+            display: none;
+            top: -20px;
+            right: 0;
+            z-index: 1001;
+            padding: 10px;
+            background-color: lightblue;
+        }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="cad-editor-container">
+    <div class="headline">
+        
+    </div>
+    <div class="content">
+        <div class="box">
+            <div class="tool box-options"><i class="fas fa-sync-alt change-direction"></i></div>
+            <div class="box">
+                <div class="tool box-options"><i class="fas fa-sync-alt change-direction"></i></div>
+    <!--       <div class="item text-box">Das ist ein Testeintrag im Fake Textarea</div></div>-->
+                <div class="item"></div>
+            </div>
+            <div class="box">
+                <div class="tool box-options"><i class="fas fa-sync-alt change-direction"></i></div>
+                <div class="item"></div>
+                <div class="item">
+                    <div class="tool resize-width" data-position="right" style="z-index: 1000; position: absolute; width: 10%; height: 100%; background-color: lightblue; opacity: 0.5; top: 0; right: 0;"></div>
+                    <div class="tool resize-width" data-position="left" style="z-index: 1000; position: absolute; width: 10%; height: 100%; background-color: lightblue; opacity: 0.5; top: 0; left: 0;"></div>
+                    <div class="tool resize-height" data-position="top" style="z-index: 1000; position: absolute; width: 100%; height: 10%; background-color: lightblue; opacity: 0.5; top: 0; right: 0;"></div>
+                    <div class="tool resize-height" data-position="bottom" style="z-index: 1000; position: absolute; width: 100%; height: 10%; background-color: lightblue; opacity: 0.5; bottom: 0; left: 0;"></div>
+                </div>
+                <div class="item"></div>
+            </div>
+            <div class="box">
+                <div class="tool box-options"><i class="fas fa-sync-alt change-direction"></i></div>
+                <div class="item"></div>
+                <div class="item"></div>
+            </div>
+
+            <div class="box">
+                <div class="tool box-options"><i class="fas fa-sync-alt change-direction"></i></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+            </div>
+
+            <div class="box">
+                <div class="tool box-options"><i class="fas fa-sync-alt change-direction"></i></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+            </div>
+            
+            <div class="box">
+                <div class="tool box-options"><i class="fas fa-sync-alt change-direction"></i></div>
+                <div class="item"></div>
+                <div class="box-wrapper">
+                    <div class="box">
+                        <div class="tool box-options"><i class="fas fa-sync-alt change-direction"></i></div>
+                        <div class="item"></div>
+                        <div class="item"></div>
+                        <div class="item"></div>
+                    </div>
+                </div>
+                <div class="item"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function() {
+            initHeadline();
+            initResizing();
+            initEditorMenu();
+            initDragBox();
+            initTextMode();
+            initLayoutContainerOptions();
+        });
+
+        let editMode = false;
+        let editTarget = undefined;
+
+        function initTextMode() {
+            $('.text-box').unbind('click').on('click', function() {
+                activateTextEditor($(this));
+            });
+        }
+
+        function activateTextEditor(element) {
+            if (true === editMode) {
+                return false;
+            }
+            editMode = true;
+            console.log("Activate Editor!");
+
+            editTarget = element;
+            editTarget
+                .addClass('unsortable')
+                .unbind('blur')
+                .blur(function() {
+                    deactivateTextEditor();
+                })
+                .on('input', function(event, ui) {
+                    console.log("CHANGE!");
+//                    console.log(event);
+                })
+            ;
+
+            $(document).on('keydown, keyup', function(event, ui) {
+                if (undefined !== editTarget) {
+                    console.log(event.keyCode);
+//                    if (13 === event.keyCode) {
+//                        let cursorPosition = getCaretPosition(editTarget);
+                        let cursorPosition = getHTMLCaretPosition(editTarget);
+                        console.log("Cursor Position: "+cursorPosition);
+                        console.log("InnerHTML vor cursor: "+editTarget[0].innerHTML.substr(0, cursorPosition));
+//                    }
+                }
+            });
+
+//            editTarget[0].addEventListener('keypress', function(event){console.log(event.target.innerText);});
+//            editTarget[0].addEventListener('keyup', function(event){console.log(event.target.innerText);});
+//            editTarget[0].addEventListener('keydown', function(event){console.log(event.target.innerText);});
+
+
+/*
+            $('body').unbind('keydown').on('keydown', function(event, ui) {
+                if (!editMode) {
+                    return true;
+                }
+                console.log(event.keyCode);
+                if (32 === event.keyCode) {
+                    editTarget.html(editTarget.html()+"&nbsp;");
+                    event.preventDefault();
+                    return false;
+                }
+                if (13 === event.keyCode) {
+                    editTarget.html(editTarget.html()+"<br />");
+                    event.preventDefault();
+                    return false;
+                }
+                if (8 === event.keyCode) {
+                    let currentText = editTarget.html()
+                    editTarget.html(currentText.substring(0, currentText.length - 1));
+                    event.preventDefault();
+                    return false;
+                }
+                editTarget.html(editTarget.html()+String.fromCharCode(event.keyCode));
+            });
+*/
+        }
+        function deactivateTextEditor() {
+            console.log("Deactivate Editor!");
+
+            if (undefined !== editTarget) {
+                editTarget.removeClass('unsortable');
+            }
+            editTarget = undefined;
+            editMode = false;
+            $('body').unbind('keydown');
+        }
+
+        function initLayoutContainerOptions() {
+            $('.content, div.content > div.box').each(function() {
+                $(this).unbind('mouseover').on('mouseover', function() {
+                });
+            });
+
+            $('.content, div.content > div.box').find('.change-direction').unbind('click').on('click', function(event) {
+                let wrapper = $(this).parent().parent();
+                let currentDirection = wrapper.css('flex-direction');
+                let otherDirection = currentDirection == "row" ? "column" : "row";
+                wrapper.css({'flex-direction': otherDirection});
+            })
+        }
+
+        function initDragBox() {
+//            var placeholderElement = jQuery('<div style="background-color: #eee;"></div>');
+
+            $('.box').sortable({
+//                placeholder: "ui-state-highlight",
+                connectWith: '.box',
+                items: 'div:not(.tool)',
+                revert: 500,
+                cancel: '.tool, .unsortable',
+                start: function(event, ui) {
+                    console.log("SORT START!!!");
+                },
+                sort: function(event, ui) {
+                    console.log("SORT!");
+//                    if (true === editMode) {
+//                        console.log(ui.sender);
+//                        $(ui.sender).sortable('cancel');
+//                        return false;
+//                    }
+                },
+//                activate: function(event, ui) {
+//                    console.log("ACTIVATE!");
+//                    placeholderElement.insertBefore(ui.item[0]);
+
+                    // Explicitly set the height and width to preserve
+                    // flex calculations
+//                    placeholderElement.width(ui.item[0].offsetWidth);
+//                    placeholderElement.height(ui.item[0].offsetHeight);
+//                    if (true === editMode) {
+//                        console.log(ui.sender);
+//                        $(ui.sender).sortable('cancel');
+//                        return false;
+//                    }
+//                },
+                drag: function(event) {
+                    console.log("DRAG!");
+//                    if (true === editMode) {
+//                        return false;
+//                    }
+                },
+                update: function(event) {
+                    console.log("UPDATE!");
+                },
+                over: function(event) {
+                    console.log("OVER!");
+//                    if (true === editMode) {
+//                        return false;
+//                    }
+                },
+                out: function(event) {
+                    console.log("OUT!");
+                },
+                receive: function(ev, ui) {
+                    console.log("SORTABLE RECEIVE!!!");
+                    //neither this, nor 'stop' work
+                    //$(ui.sender).sortable('cancel');
+                    $(ui.sender).sortable( "option", "revert", false );
+                },
+                stop: function(ev, ui) {
+                    console.log("SORTABLE STOP!!!");
+                },
+                // Remove it when you're done dragging.
+//                deactivate: function() {
+//                    placeholderElement.remove();
+//                }
+            });
+
+            $(".box").disableSelection();
+
+            var nr = 0;
+            var fileList = [];
+
+            $('.content').on({
+                'dragenter': function(event, ui) {
+                    console.log("DRAGENTER!");
+                    console.log(event);
+                    console.log(ui);
+                    event.preventDefault();
+                    event.stopPropagation();
+                },
+                'dragover': function(event, ui) {
+                    console.log("DRAGOVER!");
+                    console.log(event);
+                    console.log(ui);
+                    event.preventDefault();
+                    event.stopPropagation();
+                },
+                'drop': function(event, ui) {
+                    console.log("DROP!");
+                    console.log(event);
+                    console.log(ui);
+                    event.preventDefault();  
+                    event.stopPropagation();
+                    
+                    if ($(event.target).hasClass("tool")) {
+                        console.log("TOOL IST KEINE DROP ACCEPTABLE KLASSE!");
+//                        $(this).sortable("cancel");
+                        return false;
+                    }
+                    
+                    //console.log(e.originalEvent instanceof DragEvent);
+                    var dataTransfer = event.originalEvent.dataTransfer;
+
+                    if (dataTransfer 
+                        && dataTransfer.files.length
+                    ) {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        $.each(dataTransfer.files, function(index, file) {
+                            if (fileList[index] === undefined) {
+                                var reader = new FileReader();
+                                reader.onload = $.proxy(function(file, $fileList, transferEvent) {
+                                    nr++;
+                                    if ($(event.target).hasClass('item')) {
+                                        var img = file.type.match('image.*') ? "<img id=\"resizable"+nr+"\" style=\"display: flex; flex-row: row nowrap; align-items: center; max-width: 100%; max-height: 100%;\" class=\"resizable\" src='" + transferEvent.target.result + "' /> " : "";
+                                        $(event.target).append(img);
+                                    } else {
+                                        var img = file.type.match('image.*') ? "<div class=\"item\" style=\"flex: 1;\"><img id=\"resizable"+nr+"\" style=\"display: flex; flex-row: row nowrap; align-items: center; max-width: 100%; max-height: 100%;\" class=\"resizable\" src='" + transferEvent.target.result + "' /></div> " : "";
+        //                                $fileList.prepend($("<span>").append(img + file.name));
+                                        $(event.target).append(img);
+                                    }
+    //                                setResizable("resizable"+nr);
+                                }, this, file, $(event.target));
+                                fileList[index] = file;
+                                reader.readAsDataURL(file);
+                                initDragBox();
+                            }
+                        });
+                    }
+                    $(this).addClass("ui-state-highlight").find("p").html("Dropped!");
+                }
+            });
+
+            function setResizable(id) {
+                console.log("setResizable");
+                $("#" + id).resizable({
+                    stop: function(event, ui) {
+                        height = $("#" + id).height();
+                        width = $("#" + id).width();
+                        console.log("width=height=" + width + "==" + height);
+                    }
+                });
+            }
+        }
+
+        function initResizing() {
+            let resizeTarget = undefined;
+            let resizeDirection = undefined;
+            let resizePosition = undefined;
+
+            $('body').on('mouseup', function() {
+                if (resizeTarget) {
+                    resizeTarget=undefined;
+                    console.log("Verschiebe nicht mehr!");
+                }
+            });
+
+            function resizeBoxHorizontal(event, direction) {
+                let targetAdd = "increase" == resizePosition ? 1 : -1;
+                let boxCount = $(resizeTarget).parent().find('.item').length;
+                
+                // decrease target size
+                if ("left" == direction
+                    && "right" == resizePosition
+                ) {
+                    let previousSiblings = $(resizeTarget).nextAll('.item');
+                    let boxRight = previousSiblings.length;
+
+                    $(previousSiblings).each(function(index, sibling) {
+                        let siblingFlex = $(sibling).css("flex").split(" ");
+                        let flex = parseInt(siblingFlex[0]);
+                        if (flex <= boxRight) {
+                            $(sibling).css({'flex': (++flex) + " "+siblingFlex[1]+" "+siblingFlex[2]});
+                        }
+                    });
+                    let flexData = $(resizeTarget).css("flex").split(" ");
+                    let flex = parseInt(flexData[0]);
+                    if (1 < flex) {
+                        $(resizeTarget).css({'flex': (--flex) + " "+flexData[1]+" "+flexData[2]});
+                    }
+                // decrease target size
+                } else if ("right" == direction
+                    && "left" == resizePosition
+                ) {
+                    let previousSiblings = $(resizeTarget).prevAll('.item');
+                    let boxLeft = previousSiblings.length;
+
+                    $(previousSiblings).each(function(index, sibling) {
+                        let siblingFlex = $(sibling).css("flex").split(" ");
+                        let flex = parseInt(siblingFlex[0]);
+                        if (flex <= boxLeft) {
+                            $(sibling).css({'flex': (++flex) + " "+siblingFlex[1]+" "+siblingFlex[2]});
+                        }
+                    });
+                    let flexData = $(resizeTarget).css("flex").split(" ");
+                    let flex = parseInt(flexData[0]);
+                    if (1 < flex) {
+                        $(resizeTarget).css({'flex': (--flex) + " "+flexData[1]+" "+flexData[2]});
+                    }
+                // increate target size
+                } else if ("left" == direction
+                    && "left" == resizePosition
+                ) {
+                    let previousSiblings = $(resizeTarget).prevAll('.item');
+                    let boxLeft = previousSiblings.length;
+
+                    $(previousSiblings).each(function(index, sibling) {
+                        let siblingFlex = $(sibling).css("flex").split(" ");
+                        let flex = parseInt(siblingFlex[0]);
+                        if (1 < flex) {
+                            $(sibling).css({'flex': (--flex) + " "+siblingFlex[1]+" "+siblingFlex[2]});
+                        }
+                    });
+                    let flexData = $(resizeTarget).css("flex").split(" ");
+                    let flex = parseInt(flexData[0]);
+                    if (flex <= boxCount) {
+                        $(resizeTarget).css({'flex': (++flex) + " "+flexData[1]+" "+flexData[2]});
+                    }
+                // increase target size
+                } else if ("right" == direction
+                    && "right" == resizePosition
+                ) {
+                    let previousSiblings = $(resizeTarget).nextAll('.item');
+                    let boxRight = previousSiblings.length;
+
+                    $(previousSiblings).each(function(index, sibling) {
+                        let siblingFlex = $(sibling).css("flex").split(" ");
+                        let flex = parseInt(siblingFlex[0]);
+                        if (1 < flex) {
+                            $(sibling).css({'flex': (--flex) + " "+siblingFlex[1]+" "+siblingFlex[2]});
+                        }
+                    });
+                    let flexData = $(resizeTarget).css("flex").split(" ");
+                    let flex = parseInt(flexData[0]);
+                    if (flex <= boxCount) {
+                        $(resizeTarget).css({'flex': (++flex) + " "+flexData[1]+" "+flexData[2]});
+                    }
+                }
+            }
+
+            function resizeBoxVertical(event, direction) {
+            }
+
+            $('body').on('mousemove', function(event) {
+                if (resizeTarget) {
+                    if ($(event.target).has('.resize-width')) {
+                        let currentX = event.pageX;
+                        let startX = parseInt($(resizeTarget).data('current-x'));
+                        let targetWidth = parseInt($(resizeTarget).width());
+                        let distance = parseInt(startX - currentX);
+                        let distancePercentage = parseInt((100 / targetWidth) * distance);
+
+                        // movespace should represent part of current element width
+                        if (distance % 30) {
+                            return true;
+                        }
+
+                        let direction = startX > currentX ? 'left' : 'right';
+                        resizeBoxHorizontal(event, direction);
+                    } else if ($(event.target).has('resize-height')) {
+                        let currentY = event.pageY;
+                        let startY = $(resizeTarget).data('current-y');
+                        let targetHeight = $(resizeTarget).height();
+                        let distance = parseInt(startY - currentY);
+                        let distancePercentage = parseInt((100 / targetHeight) * distance);
+
+                        // movespace should represent part of current element width
+                        if (distancePercentage % 30) {
+                            return true;
+                        }
+
+//                        $(resizeTarget).data('current-x', currentX);
+                        let direction = startY > currentY ? 'left' : 'right';
+                        resizeBoxVertical(event, direction);
+                    }
+                }
+            });
+
+            $('.resize-width')
+                .unbind('click')
+                .on('mousedown', function(event) {
+                    
+                    resizeTarget = $(this).parent();
+                    resizeTarget
+                        .data('current-flex', $(this).parent().css('flex').split(" ")[0])
+                        .data('current-x', event.pageX)
+                        .data('current-y', event.pageY);
+                    resizeDirection = 'horizontal';
+                    resizePosition = $(this).data('position');
+
+                    event.preventDefault();
+                });
+
+            $('.resize-height').unbind('click').on('mousedown', function() {
+                console.log("resize top <-> bottom");
+                resizeDirection = 'vertical';
+            });
+        }
+
+        function getElementPosition(event, element) {
+            var parentOffset = $(element).parent().offset(); 
+            //or $(this).offset(); if you really just want the current element's offset
+            var relX = event.pageX - parentOffset.left;
+            var relY = event.pageY - parentOffset.top;
+
+            return {x: relX, y: relY};
+        }
+
+        function initEditorMenu() {
+
+        }
+
+        function initHeadline() {
+            let placeholderHeadlineText = 'Überschrift hier...';
+            let placeholderHeadline = '<span class="placeholder headline1">'+placeholderHeadlineText+'</span>';
+            let headlineContainer = $('.headline');
+            let headlineContent = $('.headline').text().trim();
+
+            if (0 === headlineContent.length) {
+                $('.headline').append(placeholderHeadline);
+            }
+
+            $('.headline').unbind('click').on('click', function(event) {
+                if ('TEXTAREA' === event.target.tagName) {
+                    return true;
+                }
+                let currentHeadline = headlineContainer.find('.headline1');
+                let currentHeadlineContent = currentHeadline.html().trim().replace(/<br\s*[\/]?>/gi, "\n");
+                let headlineInput = $('<textarea style="resize: none; height: '+currentHeadline.height()+'px; overflow: auto; width: 100%;"></textarea>');
+                headlineInput.val(placeholderHeadlineText === currentHeadlineContent ? '' : currentHeadlineContent);
+                currentHeadline.html(headlineInput);
+                headlineInput.textareaAutoSize();
+
+                headlineInput.on('blur', function() {
+                    let newHeadlineContent = $(this).val().trim().replace(/<(.|\n)*?>/g, '').replace(/(?:\r\n|\r|\n)/g, '<br>');
+                    if (0 === newHeadlineContent.length) {
+                        headlineContainer.html(placeholderHeadline);
+                    } else {
+                        currentHeadline.html(newHeadlineContent).removeClass('placeholder');
+                    }
+                });
+                headlineInput.focus();
+
+            });
+        }
+        
+        function getCaretPosition (node) {
+            var range = window.getSelection().getRangeAt(0),
+                preCaretRange = range.cloneRange(),
+                caretPosition,
+                tmp = document.createElement("div");
+
+            preCaretRange.selectNodeContents(node);
+            preCaretRange.setEnd(range.endContainer, range.endOffset);
+            tmp.appendChild(preCaretRange.cloneContents());
+            caretPosition = tmp.innerHTML.length;
+            return caretPosition;
+        }
+
+        function getHTMLCaretPosition(element) {
+            var textPosition = getCaretPosition(element),
+                htmlContent = element[0].innerHTML,
+                textIndex = 0,
+                htmlIndex = 0,
+                insideHtml = false,
+                htmlBeginChars = ['&', '<'],
+                htmlEndChars = [';', '>'];
+
+            if (textPosition == 0) {
+                return 0;
+            }
+
+            console.log("TextPosition: "+textPosition);
+
+            while(textIndex < textPosition) {
+                htmlIndex++;
+//                console.log("HTML Char:");
+//                console.log(htmlContent.charAt(htmlIndex));
+
+                // check if next character is html and if it is, iterate with htmlIndex to the next non-html character
+                while(-1 < htmlBeginChars.indexOf(htmlContent.charAt(htmlIndex))) {
+                    console.log('encountered HTML');
+                    // now iterate to the ending char
+                    insideHtml = true;
+
+                    while(insideHtml) {
+                        if (-1 < htmlEndChars.indexOf(htmlContent.charAt(htmlIndex))) {
+                            if (';' === htmlContent.charAt(htmlIndex)) {
+                                htmlIndex--; // entity is char itself
+                            }
+//                            console.log('encountered end of HTML');
+                            insideHtml = false;
+                        }
+                        htmlIndex++;
+                    }
+                }
+                textIndex++;
+                console.log("textIndex: "+textIndex);
+                console.log("HtmlIndex: "+htmlIndex);
+            }
+
+            //console.log(htmlIndex);
+            //console.log(textPosition);
+            // in htmlIndex is caret position inside html
+            return htmlIndex;
+        }
+
+        /** autosize for textarea */
+        !function(t,e,i,n){function s(e,i){this.element=e,this.$element=t(e),this.init()}var h="textareaAutoSize",o="plugin_"+h,r=function(t){return t.replace(/\s/g,"").length>0};s.prototype={init:function(){var i=parseInt(this.$element.css("paddingBottom"))+parseInt(this.$element.css("paddingTop"))+parseInt(this.$element.css("borderTopWidth"))+parseInt(this.$element.css("borderBottomWidth"))||0;r(this.element.value)&&this.$element.height(this.element.scrollHeight-i),this.$element.on("input keyup",function(n){var s=t(e),h=s.scrollTop();t(this).height(0).height(this.scrollHeight-i),s.scrollTop(h)})}},t.fn[h]=function(e){return this.each(function(){t.data(this,o)||t.data(this,o,new s(this,e))}),this}}(jQuery,window,document);
+
+/**
+
+
+            function resizeBoxHorizontal(event, direction) {
+                let moveTargetContainer = $(resizeTarget).parent();
+//                    let nextSibling = $($(resizeTarget).parent().parent().next('.box')[0]);
+                let nextSibling = $(resizeTarget).parent().parent().next('.box');
+                console.log(nextSibling);
+                console.log("*"+$(nextSibling).css("flex")+"*");
+                let nextSiblingFlex = parseInt($(nextSibling).css("flex").split(" ")[0]);
+                console.log("NextSiblingFlex: "+nextSiblingFlex);
+
+                // is the smallest and should smaller => resize sibling
+                if (1 == resizeTarget.data('current-flex')
+                    && 'left' === direction
+                ) {
+                    console.log("Vergrößere Flex vom Sibling!");
+                    console.log(nextSiblingFlex + 1);
+                    $(nextSibling).css({'flex': (nextSiblingFlex + 1) + " 1 auto"});
+                // reduce own flex value
+                } else if ('left' === direction) {
+                    console.log("Verringere eigenes Flex!");
+                    let currentFlex = parseInt($(moveTargetContainer).parent().css('flex').split(" ")[0]);
+                    console.log(currentFlex + 1);
+                    $(moveTargetContainer).parent().css({'flex': (currentFlex - 1) + " 1 auto"});
+                // next sibling has 1 => increase own flex 
+                } else if (1 >= nextSiblingFlex
+                    && 'right' === direction
+                ) {
+                    let currentFlex = parseInt($(moveTargetContainer).parent().css('flex').split(" ")[0]);
+                    console.log(currentFlex + 1);
+                    $(moveTargetContainer).parent().css({'flex': (currentFlex + 1) + " 1 auto"});
+                    console.log("Vergrößere eigenes Flex!");
+                } else if ('right' === direction) {
+                    console.log("Verringere Flex von sibling!");
+                    $(nextSibling).css({'flex': (nextSiblingFlex - 1) + " 1 auto"});
+                }
+            }
+**/
+
+    </script>
+{% endblock %}
+

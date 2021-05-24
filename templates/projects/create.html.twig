@@ -1,0 +1,269 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create New Project{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5">
+    {{ form(form) }}
+    <div id="tags_container">
+        <h3>
+            Tags:
+        </h3>
+        <div id="tags_container_clear" style="clear: both;"></div>
+    </div>
+
+    <button class="btn btn-primary btn-save">Speichern</button>
+
+    <input id="fileupload" type="file" name="files[]" data-url="server/php/" multiple>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" language="javascript">
+        let tags = [];
+        let publicPicturePath = '{{ publicPicturePath }}';
+        let currentTags = {};
+        let autocompleteTags = [];
+
+        replaceImageInputWithDropDownTarget();
+
+        function replaceImageInputWithDropDownTarget() {
+            let currentPreviewPictureInput = $('#projects_previewPicture');
+            currentPreviewPictureInput.attr('type', 'hidden');
+            let currentPreview = currentPreviewPictureInput.val();
+            currentPreviewPictureInput.parent().append(
+                '<div class="thumbnail-upload">'+
+                    '<div class="thumbnail-drop-target">'+
+                        '<img src="'+currentPreview+'" class="thumbnail-preview img-fluid img-thumbnail" style="max-height: 150px;" />'+
+                    '</div>'+
+                '</div>'
+            );
+            initPreviewPictureUpload();
+        }
+
+        // add current projects tags
+        {% for projectTag in form.vars.value.projectTags %}
+            {% if projectTag.tag and projectTag.tag.name %}
+                currentTags["{{ projectTag.tag.id }}"] = {"name": "{{ projectTag.tag.name }}", "id": "{{ projectTag.id }}"};
+            {% endif %}
+        {% endfor %}
+
+        // persist all available tags
+        {% for availableTag in availableTags %}
+            if (currentTags[{{ availableTag.id }}] != undefined) {
+                addTag("{{ availableTag.name }}", "{{ availableTag.id }}", currentTags[{{ availableTag.id }}]['id']);
+            }
+            tags["{{ availableTag.id }}"] = "{{ availableTag.name }}";
+            autocompleteTags.push("{{ availableTag.name }}");
+        {% endfor %}
+
+        function addTag(name, tagId, projectsTagId, target) {
+            let tagSpan = $('<span class="tag badge badge-large badge-primary ml-1 mb-1 float-left" data-projects-tag-id="'+projectsTagId+'" data-id="'+tagId+'">'+name+'<i class="btn-remove ml-2 fas fa-trash-alt"></i></span>');
+
+            if (undefined == target) {
+                target = $('#tags_container_clear');
+            }
+            $(tagSpan).insertBefore(target);
+            $(tagSpan).on('click', '.btn-remove', function() {1
+                $(this).parent().remove();
+                return false;
+            });
+        }
+
+        function initTagAutocomplete() {
+            $("#tags").on("keydown", function(event) {
+                switch (event.keyCode) {
+                    case $.ui.keyCode.ESCAPE:
+                        $(event.target).parent().remove();
+                        break;
+                    case $.ui.keyCode.ENTER:
+                        // no proposals found
+                        if (!$(this).autocomplete("instance").menu.active) {
+                            addTag($(this).val(), undefined, undefined, $(this).parent());
+                            $(this).val("");
+                        }
+                        break;
+                    case $.ui.keyCode.TAB:
+                        if ($(this).autocomplete("instance").menu.active) {
+                            event.preventDefault();
+                        }
+                        break;
+                }
+            })
+
+            .autocomplete({
+                minLength: 0,
+                source: autocompleteTags,
+                focus: function() {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                select: function(event, ui) {
+                    let self = this;
+                    tags.forEach(function(tag, id) {
+                        if (tag == ui.item.value) {
+                            let existingTag = $("#tags_container").find("[data-id='"+id+"']");
+                            if (0 == existingTag.length) {
+                                addTag(tag, id, undefined, $(self).parent());
+                                $(self).val("");
+                                addAutoCompleteForTags();
+                            }
+                        }
+                    });
+
+                    return false;
+                }
+            });
+        }
+
+        function addAutoCompleteForTags() {
+            $('#tags_container').unbind('click').on('click', function() {
+                let existingTagsInput = $('#tags_container #tags');
+                if (0 == existingTagsInput.length) {
+                    let tagAutocomplete = $('<div class="ui-widget float-left"><input id="tags"></div>');
+                    tagAutocomplete.on('focusout', function() {
+                        tagAutocomplete.remove();
+                    });
+                    $(tagAutocomplete).insertBefore('#tags_container_clear');
+                    $(tagAutocomplete).find('#tags').focus();
+                    initTagAutocomplete();
+                }
+            });
+        }
+
+        function save() {
+            let data = $('form').serializeArray();
+            data['projects[previewPicture]'] = document.querySelector('.thumbnail-preview').src;
+            data = extendDataWithTagBlogs(data);
+
+            $.post('/project/save', data, function(response) {
+            });
+        }
+
+        function extendDataWithTagBlogs(data) {
+            let counter = 0;
+
+            /** orig content :
+             * [] = {name : 'projects[projectsTags][]': value: tagId}
+             */
+            $('#tags_container .tag').each(function() {
+                data.push({name: 'projects[projectTags]['+counter+'][id]', value: $(this).data('project-tag-id')});
+                data.push({name: 'projects[projectTags]['+counter+'][tagId]', value: $(this).data('id')});
+                data.push({name: 'projects[projectTags]['+counter+'][tagName]', value: $(this).text()});
+                ++counter;
+            });
+
+            return data;
+        }
+
+        $(function() {
+            $('#projects_projectTags').parent().parent().remove();
+            $('.btn-save').unbind('click').on('click', function() {
+                save();
+            });
+            addAutoCompleteForTags();
+        });
+
+        function initPreviewPictureUpload() {
+            let thumbnailDropTarget = document.querySelector('.thumbnail-upload');
+            let thumbnailDropZone = document.querySelector('.thumbnail-drop-target');
+
+            thumbnailDropTarget.ondragover = (event) => {
+                console.log(event);
+                event.preventDefault();
+                event.currentTarget.style = "background-color:pink";
+            }
+
+            thumbnailDropTarget.ondragleave = (event) => {
+                console.log(event);
+                event.preventDefault();
+                event.currentTarget.style = "";
+            }
+
+            thumbnailDropZone.ondrop = (event) => {
+                event.stopPropagation();
+                event.preventDefault();
+
+                var selectedFiles = event.dataTransfer.files;
+
+                var output = [];
+                for (var i = 0, file; file = selectedFiles[i]; i++) {
+                    output.push('<li><strong>', escape(file.name), '</strong> (', file.type || 'n/a', ') - ',
+                        file.size, ' bytes,'+
+                        'last modified: ',
+                        new Date(file.lastModified).toLocaleString(),
+                        '</li>'
+                    );
+
+                    var reader = new FileReader();
+
+                    var senddata = new Object();
+                    senddata.name = file.name;
+                    senddata.date = file.lastModified;
+                    senddata.size = file.size;
+                    senddata.type = file.type;
+
+                    reader.onload = function(theFileData) {
+                        console.log("READER ONLOAD!");
+                        senddata.fileData = theFileData.target.result;
+
+                        $.post('/project/upload/preview', senddata, function(response) {
+                            console.log(response);
+                            document.querySelector('.thumbnail-preview').src=response.url+'?'+microtime();
+                            document.querySelector('#projects_previewPicture').value = response.url;
+                            thumbnailDropTarget.style = "";
+                        });
+                    }
+                    reader.readAsDataURL(file);
+                }
+                console.log(output.join(''));
+//                document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+            }
+        }
+
+        function addCssClass(element, cssClassName) {
+            let classes = element.className.split(" ");
+            if (classes.indexOf(cssClassName) == -1) {
+                element.className += " " + cssClassName;
+            }
+        }
+        function microtime(getAsFloat) {
+            var s, now, multiplier;
+
+            if(typeof performance !== 'undefined' && performance.now) {
+                now = (performance.now() + performance.timing.navigationStart) / 1000;
+                multiplier = 1e6; // 1,000,000 for microseconds
+            }
+            else {
+                now = (Date.now ? Date.now() : new Date().getTime()) / 1000;
+                multiplier = 1e3; // 1,000
+            }
+
+            // Getting microtime as a float is easy
+            if(getAsFloat) {
+                return now;
+            }
+
+            // Dirty trick to only get the integer part
+            s = now | 0;
+
+            return (Math.round((now - s) * multiplier ) / multiplier ) + ' ' + s;
+        }
+
+        $(document).ready(function() {
+            $(function () {
+                console.log("INIT!");
+                $('#fileupload').fileupload({
+                    dataType: 'json',
+                    done: function (e, data) {
+                        $.each(data.result.files, function (index, file) {
+                            $('<p/>').text(file.name).appendTo(document.body);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

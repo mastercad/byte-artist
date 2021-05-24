@@ -1,0 +1,256 @@
+
+/******************************************************************************/
+/****************               CAD CMS                 ***********************/
+/******************************************************************************/
+
+.cad-cms-edit-image {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    display: none;
+}
+
+#cad-cms-editor {
+    position: absolute;
+    width: 499px;
+    top: -5000px;
+    left: -5000px;
+}
+
+#cad-cms-editor #cad-cms-textfeld    {
+    padding: 5px;
+    width: 489px;
+    height: 200px;
+}
+
+#cad-cms-editor .cad-cms-leiste {
+    position: relative;
+    height: 38px;
+    width: 499px;
+    background-image: url('/images/content/statisch/cms/editor_bg.png');
+    background-repeat: no-repeat;
+    cursor: move;
+}
+
+#cad-cms-editor .cad-cms-button {
+    /* 	position: absolute; */
+    width: 42px;
+    height: 30px;
+    margin-top: 4px;
+    margin-left: 2px;
+    float: left;
+    display: inline;
+    background-position: left -60px;
+    border: 0 none;
+    background-repeat: no-repeat;
+}
+
+#cad-cms-editor .cad-cms-button-hover   {
+    background-position: left -90px !important;
+}
+
+#cad-cms-editor .cad-cms-button-active   {
+    background-position: left -30px !important;
+}
+
+#cad-cms-editor #cad-cms-button-save   {
+    margin-left: 10px;
+    background-image: url('/images/content/statisch/cms/icons_save.png');
+}
+
+#cad-cms-editor #cad-cms-button-bold   {
+    margin-left: 10px;
+    background-image: url('/images/content/statisch/cms/icons_bold.png');
+}
+
+#cad-cms-editor #cad-cms-button-italic   {
+    background-image: url('/images/content/statisch/cms/icons_italic.png');
+}
+
+#cad-cms-editor #cad-cms-button-underline   {
+    background-image: url('/images/content/statisch/cms/icons_underline.png');
+}
+
+#cad-cms-editor #cad-cms-button-left   {
+    background-image: url('/images/content/statisch/cms/icons_left.png');
+}
+
+#cad-cms-editor #cad-cms-button-center   {
+    background-image: url('/images/content/statisch/cms/icons_center.png');
+}
+
+#cad-cms-editor #cad-cms-button-right   {
+    background-image: url('/images/content/statisch/cms/icons_right.png');
+}
+
+#cad-cms-editor #cad-cms-button-block   {
+    background-image: url('/images/content/statisch/cms/icons_block.png');
+}
+
+#cad-cms-editor #cad-cms-button-help   {
+    float: right;
+    background-image: url('/images/content/statisch/cms/icons_help.png');
+    cursor: help;
+}
+
+#cad-cms-editor #cad-cms-button-close   {
+    float: right;
+    margin-right: 10px;
+    background-image: url('/images/content/statisch/cms/icons_close.png');
+}
+
+#cad-cms-editor #cad-cms-button-font-size   {
+    margin-left: 10px;
+    background-image: url('/images/content/statisch/cms/icons_font_size.png');
+}
+
+#cad-cms-editor #cad-cms-button-font-color   {
+    background-image: url('/images/content/statisch/cms/icons_font_color.png');
+}
+
+#cad-cms-editor #cad-cms-button-background-color   {
+    background-image: url('/images/content/statisch/cms/icons_background_color.png');
+}
+
+#cad-cms-editor #cad-cms-button-ordered-list   {
+    background-image: url('/images/content/statisch/cms/icons_ordered_list.png');
+}
+
+#cad-cms-editor #cad-cms-button-unordered-list   {
+    background-image: url('/images/content/statisch/cms/icons_unordered_list.png');
+}
+
+#cad-cms-editor #cad-cms-button-image   {
+    background-image: url('/images/content/statisch/cms/icons_image.png');
+}
+
+#cad-cms-editor #cad-cms-button-url   {
+    background-image: url('/images/content/statisch/cms/icons_url.png');
+}
+
+#cad-cms-editor #cad-cms-button-insert-tab   {
+    background-image: url('/images/content/statisch/cms/icons_insert_tab.png');
+}
+
+#cad-cms-editor #cad-cms-button-delete-tab   {
+    background-image: url('/images/content/statisch/cms/icons_delete_tab.png');
+}
+
+/* klasse zum aufblähen leerer edit felder, um sie auch klickbar zu machen */
+.cad-cms-dummy-blaeher  {
+    padding: 20px;
+}
+
+#upload_target  {
+    height: 0;
+    width: 0;
+    display: none;
+    margin: 0;
+    padding: 0;
+}
+
+.cad-cms-image-dialog-marked    {
+    outline: 2px solid green;
+}
+
+.ui-draggable-dragging  {
+    cursor: move;
+}
+
+#cad-ubb-proposals {
+    background-color: #F0F8FF;
+    opacity: 0.95;
+    border: 1px solid black;
+    border-radius: 3px;
+    font-size: 12px;
+    padding: 10px;
+}
+
+.cad-ubb-proposal.selected,
+.cad-ubb-proposal:hover {
+    background-color: #006aeb;
+    color: #FFFFFF;
+}
+
+.cad-ubb-proposal {
+    cursor: pointer;
+    background-color: transparent;
+    color: #000000;
+}
+
+#blog_edit_container {
+    margin-top: 0;
+}
+
+.blog_pic_container {
+    width: 100%;
+    margin-right: 15px;
+    margin-bottom: 15px;
+    float: left;
+    display: inline;
+    padding: 5px 0 2px 0;
+    text-align: center;
+}
+
+.blog_pic {
+    max-width: 100%;
+}
+
+code    {
+    white-space: pre-wrap;
+    font-family: courier-new;
+}
+
+pre {
+    white-space: pre-wrap;
+    font-family: courier-new;
+}
+
+.magnified {
+    cursor:url(/build/images/lupe.cur), -moz-zoom-in;
+/*
+    cursor: zoom-in;
+    cursor: -moz-zoom-in;
+    cursor: -webkit-zoom-in;
+*/
+}
+
+.cad-table {
+    width: 90%;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+.cad-table-row {
+    border: 1px solid black;
+}
+
+.cad-table-cell {
+    border: 1px solid black;
+    padding: 2px;
+}
+
+.cad-thumb {
+
+}
+
+#cad-ubb-proposals {
+    background-color: #F0F8FF;
+    opacity: 0.95;
+    border: 1px solid black;
+    border-radius: 3px;
+    font-size: 12px;
+    padding: 10px;
+}
+
+.cad-ubb-proposal.selected,
+.cad-ubb-proposal:hover {
+    background-color: #006aeb;
+    color: #FFFFFF;
+}
+
+.cad-ubb-proposal {
+    cursor: pointer;
+    background-color: transparent;
+    color: #000000;
+}

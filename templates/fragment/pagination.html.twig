@@ -1,0 +1,37 @@
+{% set currentPage = app.request.query.get('p') ?: 1 %}
+{% set currentRoute = app.request.attributes.get('_route') %}
+{% set currentParams = app.request.query.all %}
+
+{% if app.request.attributes.get('tagSeoLink') %}
+    {% set currentParams = currentParams|merge({'tagSeoLink': app.request.attributes.get('tagSeoLink')}) %}
+{% endif %}
+
+{% if lastPage > 1 %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if currentPage > 1 %}
+                <li class="page-item">
+                    <a class="page-link" data-toggle="tooltip" data-placement="top" title="Previous" href="{{ path(currentRoute, currentParams|merge({p: currentPage - 1})) }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for i in 1..lastPage %}
+                <li class="page-item {% if i == currentPage %}active disabled{% endif %}">
+                    <a class="page-link" href="{{ path(currentRoute, currentParams|merge({p: i})) }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+
+            {% if currentPage < lastPage %}
+                <li class="page-item">
+                    <a class="page-link" data-toggle="tooltip" data-placement="top" title="Next" href="{{ path(currentRoute, currentParams|merge({p: currentPage + 1})) }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}

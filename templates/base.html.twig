@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}|byte-artist{% endblock %}</title>
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+    </head>
+
+    <body>
+        <header>
+            <nav class="navbar navbar-light bg-light fixed-top navbar-expand-lg" data-toggle="affix">
+                <a class="navbar-brand" href="{{ path('index') }}">byte-artist.de</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                    <li class="nav-item {% if app.request.attributes.get('_route') == 'index' %}active{% endif %}">
+                        <a class="nav-link" href="{{ path('index') }}">Startseite {% if app.request.attributes.get('_route') matches '{^index}' %}<span class="sr-only">(current)</span>{% endif %}</a>
+                    </li>
+                    <li class="nav-item {% if app.request.attributes.get('_route') matches '{^project}' %}active{% endif %}">
+                        <a class="nav-link" href="{{ path('projects') }}">Projekte {% if app.request.attributes.get('_route') matches '{^project$}' %}<span class="sr-only">(current)</span>{% endif %}</a>
+                    </li>
+                    <li class="nav-item {% if app.request.attributes.get('_route') matches '{^blog}' %}active{% endif %}">
+                        <a class="nav-link" href="{{ path('blog') }}">Blog {% if app.request.attributes.get('_route') matches '{^blog}' %}<span class="sr-only">(current)</span>{% endif %}</a>
+                    </li>
+                    <li class="nav-item {% if app.request.attributes.get('_route') == 'about' %}active{% endif %}">
+                        <a class="nav-link" href="{{ path('about') }}">über mich {% if app.request.attributes.get('_route') matches '{^about}' %}<span class="sr-only">(current)</span>{% endif %}</a>
+                    </li>
+                    </ul>
+                    <form class="form-inline my-2 my-lg-0" method="get" action="{{ path('app_search_result') }}" >
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                    <ul class="navbar-nav user">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {% if app.user.name is defined %} active {% endif %}" href="#" id="navbar_drop_profile" data-toggle="dropdown" >
+                                <icon class="fas fa-user mr-1"></icon>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                        {% if app.user.username is defined %}
+                                <span class="dropdown-item" data-toggle="tooltip" title="{{ app.user.email }}">{{ app.user.username }}</span>
+{#                                        <a class="dropdown-item user-profile" href="{{ path('user_profile') }}" data-toggle="tooltip" title="{{ 'click_edit_profil'|trans({}, 'titles') }}">{{ 'profile'|trans({}, 'labels') }}</a> #}
+                                <a class="dropdown-item user-logout" href="{{ path('app_logout') }}" data-toggle="tooltip" title="{{ 'click_to_logout'|trans({}, 'titles') }}">{{ 'logout'|trans({}, 'labels') }}</a>
+                        {% else %}
+                                <a class="dropdown-item user-login" href="{{ path('app_login') }}" data-toggle="tooltip" title="{{ 'click_to_login'|trans({}, 'titles') }}">{{ 'login'|trans({}, 'labels') }}</a>
+                        {% endif %}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            {% block body %}{% endblock %}
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+<!--                <span class="text-muted">-->
+                    <a target="_blank" href="{{ path('imprint') }}">Impressum</a>
+                    |
+                    <a target="_blank" href="{{ path('data_protection') }}">Datenschutz</a>
+<!--                </span>-->
+            </div>
+        </footer>
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+            <script type="text/javascript" language="javascript">
+
+                function considerScroll() {
+//                    if ($(this).scrollTop() > 1){
+
+                    var startY = $('header').height();
+                    if($(window).scrollTop() > startY){
+                        $('header').addClass("sticky");
+                    }else{
+                        $('header').removeClass("sticky");
+                    }
+                }
+
+                $(document).ready(function() {
+                    $('[data-toggle="tooltip"]').tooltip();
+                    if($('header').length > 0){
+                        $(window).on("scroll load resize", function(){
+                            considerScroll();
+                        });
+                    }
+                });
+            </script>
+        {% endblock %}
+
+    </body>
+</html>

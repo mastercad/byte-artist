@@ -1,0 +1,105 @@
+version: '3'
+
+services:
+
+  apache:
+    build: .docker/apache
+    container_name: byte_artist_apache
+    ports:
+      - 8280:80
+    volumes:
+      - .docker/apache/config/vhosts:/etc/apache2/sites-enabled
+      - .:/var/www/byte_artist
+    depends_on:
+      - php
+    links:
+      - php
+#    network_mode: host
+    networks:
+      byte_artist_net:
+        ipv4_address: 172.1.2.2
+
+  mysql:
+    image: mysql
+    restart: always
+    user:
+      1000:1000
+    container_name: byte_artist_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=XQW16asZ
+
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - .docker/data/db:/var/lib/mysql
+#    network_mode: host
+    networks:
+      byte_artist_net:
+        ipv4_address: 172.1.2.3
+
+#  adminer:
+#    image: adminer
+#    container_name: byte_artist_adminer
+#    restart: on-failure
+#    ports:
+#      - '8080:8080'
+#    network_mode: host
+#    networks:
+#      - byte_artist_net
+
+  php:
+    build:
+      context: ./.docker/php
+      dockerfile: Dockerfile
+      args:
+        - HOST_IP=192.168.178.39
+    container_name: byte_artist_php
+    volumes:
+      - .:/var/www/byte_artist
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+#    environment:
+#      - maildev_host=byte_artist_maildev
+    depends_on:
+#      - maildev
+      - mysql
+    links:
+      - mysql
+#    network_mode: host
+    networks:
+      byte_artist_net:
+        ipv4_address: 172.1.2.4
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: byte_artist_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - 8281:80
+    links:
+      - mysql
+#    network_mode: host
+    networks:
+      byte_artist_net:
+        ipv4_address: 172.1.2.5
+
+#  maildev:
+#    image: djfarrelly/maildev
+#    container_name: byte_artist_maildev
+#    ports:
+#      - 8001:80
+#    network_mode: host
+#    networks:
+#      - byte_artist_net
+
+networks:
+  byte_artist_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.1.2.0/24
+
+volumes:
+  data:
+    driver: local
