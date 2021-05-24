@@ -63,7 +63,7 @@ class ProjectStates
     private $modified;
 
     /**
-     * @var User
+     * @var ?User
      *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({
@@ -73,7 +73,7 @@ class ProjectStates
     private $creator;
 
     /**
-     * @var User
+     * @var ?User
      *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({

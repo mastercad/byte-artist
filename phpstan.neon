@@ -1,3 +1,8 @@
 parameters:
     autoload_files:
         - vendor/autoload.php
+    symfony:
+        container_xml_path: var/cache/dev/App_KernelDevDebugContainer.xml
+        console_application_loader: build/phpstan/console-loader.php
+    doctrine:
+        objectManagerLoader: build/phpstan/doctrine-orm-bootstrap.php

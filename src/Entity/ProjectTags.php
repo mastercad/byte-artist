@@ -55,7 +55,7 @@ class ProjectTags
     private $creator;
 
     /**
-     * @var User
+     * @var ?User
      *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({

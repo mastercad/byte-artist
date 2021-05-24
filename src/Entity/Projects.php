@@ -111,7 +111,7 @@ class Projects
     private $creator;
 
     /**
-     * @var User
+     * @var ?User
      *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({
@@ -121,7 +121,7 @@ class Projects
     private $modifier;
 
     /**
-     * @var ProjectStates
+     * @var ?ProjectStates
      *
      * @ORM\ManyToOne(targetEntity="ProjectStates")
      * @ORM\JoinColumns({

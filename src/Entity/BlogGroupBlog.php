@@ -79,7 +79,7 @@ class BlogGroupBlog
     private $modified;
 
     /**
-     * @var User
+     * @var ?User
      *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({
@@ -100,7 +100,7 @@ class BlogGroupBlog
 
     public function setBlog(Blogs $blog): self
     {
-        $this->blogF= $blog;
+        $this->blog= $blog;
 
         return $this;
     }

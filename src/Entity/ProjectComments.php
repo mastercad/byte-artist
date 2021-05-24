@@ -75,7 +75,7 @@ class ProjectComments
     private $creator;
 
     /**
-     * @var User
+     * @var ?User
      *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({
@@ -95,7 +95,7 @@ class ProjectComments
     private $project;
 
     /**
-     * @var ProjectComments
+     * @var ?ProjectComments
      *
      * @ORM\ManyToOne(targetEntity="ProjectComments")
      * @ORM\JoinColumns({

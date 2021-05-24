@@ -69,7 +69,7 @@ class Tags
     private $creator;
 
     /**
-     * @var User
+     * @var ?User
      *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({
@@ -79,7 +79,7 @@ class Tags
     private $modifier;
 
     /**
-     * @var Tags
+     * @var ?Tags
      *
      * @ORM\ManyToOne(targetEntity="Tags")
      * @ORM\JoinColumns({
