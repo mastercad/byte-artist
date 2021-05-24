@@ -27,6 +27,7 @@
         "symfony/mime": "^5.2",
         "symfony/monolog-bundle": "^3.4",
         "symfony/orm-pack": "^1.0",
+        "symfony/requirements-checker": "^2.0",
         "symfony/security-bundle": "^5.2",
         "symfony/translation": "^5.2",
         "symfony/twig-bundle": "^5.2",
@@ -84,7 +85,8 @@
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd",
-            "ckeditor:install --clear=drop": "symfony-cmd"
+            "ckeditor:install --clear=drop": "symfony-cmd",
+            "requirements-checker": "script"
         },
         "post-install-cmd": [
             "@auto-scripts"
