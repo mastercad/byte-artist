@@ -132,14 +132,14 @@ jobs:
         # Set the sonar.projectBaseDir analysis property
 #        projectBaseDir: # optional, default is .
 
-    - name: tag-version
-      # You may pin to the exact commit or the version.
-      # uses: juliansangillo/tag-version@0ca10cb901a4e3273715c4443e5dec5ad8f40328
-      uses: juliansangillo/tag-version@v1.5
-      with:
-        # The branch to use for stable releases in production. Default is master
-        production-branch: main # optional, default is master
-        # The branch to use for test deployments. Default is test
-        test-branch: test # optional, default is test
-        # The branch to use for dev deployments. Default is develop
-        dev-branch: development # optional, default is develop
+#    - name: tag-version
+#      # You may pin to the exact commit or the version.
+#      # uses: juliansangillo/tag-version@0ca10cb901a4e3273715c4443e5dec5ad8f40328
+#      uses: juliansangillo/tag-version@v1.5
+#      with:
+#        # The branch to use for stable releases in production. Default is master
+#        production-branch: main # optional, default is master
+#        # The branch to use for test deployments. Default is test
+#        test-branch: test # optional, default is test
+#        # The branch to use for dev deployments. Default is develop
+#        dev-branch: development # optional, default is develop
