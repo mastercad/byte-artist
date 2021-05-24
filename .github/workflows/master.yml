@@ -38,7 +38,7 @@ jobs:
       
     - name: provide secrets
       env:
-        SYMFONY_DECRYPTION_SECRET: os.getenv("SYMFONY_DECRYPTION_SECRET")
+        SYMFONY_DECRYPTION_SECRET: ${{ secrets.SYMFONY_DECRYPTION_SECRET }}
       run: php bin/console secrets:decrypt-to-local --force --env=prod
 
     - name: php-codesniffer
