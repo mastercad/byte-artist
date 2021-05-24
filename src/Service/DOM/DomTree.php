@@ -1,15 +1,15 @@
 <?php
 
- /**
-  * DomTree.
-  *
-  * Dump DomDocument based documents, suiting debugging needs
-  *
-  * @author hakre <http://hakre.wordpress.com/>
-  *
-  * @see http://stackoverflow.com/questions/12108324/how-to-get-a-raw-from-a-domnodelist/12108732#12108732
-  * @see http://stackoverflow.com/questions/684227/debug-a-domdocument-object-in-php/8631974#8631974
-  */
+/**
+ * DomTree.
+ *
+ * Dump DomDocument based documents, suiting debugging needs
+ *
+ * @author hakre <http://hakre.wordpress.com/>
+ *
+ * @see http://stackoverflow.com/questions/12108324/how-to-get-a-raw-from-a-domnodelist/12108732#12108732
+ * @see http://stackoverflow.com/questions/684227/debug-a-domdocument-object-in-php/8631974#8631974
+ */
 
 namespace App\Service\DOM;
 
