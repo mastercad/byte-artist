@@ -132,12 +132,14 @@ jobs:
         # Set the sonar.projectBaseDir analysis property
 #        projectBaseDir: # optional, default is .
 
-    - name: Git Release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: tag-version
       # You may pin to the exact commit or the version.
-      # uses: anton-yurchenko/git-release@7a1349223bc56b846390a268b5c9948d8db70e7d
-      uses: anton-yurchenko/git-release@v3.4.4
-#      with:
-        # Release Assets
-#        args: # optional
+      # uses: juliansangillo/tag-version@0ca10cb901a4e3273715c4443e5dec5ad8f40328
+      uses: juliansangillo/tag-version@v1.5
+      with:
+        # The branch to use for stable releases in production. Default is master
+        production-branch: main # optional, default is master
+        # The branch to use for test deployments. Default is test
+        test-branch: test # optional, default is test
+        # The branch to use for dev deployments. Default is develop
+        dev-branch: development # optional, default is develop
