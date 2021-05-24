@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * BlogGroupBlog
+ * BlogGroupBlog.
  *
  * @ORM\Table(
  *  name="blog_group_blog",
@@ -100,7 +100,7 @@ class BlogGroupBlog
 
     public function setBlog(Blogs $blog): self
     {
-        $this->blog= $blog;
+        $this->blog = $blog;
 
         return $this;
     }

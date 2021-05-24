@@ -12,7 +12,6 @@ class BlogTagsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
 //            ->add('blogFk')
 //            ->add('blog', CollectionType::class, [
 //                'entry_type' => BlogType::class,
@@ -23,7 +22,6 @@ class BlogTagsType extends AbstractType
 //                'entry_type' => TagsType::class,
 //                'allow_add' => true
 //            ])
-        ;
     }
 
     public function configureOptions(OptionsResolver $resolver)

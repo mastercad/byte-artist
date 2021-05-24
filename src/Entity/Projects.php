@@ -3,11 +3,11 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Projects
+ * Projects.
  *
  * @ORM\Table(
  *  name="projects",
@@ -148,6 +148,7 @@ class Projects
     public function setId(int $id): self
     {
         $this->id = $id;
+
         return $this;
     }
 

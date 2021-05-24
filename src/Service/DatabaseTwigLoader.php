@@ -13,7 +13,7 @@ use Twig\Source;
  *
  * Loader to load content by column direct from database in twig template
  */
-class DatabaseTwigLoader # implements LoaderInterface
+class DatabaseTwigLoader // implements LoaderInterface
 {
     protected $dbh;
 

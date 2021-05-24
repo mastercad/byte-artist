@@ -3,8 +3,9 @@
  * Created by PhpStorm.
  * User: mastercad
  * Date: 16.04.15
- * Time: 19:03
+ * Time: 19:03.
  */
+
 namespace App\Service\DOM;
 
 class TagMerge
@@ -15,14 +16,15 @@ class TagMerge
     private $sSecondAttributes = null;
 
     /** @var array Container mit den Attributen, die gemerged werden können */
-    private $aAttributeMergePossible = array(
+    private $aAttributeMergePossible = [
         'span',
-        'class'
-    );
+        'class',
+    ];
 
     public function setString($sString)
     {
         $this->sString = $sString;
+
         return $this;
     }
 
@@ -43,7 +45,8 @@ class TagMerge
                     $this->mergeAttributes($aFirstAttributes, $aSecondAttributes)
                 )
             );
-        };
+        }
+
         return $this->getString();
     }
 
@@ -58,6 +61,7 @@ class TagMerge
             $this->sContent = $aMatches[3];
             $bReturn = true;
         }
+
         return $bReturn;
     }
 
@@ -65,13 +69,14 @@ class TagMerge
     {
         $regex = '/<span\s*[a-z0-9,\.;:\|\s=\-_#\'"]*>\s*<span\s*[\sa-z0-9,\.;:\|=\-_"#\']*>.*?<\/span>\s*<\/span>/is';
         $sContent = preg_replace($regex, '<span '.$sMergedContent.'>'.$this->sContent.'</span>', $this->getString());
+
         return $sContent;
     }
 
     private function extractAttributesFromString($sString)
     {
-        $mReturn = array();
-        /** @fixme hier gibts noch einen bug wenn ein attribute value keine anführungszeichen hat
+        $mReturn = [];
+        /* @fixme hier gibts noch einen bug wenn ein attribute value keine anführungszeichen hat
          * -> invalid und mir daher gerade erstmal latte, es soll für den replacer dienen und
          * da gibts sowas nicht
          */
@@ -85,19 +90,20 @@ class TagMerge
                 $mReturn[$sAttribute] .= $sValues;
             }
         }
+
         return $mReturn;
     }
 
     private function mergeAttributes($aFirstAttributes, $aSecondAttributes)
     {
         $sAttributes = '';
-        $aProcessedAttributes = array();
+        $aProcessedAttributes = [];
         foreach ($aFirstAttributes as $sAttribute => $sValues) {
             if (true === array_key_exists($sAttribute, $aSecondAttributes)) {
-                if (strtoupper($sAttribute) == "STYLE") {
+                if ('STYLE' == strtoupper($sAttribute)) {
                     $sMergedAttributes = $this->mergeStyleAttributes($sValues, $aSecondAttributes[$sAttribute]);
                     $aProcessedAttributes[$sAttribute] = $sAttribute;
-                } elseif (strtoupper($sAttribute) == "CLASS") {
+                } elseif ('CLASS' == strtoupper($sAttribute)) {
                     $sMergedAttributes = $this->mergeClassAttributes($sValues, $aSecondAttributes[$sAttribute]);
                     $aProcessedAttributes[$sAttribute] = $sAttribute;
                 } else {
@@ -109,7 +115,7 @@ class TagMerge
                 $sMergedAttributes = $sValues;
                 $aProcessedAttributes[$sAttribute] = $sAttribute;
             }
-            $sAttributes .= $sAttribute . '="' . $sMergedAttributes . '" ';
+            $sAttributes .= $sAttribute.'="'.$sMergedAttributes.'" ';
         }
 
         foreach ($aProcessedAttributes as $sAttribute) {
@@ -118,12 +124,13 @@ class TagMerge
         }
 
         foreach ($aFirstAttributes as $sAttribute => $sValues) {
-            $sAttributes .= $sAttribute . '="' . $sValues . '" ';
+            $sAttributes .= $sAttribute.'="'.$sValues.'" ';
         }
 
         foreach ($aSecondAttributes as $sAttribute => $sValues) {
-            $sAttributes .= $sAttribute . '="' . $sValues . '" ';
+            $sAttributes .= $sAttribute.'="'.$sValues.'" ';
         }
+
         return trim($sAttributes);
     }
 
@@ -138,7 +145,8 @@ class TagMerge
         if (';' != substr($sValuesSecond, -1)) {
             $sValuesSecond .= ';';
         }
-        return $sValuesFirst . '; ' . $sValuesSecond;
+
+        return $sValuesFirst.'; '.$sValuesSecond;
     }
 
     private function mergeClassAttributes($sValuesFirst, $sValuesSecond)
@@ -146,6 +154,6 @@ class TagMerge
         $sValuesFirst = trim($sValuesFirst);
         $sValuesSecond = trim($sValuesSecond);
 
-        return $sValuesFirst . ' ' . $sValuesSecond;
+        return $sValuesFirst.' '.$sValuesSecond;
     }
 }

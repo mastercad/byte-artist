@@ -6,7 +6,7 @@ use App\Service\Util\Strings;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * This class is responsible for generating unique seo links
+ * This class is responsible for generating unique seo links.
  *
  * needed is repository and column name, also the topic name to generate seo link from this.
  */
@@ -31,11 +31,13 @@ class Link
 
         if (!$dbEntity) {
             $entity->setSeoLink($seoLink);
+
             return $entity;
         }
 
         if ($dbEntity->getId() === $entity->getId()) {
             $entity->setSeoLink($seoLink);
+
             return $entity;
         }
 
@@ -46,8 +48,10 @@ class Link
     {
         if (preg_match('/^(.*?)(\-)([0-9]{1,})$/', $seoLink, $matches)) {
             $newCount = ++$matches[3];
+
             return $matches[1].'-'.$newCount;
         }
+
         return $seoLink.'-1';
     }
 }

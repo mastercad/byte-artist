@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,8 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class GoogleController extends AbstractController
 {
     /**
-     * Link to this controller to start the "connect" process
-     * @param ClientRegistry $clientRegistry
+     * Link to this controller to start the "connect" process.
      *
      * @Route("/connect/google", name="connect_google_start")
      *
@@ -25,7 +23,7 @@ class GoogleController extends AbstractController
         return $clientRegistry
             ->getClient('google')
             ->redirect([
-                'profile', 'email' // the scopes you want to access
+                'profile', 'email', // the scopes you want to access
             ])
         ;
     }
@@ -33,12 +31,10 @@ class GoogleController extends AbstractController
     /**
      * After going to Google, you're redirected back here
      * because this is the "redirect_route" you configured
-     * in config/packages/knpu_oauth2_client.yaml
-     *
-     * @param Request $request
-     * @param ClientRegistry $clientRegistry
+     * in config/packages/knpu_oauth2_client.yaml.
      *
      * @Route("/connect/google/check", name="connect_google_check")
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function connectCheckAction(Request $request, ClientRegistry $clientRegistry)

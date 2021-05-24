@@ -5,9 +5,9 @@ namespace App\Service\Security;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
-use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
-use KnpU\OAuth2ClientBundle\Client\Provider\GoogleClient;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use KnpU\OAuth2ClientBundle\Client\Provider\GoogleClient;
+use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
 use League\OAuth2\Client\Provider\GoogleUser;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,9 +30,9 @@ class GoogleAuthenticator extends SocialAuthenticator
 
     /**
      * GoogleAuthenticator constructor.
-     * @param ClientRegistry $clientRegistry
+     *
      * @param EntityManagerInterface $em
-     * @param UserManagerInterface $userManager
+     * @param UserManagerInterface   $userManager
      */
     public function __construct(ClientRegistry $clientRegistry, EntityManagerInterface $entityManager)
     {
@@ -41,17 +41,15 @@ class GoogleAuthenticator extends SocialAuthenticator
     }
 
     /**
-     * @param Request $request
      * @return bool
      */
     public function supports(Request $request)
     {
         // continue ONLY if the current ROUTE matches the check ROUTE
-        return $request->attributes->get('_route') === 'connect_google_check';
+        return 'connect_google_check' === $request->attributes->get('_route');
     }
 
     /**
-     * @param Request $request
      * @return \League\OAuth2\Client\Token\AccessToken|mixed
      */
     public function getCredentials(Request $request)
@@ -63,8 +61,8 @@ class GoogleAuthenticator extends SocialAuthenticator
 
     /**
      * @param mixed $credentials
-     * @param UserProviderInterface $userProvider
-     * @return User|null|object|\Symfony\Component\Security\Core\User\UserInterface
+     *
+     * @return User|object|\Symfony\Component\Security\Core\User\UserInterface|null
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
@@ -89,8 +87,8 @@ class GoogleAuthenticator extends SocialAuthenticator
                 /** @var User $user */
                 $user = new User();
                 $user->setEmail($email);
-                $user->setUsername("your chosen username");
-                $user->setPlainPassword("your chosen password");
+                $user->setUsername('your chosen username');
+                $user->setPlainPassword('your chosen password');
             }
         }
 
@@ -113,10 +111,9 @@ class GoogleAuthenticator extends SocialAuthenticator
     }
 
     /**
-     * @param Request $request
-     * @param TokenInterface $token
      * @param string $providerKey
-     * @return null|Response
+     *
+     * @return Response|null
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
@@ -125,9 +122,7 @@ class GoogleAuthenticator extends SocialAuthenticator
     }
 
     /**
-     * @param Request $request
-     * @param AuthenticationException $exception
-     * @return null|Response
+     * @return Response|null
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
@@ -139,9 +134,6 @@ class GoogleAuthenticator extends SocialAuthenticator
     /**
      * Called when authentication is needed, but it's not sent.
      * This redirects to the 'login'.
-     *
-     * @param Request $request
-     * @param AuthenticationException|null $authException
      *
      * @return RedirectResponse
      */

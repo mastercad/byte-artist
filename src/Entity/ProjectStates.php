@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ProjectStates
+ * ProjectStates.
  *
  * @ORM\Table(
  *  name="project_states",

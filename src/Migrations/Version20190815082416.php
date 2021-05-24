@@ -12,12 +12,12 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20190815082416 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return 'CREATE TABLE blog_groups';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         $this->addSql('CREATE TABLE `blog_groups` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -37,7 +37,7 @@ final class Version20190815082416 extends AbstractMigration
            ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         $this->addSql('DROP TABLE blog_groups');
     }
