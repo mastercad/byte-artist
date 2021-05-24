@@ -17,21 +17,23 @@ class ProjectsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name',
-            TextType::class,
-            [
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a project name',
-                    ]),
-                    new Length([
-                        'min' => 6,
-                        'minMessage' => 'The name should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
-                    ])
+            ->add(
+                'name',
+                TextType::class,
+                [
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'Please enter a project name',
+                        ]),
+                        new Length([
+                            'min' => 6,
+                            'minMessage' => 'The name should be at least {{ limit }} characters',
+                            // max length allowed by Symfony for security reasons
+                            'max' => 4096,
+                        ])
+                    ]
                 ]
-            ])
+            )
             ->add('shortDescription')
 //            ->add('description')
 
@@ -40,8 +42,8 @@ class ProjectsType extends AbstractType
                 CKEditorType::class,
                 [
                     'config' => [
-//                        'filebrowserUploadUrl' => '/upload?',
-//                        'filebrowserImageUploadUrl' => '/upload?',
+                //                        'filebrowserUploadUrl' => '/upload?',
+                //                        'filebrowserImageUploadUrl' => '/upload?',
                         'filebrowserImageUploadRoute' => 'app_project_image_upload',
                         'filebrowserImageUploadRouteParameters' => [
                             'type' => 'project',
@@ -58,13 +60,17 @@ class ProjectsType extends AbstractType
 
             ->add('id', HiddenType::class)
             ->add('previewPicture')
-            ->add('seoLink', TextType::class, [
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a valid project name!',
-                    ])
+            ->add(
+                'seoLink',
+                TextType::class,
+                [
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'Please enter a valid project name!',
+                        ])
+                    ]
                 ]
-            ])
+            )
             ->add('link', TextType::class)
             ->add('isPublic')
             ->add('projectTags')

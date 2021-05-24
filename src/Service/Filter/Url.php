@@ -18,7 +18,16 @@ class Url
         } elseif (trim($string) == '#') {
             return '#';
         } else {
-            return $view->url(array('module' => 'default', 'controller' => 'index', 'action' => 'show', 'name' => urlencode($string)), null, true) . "/";
+            return $view->url(
+                array(
+                    'module' => 'default',
+                    'controller' => 'index',
+                    'action' => 'show',
+                    'name' => urlencode($string)
+                ),
+                null,
+                true
+            ) . "/";
         }
     }
 }

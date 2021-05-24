@@ -9,66 +9,66 @@ namespace App\Service\DOM;
 
 class TagMerge
 {
-    private $_sString = null;
-    private $_sContent = null;
-    private $_sFirstAttributes = null;
-    private $_sSecondAttributes = null;
+    private $sString = null;
+    private $sContent = null;
+    private $sFirstAttributes = null;
+    private $sSecondAttributes = null;
 
     /** @var array Container mit den Attributen, die gemerged werden können */
-    private $_aAttributeMergePossible = array(
+    private $aAttributeMergePossible = array(
         'span',
         'class'
     );
 
     public function setString($sString)
     {
-        $this->_sString = $sString;
+        $this->sString = $sString;
         return $this;
     }
 
     public function getString()
     {
-        return $this->_sString;
+        return $this->sString;
     }
 
     public function merge($sString)
     {
         $this->setString($sString);
-        while ($this->_splitStringInEmptyTags()) {
-            $aFirstAttributes = $this->_extractAttributesFromString($this->_sFirstAttributes);
-            $aSecondAttributes = $this->_extractAttributesFromString($this->_sSecondAttributes);
+        while ($this->splitStringInEmptyTags()) {
+            $aFirstAttributes = $this->extractAttributesFromString($this->sFirstAttributes);
+            $aSecondAttributes = $this->extractAttributesFromString($this->sSecondAttributes);
 
             $this->setString(
-                $this->_replaceMergedContent(
-                    $this->_mergeAttributes(
-                        $aFirstAttributes,
-                        $aSecondAttributes
-                    )
+                $this->replaceMergedContent(
+                    $this->mergeAttributes($aFirstAttributes, $aSecondAttributes)
                 )
             );
         };
         return $this->getString();
     }
 
-    private function _splitStringInEmptyTags()
+    private function splitStringInEmptyTags()
     {
         $bReturn = false;
-        if (preg_match('/<span\s*([a-z0-9,\.;:\|\s=\-_#\'"]*)>\s*<span\s*([\sa-z0-9,\.;:\|=\-_"#\']*)>(.*?)<\/span>\s*<\/span>/si', $this->getString(), $aMatches)) {
-            $this->_sFirstAttributes = $aMatches[1];
-            $this->_sSecondAttributes = $aMatches[2];
-            $this->_sContent = $aMatches[3];
+        $regex = '/<span\s*([a-z0-9,\.;:\|\s=\-_#\'"]*)>\s*<span\s*([\sa-z0-9,\.;:\|=\-_"#\']*)>(.*?)<\/span>\s*'.
+            '<\/span>/si';
+        if (preg_match($regex, $this->getString(), $aMatches)) {
+            $this->sFirstAttributes = $aMatches[1];
+            $this->sSecondAttributes = $aMatches[2];
+            $this->sContent = $aMatches[3];
             $bReturn = true;
         }
         return $bReturn;
     }
 
-    private function _replaceMergedContent($sMergedContent)
+    private function replaceMergedContent($sMergedContent)
     {
-        $sContent = preg_replace('/<span\s*[a-z0-9,\.;:\|\s=\-_#\'"]*>\s*<span\s*[\sa-z0-9,\.;:\|=\-_"#\']*>.*?<\/span>\s*<\/span>/is', '<span ' . $sMergedContent . '>' . $this->_sContent . '</span>', $this->getString());
+        $regex = '/<span\s*[a-z0-9,\.;:\|\s=\-_#\'"]*>\s*<span\s*[\sa-z0-9,\.;:\|=\-_"#\']*>.*?<\/span>\s*<\/span>/is';
+        $sContent = preg_replace($regex, '<span '.$sMergedContent.'>'.$this->sContent.'</span>', $this->getString());
         return $sContent;
     }
 
-    private function _extractAttributesFromString($sString)
+    private function extractAttributesFromString($sString)
     {
         $mReturn = array();
         /** @fixme hier gibts noch einen bug wenn ein attribute value keine anführungszeichen hat
@@ -88,17 +88,17 @@ class TagMerge
         return $mReturn;
     }
 
-    private function _mergeAttributes($aFirstAttributes, $aSecondAttributes)
+    private function mergeAttributes($aFirstAttributes, $aSecondAttributes)
     {
         $sAttributes = '';
         $aProcessedAttributes = array();
         foreach ($aFirstAttributes as $sAttribute => $sValues) {
             if (true === array_key_exists($sAttribute, $aSecondAttributes)) {
                 if (strtoupper($sAttribute) == "STYLE") {
-                    $sMergedAttributes = $this->_mergeStyleAttributes($sValues, $aSecondAttributes[$sAttribute]);
+                    $sMergedAttributes = $this->mergeStyleAttributes($sValues, $aSecondAttributes[$sAttribute]);
                     $aProcessedAttributes[$sAttribute] = $sAttribute;
                 } elseif (strtoupper($sAttribute) == "CLASS") {
-                    $sMergedAttributes = $this->_mergeClassAttributes($sValues, $aSecondAttributes[$sAttribute]);
+                    $sMergedAttributes = $this->mergeClassAttributes($sValues, $aSecondAttributes[$sAttribute]);
                     $aProcessedAttributes[$sAttribute] = $sAttribute;
                 } else {
                     // kein zusammenführbares attribut, daher hier das äußere nehmen!
@@ -127,7 +127,7 @@ class TagMerge
         return trim($sAttributes);
     }
 
-    private function _mergeStyleAttributes($sValuesFirst, $sValuesSecond)
+    private function mergeStyleAttributes($sValuesFirst, $sValuesSecond)
     {
         $sValuesFirst = trim($sValuesFirst);
         $sValuesSecond = trim($sValuesSecond);
@@ -141,7 +141,7 @@ class TagMerge
         return $sValuesFirst . '; ' . $sValuesSecond;
     }
 
-    private function _mergeClassAttributes($sValuesFirst, $sValuesSecond)
+    private function mergeClassAttributes($sValuesFirst, $sValuesSecond)
     {
         $sValuesFirst = trim($sValuesFirst);
         $sValuesSecond = trim($sValuesSecond);

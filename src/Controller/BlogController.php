@@ -39,10 +39,19 @@ class BlogController extends AbstractController
     }
     
     /**
-     * @Route("/blog/tag/{tagSeoLink}", name="blog_tag_landing", methods={"GET"}, requirements={"tagSeoLink"="[a-z0-9\_\-]+"})
+     * @Route(
+     *      "/blog/tag/{tagSeoLink}",
+     *      name="blog_tag_landing",
+     *      methods={"GET"},
+     *      requirements={"tagSeoLink"="[a-z0-9\_\-]+"}
+     * )
      */
-    public function tagAction(EntityManagerInterface $entityManager, Request $request, Pagination $pagination, string $tagSeoLink)
-    {
+    public function tagAction(
+        EntityManagerInterface $entityManager,
+        Request $request,
+        Pagination $pagination,
+        string $tagSeoLink
+    ) {
         $blogTags = $this->getDoctrine()->getRepository(BlogTags::class)->findAll();
 
         $query = $entityManager->getRepository(Blogs::class)->queryAllBlogsByTag($tagSeoLink);

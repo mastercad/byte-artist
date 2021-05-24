@@ -100,7 +100,12 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route("/project/delete/{projectId}", name="app_project_delete", methods={"GET"}, requirements={"projectId"="\d+"})
+     * @Route(
+     *      "/project/delete/{projectId}",
+     *      name="app_project_delete",
+     *      methods={"GET"},
+     *      requirements={"projectId"="\d+"}
+     * )
      */
     public function deleteAction(int $projectId, EntityManagerInterface $entityManager)
     {
@@ -130,10 +135,19 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route("/project/tag/{tagSeoLink}", name="project_tag_landing", methods={"GET"}, requirements={"tagSeoLink"="[a-z0-9\_\-]+"})
+     * @Route(
+     *      "/project/tag/{tagSeoLink}",
+     *      name="project_tag_landing",
+     *      methods={"GET"},
+     *      requirements={"tagSeoLink"="[a-z0-9\_\-]+"}
+     * )
      */
-    public function tagAction(EntityManagerInterface $entityManager, Request $request, Pagination $pagination, string $tagSeoLink)
-    {
+    public function tagAction(
+        EntityManagerInterface $entityManager,
+        Request $request,
+        Pagination $pagination,
+        string $tagSeoLink
+    ) {
         $projectTags = $this->getDoctrine()->getRepository(ProjectTags::class)->findAll();
 
         /** @var ProjectsRepository */
@@ -153,7 +167,12 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route("/project/create/{projectId}", name="project_edit_by_id", methods={"GET", "POST"}, requirements={"projectId"="\d+"})
+     * @Route(
+     *      "/project/create/{projectId}",
+     *      name="project_edit_by_id",
+     *      methods={"GET", "POST"},
+     *      requirements={"projectId"="\d+"}
+     * )
      */
     public function editByIdAction(int $projectId)
     {
@@ -175,7 +194,12 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route("/project/create/{projectSeoName}", name="project_edit_by_name", methods={"GET", "POST"}, requirements={"projectSeoName"="[a-z0-9\_\-]+"})
+     * @Route(
+     *      "/project/create/{projectSeoName}",
+     *      name="project_edit_by_name",
+     *      methods={"GET", "POST"},
+     *      requirements={"projectSeoName"="[a-z0-9\_\-]+"}
+     * )
      */
     public function editBySeoNameAction(string $projectSeoName)
     {
@@ -274,9 +298,12 @@ class ProjectsController extends AbstractController
      */
     private function handleUploadFiles(Projects $project)
     {
+        $regex = '/\<img .*? src="(?:http[s]*:\/\/[0-9\.a-z:]+)*(\/images\/upload\/'.$this->getUser()->getId().
+            '\/projects\/([^"]+\.[a-z]+))" .*?\/>/i';
+
         // Match images in description
         if (!empty($project->getDescription())
-            && preg_match_all('/\<img .*? src="(?:http[s]*:\/\/[0-9\.a-z:]+)*(\/images\/upload\/'.$this->getUser()->getId().'\/projects\/([^"]+\.[a-z]+))" .*?\/>/i', $project->getDescription(), $matches)
+            && preg_match_all($regex, $project->getDescription(), $matches)
         ) {
             foreach ($matches[1] as $filePathname) {
                 $absoluteFilePath = __DIR__.'/../../public'.$filePathname;
@@ -289,7 +316,11 @@ class ProjectsController extends AbstractController
                 if ($file->isReadable()) {
                     $targetPublicPath = '/images/content/dynamisch/projects/'.$project->getId().'/';
                     $file->move(__DIR__.'/../../public'.$targetPublicPath);
-                    $newImagePath = str_replace($filePathname, $targetPublicPath.basename($filePathname), $project->getDescription());
+                    $newImagePath = str_replace(
+                        $filePathname,
+                        $targetPublicPath.basename($filePathname),
+                        $project->getDescription()
+                    );
                     $project->setDescription($newImagePath);
                 }
             }
@@ -470,7 +501,7 @@ class ProjectsController extends AbstractController
         $this->denyAccessUnlessGranted('edit', $project);
 
         $files = glob($this->getParameter('kernel.project_dir').'/public/'.$this->generatePublicUploadPath().'/*');
-        foreach($files as $file) {
+        foreach ($files as $file) {
             if (is_file($file)) {
                 unlink($file);
             }
@@ -497,7 +528,12 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route("/project/{projectSeoName}", name="project_show_by_name", methods={"GET"}, requirements={"projectSeoName"="[a-z0-9\_\-]+"})
+     * @Route(
+     *      "/project/{projectSeoName}",
+     *      name="project_show_by_name",
+     *      methods={"GET"},
+     *      requirements={"projectSeoName"="[a-z0-9\_\-]+"}
+     * )
      */
     public function showBySeoNameAction(string $projectSeoName)
     {
@@ -540,5 +576,4 @@ class ProjectsController extends AbstractController
         }
         return $errors;
     }
-
 }

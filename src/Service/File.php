@@ -287,25 +287,14 @@ class File
          */
         if (is_array($m_dest_files)) {
             foreach ($m_dest_files as &$a_dest_file) {
-                if (isset($a_dest_file[self::SYS_PFAD])) {
-                    // alles ok
-                } // ergebis des foreach ist ein array
-                /**
-                 * @todo hier noch was überlegen, was ich unternehme, wenn
-                 * das übergebene array arrays enthält, die nicht die nötige
-                 * struktur enthalten
-                 */ elseif (is_array($a_dest_file)) {
-} /**
-                 * wenn ergebnis des foreach ein string, dieses ergebnis
-                 * in syspfad der jeweiligen ebene ablegen
-                 */ elseif (is_string($a_dest_file)) {
+                if (is_string($a_dest_file)) {
                     $temp_file = $a_dest_file;
                     $basename = basename($temp_file);
                     $a_dest_file = array();
                     $a_dest_file[self::SYS_PFAD] = $temp_file;
                     $a_dest_file[self::HTML_PFAD] = str_replace(getcwd(), '', $temp_file);
                     $a_dest_file[self::FILE] = $basename;
-}
+                }
             }
             $this->a_dest_files = $m_dest_files;
         } elseif (strlen(trim($m_dest_files))) {
@@ -395,7 +384,8 @@ class File
                             $count_moved_files = count($a_moved_files);
 
                             $a_moved_files[$count_moved_files][self::SYS_PFAD] = $this->getDestPath() . $orig_name;
-                            $a_moved_files[$count_moved_files][self::HTML_PFAD] = 'http://' . $localHostName . str_replace(getcwd(), '', $this->getDestPath()) . $orig_name;
+                            $a_moved_files[$count_moved_files][self::HTML_PFAD] = 'http://' . $localHostName .
+                                str_replace(getcwd(), '', $this->getDestPath()) . $orig_name;
                             $a_moved_files[$count_moved_files][self::FILE] = $orig_name;
 //                              $a_moved_files[$count_moved_files] = $this->getDestPath() . $orig_name;
                         } else {
@@ -513,7 +503,10 @@ class File
                         @mkdir($dir, 0755, true) or die("Unable to create $dir\n");
                     }
                     if (strlen(trim($file)) > 0) {
-                        $return = @file_put_contents($dest_dir . $dir . "/" . $file, zip_entry_read($zip_entry, zip_entry_filesize($zip_entry)));
+                        $return = @file_put_contents(
+                            $dest_dir . $dir . "/" . $file,
+                            zip_entry_read($zip_entry, zip_entry_filesize($zip_entry))
+                        );
                         if ($return === false) {
                             die("Unable to write file $dir/$file\n");
                         }

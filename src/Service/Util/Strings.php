@@ -4,21 +4,21 @@ namespace App\Service\Util;
 
 class Strings
 {
-  public static function makeStringLinkSave(string $content)
-  {
-    $content = strtolower($content);
+    public static function makeStringLinkSave(string $content)
+    {
+        $content = strtolower($content);
 
-    $content = preg_replace('/[^A-Za-z0-9]/i', '-', $content);
-    $content = preg_replace('/\-{2,}+/', '-', $content);
-    $content = preg_replace('/^\-/', '', $content);
-    $content = preg_replace('/\-$/', '', $content);
+        $content = preg_replace('/[^A-Za-z0-9]/i', '-', $content);
+        $content = preg_replace('/\-{2,}+/', '-', $content);
+        $content = preg_replace('/^\-/', '', $content);
+        $content = preg_replace('/\-$/', '', $content);
 
-    return $content;
-  }
+        return $content;
+    }
 
-  public static function replaceSpecialCharacters(string $content)
-  {
-    $search = [
+    public static function replaceSpecialCharacters(string $content)
+    {
+        $search = [
         '/ä/',
         '/ü/',
         '/ö/',
@@ -26,9 +26,9 @@ class Strings
         '/Ü/',
         '/Ä/',
         '/Ö/'
-    ];
+        ];
 
-    $replaces = [
+        $replaces = [
         'ae',
         'ue',
         'oe',
@@ -36,10 +36,10 @@ class Strings
         'ue',
         'ae',
         'oe'
-    ];
+        ];
 
-    return preg_replace($search, $replaces, $content);
-  }
+        return preg_replace($search, $replaces, $content);
+    }
 
   /**
    * Convert all separator founds with followed single character with uppercase single character.
@@ -49,21 +49,25 @@ class Strings
    *
    * @return string
    */
-  public static function convertToCamelCase(string $content, string $separator = '_')
-  {
-    return preg_replace_callback(
-      '/('.preg_quote($separator).')+([a-z])+?/i',
-      function($match) { return ucfirst($match[2]);},
-      $content
-    );
-  }
+    public static function convertToCamelCase(string $content, string $separator = '_')
+    {
+        return preg_replace_callback(
+            '/('.preg_quote($separator).')+([a-z])+?/i',
+            function ($match) {
+                return ucfirst($match[2]);
+            },
+            $content
+        );
+    }
 
-  public static function convertFromCamelCase(string $content, string $separator = '_')
-  {
-    return preg_replace_callback(
-      '/([A-Z])/',
-      function($match) use ($separator) { return $separator.lcfirst($match[1]);},
-      lcfirst($content)
-    );
-  }
+    public static function convertFromCamelCase(string $content, string $separator = '_')
+    {
+        return preg_replace_callback(
+            '/([A-Z])/',
+            function ($match) use ($separator) {
+                return $separator.lcfirst($match[1]);
+            },
+            lcfirst($content)
+        );
+    }
 }

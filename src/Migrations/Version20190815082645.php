@@ -37,48 +37,11 @@ final class Version20190815082645 extends AbstractMigration
             KEY `fk_blog_modifier` (`modifier`),
             KEY `fk_blog_group_fk` (`group_fk`),
             CONSTRAINT `FK_C0155143E973D819` FOREIGN KEY (`group_fk`) REFERENCES `blog_groups` (`id`),
-            CONSTRAINT `fk_blog_creator` FOREIGN KEY (`creator`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-            CONSTRAINT `fk_blog_modifier` FOREIGN KEY (`modifier`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+            CONSTRAINT `fk_blog_creator` FOREIGN KEY (`creator`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON '.
+                'UPDATE RESTRICT,
+            CONSTRAINT `fk_blog_modifier` FOREIGN KEY (`modifier`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON '.
+                'UPDATE RESTRICT
            ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
-
-        /** Schema */
-        /*
-        $this->addSql('CREATE TABLE `blog` (
-            `id` int(11) UNSIGNED NOT NULL,
-            `name` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-            `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-            `seo_link` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-            `short_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-            `preview_picture` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-            `group_fk` int(11) UNSIGNED DEFAULT NULL,
-            `group_order` int(11) NOT NULL,
-            `created` datetime NOT NULL,
-            `creator` int(11) UNSIGNED NOT NULL,
-            `modified` datetime DEFAULT NULL,
-            `modifier` int(11) UNSIGNED DEFAULT NULL
-          ) ENGINE=InnoDB DEFAULT CHARSET=utf8;');
-        */
-        /** Indizes */
-        /*
-        $this->addSql('ALTER TABLE `blog`
-            ADD PRIMARY KEY (`id`),
-            ADD KEY `fk_blog_creator` (`creator`),
-            ADD KEY `fk_blog_modifier` (`modifier`),
-            ADD KEY `fk_blog_group_fk` (`group_fk`);');
-        */
-        /** AUTO_INCREMENT */
-        /*
-        $this->addSql('ALTER TABLE `blog`
-            MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;');
-        */
-        /** Constraints */
-        /*
-        $this->addSql('ALTER TABLE `blog`
-            ADD CONSTRAINT `fk_blog_creator` FOREIGN KEY (`creator`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-            ADD CONSTRAINT `fk_blog_group_fk` FOREIGN KEY (`group_fk`) REFERENCES `blog_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-            ADD CONSTRAINT `fk_blog_modifier` FOREIGN KEY (`modifier`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-        COMMIT;');
-        */
     }
 
     public function down(Schema $schema) : void

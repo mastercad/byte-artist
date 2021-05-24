@@ -34,45 +34,11 @@ final class Version20190815082050 extends AbstractMigration
             KEY `fk_project_tags_tag_fk` (`tag_fk`),
             CONSTRAINT `FK_562D5C3E14A1EC2` FOREIGN KEY (`project_fk`) REFERENCES `projects` (`id`),
             CONSTRAINT `FK_562D5C3EADF5624F` FOREIGN KEY (`tag_fk`) REFERENCES `tags` (`id`),
-            CONSTRAINT `fk_project_creator_fk` FOREIGN KEY (`creator`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-            CONSTRAINT `fk_project_modifier_fk` FOREIGN KEY (`modifier`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+            CONSTRAINT `fk_project_creator_fk` FOREIGN KEY (`creator`) REFERENCES `user` (`id`) ON DELETE RESTRICT '.
+                'ON UPDATE RESTRICT,
+            CONSTRAINT `fk_project_modifier_fk` FOREIGN KEY (`modifier`) REFERENCES `user` (`id`) ON DELETE RESTRICT '.
+                'ON UPDATE RESTRICT
            ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
-
-        /** Schema */
-        /*
-        $this->addSql('CREATE TABLE `project_tags` (
-            `id` int(11) UNSIGNED NOT NULL,
-            `project_fk` int(11) UNSIGNED NOT NULL,
-            `tag_fk` int(11) UNSIGNED NOT NULL,
-            `created` datetime NOT NULL,
-            `creator` int(11) UNSIGNED NOT NULL,
-            `modified` datetime DEFAULT NULL,
-            `modifier` int(11) UNSIGNED DEFAULT NULL
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;');
-        */
-        /** Indizies */
-        /*
-        $this->addSql('ALTER TABLE `project_tags`
-            ADD PRIMARY KEY (`id`),
-            ADD KEY `fk_project_tags_tag_fk` (`tag_fk`),
-            ADD KEY `fk_project_creator_fk` (`creator`),
-            ADD KEY `fk_project_modifier_fk` (`modifier`),
-            ADD KEY `fk_project_tags_project_fk` (`project_fk`);');
-        */
-        /** AUTO_INCREMENT */
-        /*
-        $this->addSql('ALTER TABLE `project_tags`
-            MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;');
-        */
-        /** Constraints */
-        /*
-        $this->addSql('ALTER TABLE `project_tags`
-            ADD CONSTRAINT `fk_project_creator_fk` FOREIGN KEY (`creator`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-            ADD CONSTRAINT `fk_project_modifier_fk` FOREIGN KEY (`modifier`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-            ADD CONSTRAINT `fk_project_tags_project_fk` FOREIGN KEY (`project_fk`) REFERENCES `projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-            ADD CONSTRAINT `fk_project_tags_tag_fk` FOREIGN KEY (`tag_fk`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-            COMMIT;');
-        */
     }
 
     public function down(Schema $schema) : void
