@@ -41,6 +41,9 @@ jobs:
         SYMFONY_DECRYPTION_SECRET: ${{ secrets.SYMFONY_DECRYPTION_SECRET }}
       run: env && php bin/console secrets:decrypt-to-local --force --env=prod
 
+    - name: prepare php-cs-fixer config
+      run: cp .php-cs-fixer.dist.php .php-cs-fixer.php
+
     - name: php-codesniffer
       # You may pin to the exact commit or the version.
       # uses: pipeline-components/php-codesniffer@e3341450afba37fab4275b31f041646a26b2da9d
