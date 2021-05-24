@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ProjectTags
+ * ProjectTags.
  *
  * @ORM\Table(
  *  name="project_tags",

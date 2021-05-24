@@ -18,12 +18,12 @@ class AboutController extends AbstractController
         $month = 11;
         $year = 1975;
 
-        $today = mktime(0, 0, 0, (int)date("m"), (int)date("d"), (int)date("Y"));
+        $today = mktime(0, 0, 0, (int) date('m'), (int) date('d'), (int) date('Y'));
         $birthday = mktime(0, 0, 0, $month, $day, $year);
         $age = intval(($today - $birthday) / (60 * 60 * 24 * 365));
 
         return $this->render('about/index.html.twig', [
-            'age' => $age
+            'age' => $age,
         ]);
     }
 }

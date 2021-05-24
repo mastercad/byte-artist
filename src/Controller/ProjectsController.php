@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Projects;
 use App\Entity\ProjectTags;
 use App\Entity\Tags;
 use App\Form\ProjectsType;
 use App\Repository\ProjectsRepository;
-use App\Service\Seo\Generator\LinkFactory;
 use App\Service\Pagination;
+use App\Service\Seo\Generator\LinkFactory;
 use DateTime;
 use DirectoryIterator;
 use Doctrine\ORM\EntityManagerInterface;
 use Hshn\Base64EncodedFile\HttpFoundation\File\Base64EncodedFile;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ProjectsController extends AbstractController
 {
-    const ITEMS_PER_PAGE = 10;
+    public const ITEMS_PER_PAGE = 10;
 
     /**
      * @Route("/projects", name="projects")
@@ -44,7 +44,7 @@ class ProjectsController extends AbstractController
             [
                 'projects' => $projects,
                 'projectTags' => $projectTags,
-                'lastPage' => $pagination->lastPage($projects)
+                'lastPage' => $pagination->lastPage($projects),
             ]
         );
     }
@@ -64,12 +64,11 @@ class ProjectsController extends AbstractController
 
         $tags = $this->getDoctrine()->getRepository(Tags::class)->findAll();
 
-
         return $this->render('projects/create.html.twig', [
             'form' => $form->createView(),
             'id' => null,
             'availableTags' => $tags,
-            'publicPicturePath' => $this->generatePublicPicturePath()
+            'publicPicturePath' => $this->generatePublicPicturePath(),
         ]);
     }
 
@@ -79,7 +78,7 @@ class ProjectsController extends AbstractController
     public function imageBrowserAction(Request $request)
     {
         $publicUploadPath = $this->generatePublicUploadPath();
-        $rootPath =  __DIR__.'/../../public';
+        $rootPath = __DIR__.'/../../public';
         $targetPath = $rootPath.$publicUploadPath;
 
         $fileIterator = new DirectoryIterator($targetPath);
@@ -94,7 +93,7 @@ class ProjectsController extends AbstractController
         return $this->render(
             'fragment/thumb_gallery.html.twig',
             [
-                'images' => $files
+                'images' => $files,
             ]
         );
     }
@@ -130,7 +129,7 @@ class ProjectsController extends AbstractController
         }
 
         return new JsonResponse([
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -161,7 +160,7 @@ class ProjectsController extends AbstractController
                 'projects' => $projects,
                 'projectTags' => $projectTags,
                 'lastPage' => $pagination->lastPage($projects),
-                'tagSeoLink' => $tagSeoLink
+                'tagSeoLink' => $tagSeoLink,
             ]
         );
     }
@@ -184,12 +183,11 @@ class ProjectsController extends AbstractController
 
         $tags = $this->getDoctrine()->getRepository(Tags::class)->findAll();
 
-
         return $this->render('projects/create.html.twig', [
             'form' => $form->createView(),
             'id' => $project->getId(),
             'availableTags' => $tags,
-            'publicPicturePath' => $this->generatePublicPicturePath()
+            'publicPicturePath' => $this->generatePublicPicturePath(),
         ]);
     }
 
@@ -211,19 +209,16 @@ class ProjectsController extends AbstractController
 
         $tags = $this->getDoctrine()->getRepository(Tags::class)->findAll();
 
-
         return $this->render('projects/create.html.twig', [
             'form' => $form->createView(),
             'id' => $project->getId(),
             'availableTags' => $tags,
-            'publicPicturePath' => $this->generatePublicPicturePath()
+            'publicPicturePath' => $this->generatePublicPicturePath(),
         ]);
     }
 
     /**
      * @Route("/project/save", name="project_save", methods={"POST"})
-     *
-     * @param Request $request
      *
      * @return void
      */
@@ -292,8 +287,6 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @param Projects $project
-     *
      * @return void
      */
     private function handleUploadFiles(Projects $project)
@@ -347,6 +340,7 @@ class ProjectsController extends AbstractController
                 unlink($file->getPathname());
             }
         }
+
         return $this;
     }
 
@@ -365,7 +359,7 @@ class ProjectsController extends AbstractController
             // project tag id exists
             if (isset($projectTag['id'])
                 && !empty($projectTag['id'])
-                && "undefined" != $projectTag['id']
+                && 'undefined' != $projectTag['id']
             ) {
                 unset($oldProjectTags[$projectTag['id']]);
                 continue;
@@ -373,7 +367,7 @@ class ProjectsController extends AbstractController
 
             if (isset($projectTag['tagId'])
                 && !empty($projectTag['tagId'])
-                && "undefined" != $projectTag['tagId']
+                && 'undefined' != $projectTag['tagId']
             ) {
                 $tagEntity = $this->getDoctrine()->getRepository(Tags::class)->find($projectTag['tagId']);
             } else {
@@ -415,7 +409,7 @@ class ProjectsController extends AbstractController
         // convert json content, if it send
         if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
             $data = json_decode($request->getContent(), true);
-            $request->request->replace(is_array($data) ? $data : array());
+            $request->request->replace(is_array($data) ? $data : []);
         }
 
         /** @var UploadedFile $file */
@@ -445,7 +439,7 @@ class ProjectsController extends AbstractController
         $response = [
             'uploaded' => 1,
             'fileName' => $originalFileName,
-            'url' => $publicUploadPath.'/'.$originalFileName
+            'url' => $publicUploadPath.'/'.$originalFileName,
         ];
 
         return new JsonResponse($response);
@@ -484,7 +478,7 @@ class ProjectsController extends AbstractController
         $response = [
             'uploaded' => 1,
             'fileName' => $fileName,
-            'url' => $publicUploadPath.'/'.$fileName
+            'url' => $publicUploadPath.'/'.$fileName,
         ];
 
         return new JsonResponse($response);
@@ -522,7 +516,7 @@ class ProjectsController extends AbstractController
         return $this->render(
             'projects/show.html.twig',
             [
-                'project' => $project
+                'project' => $project,
             ]
         );
     }
@@ -544,7 +538,7 @@ class ProjectsController extends AbstractController
         return $this->render(
             'projects/show.html.twig',
             [
-                'project' => $project
+                'project' => $project,
             ]
         );
     }
@@ -563,7 +557,7 @@ class ProjectsController extends AbstractController
 
     private function extractErrorsFromForm(FormInterface $form)
     {
-        $errors = array();
+        $errors = [];
         foreach ($form->getErrors() as $error) {
             $errors[] = $error->getMessage();
         }
@@ -574,6 +568,7 @@ class ProjectsController extends AbstractController
                 }
             }
         }
+
         return $errors;
     }
 }

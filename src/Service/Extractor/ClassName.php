@@ -14,6 +14,7 @@ class ClassName
         if (preg_match('/([^\\\]+)$/i', $fqdn, $matches)) {
             return $matches[1];
         }
+
         return $fqdn;
     }
 }

@@ -30,6 +30,7 @@ class Path
     public function generatePublicImagesPath($entity)
     {
         $entityType = $this->classNameExtractor->extractClassName($entity);
+
         return '/images/content/dynamisch/'.strtolower($entityType).'/'.$entity->getId();
     }
 

@@ -2,9 +2,9 @@
 
 namespace App\Twig\Extension;
 
+use App\Service\Filter\Ubb\Replace;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
-use App\Service\Filter\Ubb\Replace;
 
 class UppReplaceExtension extends AbstractExtension
 {
@@ -18,8 +18,8 @@ class UppReplaceExtension extends AbstractExtension
     public function replace($content, $id)
     {
         $ubbReplacer = new Replace(true);
-        $ubbReplacer->setBilderPfad('/images/content/dynamisch/blogs/' . $id . '/');
-        
+        $ubbReplacer->setBilderPfad('/images/content/dynamisch/blogs/'.$id.'/');
+
         return $ubbReplacer->filter($content);
     }
 }

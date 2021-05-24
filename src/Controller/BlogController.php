@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Blogs;
 use App\Entity\BlogTags;
 use App\Entity\Tags;
 use App\Form\BlogType;
 use App\Service\Pagination;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class BlogController extends AbstractController
 {
-    const ITEMS_PER_PAGE = 10;
+    public const ITEMS_PER_PAGE = 10;
 
     /**
      * @Route("/blog", name="blog")
@@ -33,11 +33,11 @@ class BlogController extends AbstractController
             [
                 'blogs' => $blogs,
                 'blogTags' => $blogTags,
-                'lastPage' => $pagination->lastPage($blogs)
+                'lastPage' => $pagination->lastPage($blogs),
             ]
         );
     }
-    
+
     /**
      * @Route(
      *      "/blog/tag/{tagSeoLink}",
@@ -63,7 +63,7 @@ class BlogController extends AbstractController
                 'blogs' => $blogs,
                 'blogTags' => $blogTags,
                 'lastPage' => $pagination->lastPage($blogs),
-                'tagSeoLink' => $tagSeoLink
+                'tagSeoLink' => $tagSeoLink,
             ]
         );
     }
@@ -95,7 +95,7 @@ class BlogController extends AbstractController
         if (is_array($blogRequest)
             && array_key_exists('blogTags', $blogRequest)
         ) {
-            $currentBlogTagsRequest =  $blogRequest['blogTags'];
+            $currentBlogTagsRequest = $blogRequest['blogTags'];
             unset($blogRequest['blogTags']);
         }
         $request->request->set('blog', $blogRequest);
@@ -114,7 +114,7 @@ class BlogController extends AbstractController
 
         return $this->render('blog/create.html.twig', [
             'form' => $form->createView(),
-            'availableTags' => $tags
+            'availableTags' => $tags,
         ]);
     }
 
@@ -133,15 +133,15 @@ class BlogController extends AbstractController
             // blog tag id exists
             if (isset($blogTag['id'])
                 && !empty($blogTag['id'])
-                && "undefined" != $blogTag['id']
+                && 'undefined' != $blogTag['id']
             ) {
                 unset($oldBlogTags[$blogTag['id']]);
                 continue;
             }
-            
+
             if (isset($blogTag['tagId'])
                 && !empty($blogTag['tagId'])
-                && "undefined" != $blogTag['tagId']
+                && 'undefined' != $blogTag['tagId']
             ) {
                 $tagEntity = $this->getDoctrine()->getRepository(Tags::class)->find($blogTag['tagId']);
             } else {
@@ -177,14 +177,14 @@ class BlogController extends AbstractController
     public function showAction(int $id)
     {
         $blog = $this->getDoctrine()->getRepository(Blogs::class)->find($id);
-        
+
 //        $this->isGranted('view', $blog);
         $this->denyAccessUnlessGranted('show', $blog);
 
         return $this->render(
             'blog/show.html.twig',
             [
-                'blog' => $blog
+                'blog' => $blog,
             ]
         );
     }
@@ -202,7 +202,7 @@ class BlogController extends AbstractController
         return $this->render(
             'blog/show.html.twig',
             [
-                'blog' => $blog
+                'blog' => $blog,
             ]
         );
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Service;
 
 use Doctrine\ORM\EntityRepository;
@@ -56,7 +57,7 @@ class Seo
             '/ß/',
             '/Ü/',
             '/Ä/',
-            '/Ö/'
+            '/Ö/',
         ];
 
         $a_replaces = [
@@ -66,7 +67,7 @@ class Seo
             'ss',
             'ue',
             'ae',
-            'oe'
+            'oe',
         ];
 
         $str_text = preg_replace($a_search, $a_replaces, $str_text);
@@ -105,9 +106,7 @@ class Seo
 
     /**
      * function zum erstellen eines eindeutigen seo link namens an hand eines
-     * übergebenen string und der datenbank
-     *
-     *
+     * übergebenen string und der datenbank.
      */
     public function createUniqueDbEntry($linkName = null, EntityRepository $entityRepository = null, $columnName = '')
     {
@@ -143,7 +142,7 @@ class Seo
                 $str_seo_name = $str_base_seo_name;
 
                 if ($i_count > 0) {
-                    $str_seo_name .= "-" . $i_count;
+                    $str_seo_name .= '-'.$i_count;
                 }
 
                 $row = $entityRepository->findOneBy([$columnName => $str_seo_name]);

@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * BlogGroups
+ * BlogGroups.
  *
  * @ORM\Table(
  *  name="blog_groups",

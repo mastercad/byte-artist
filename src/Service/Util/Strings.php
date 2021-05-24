@@ -25,7 +25,7 @@ class Strings
         '/ß/',
         '/Ü/',
         '/Ä/',
-        '/Ö/'
+        '/Ö/',
         ];
 
         $replaces = [
@@ -35,20 +35,17 @@ class Strings
         'ss',
         'ue',
         'ae',
-        'oe'
+        'oe',
         ];
 
         return preg_replace($search, $replaces, $content);
     }
 
-  /**
-   * Convert all separator founds with followed single character with uppercase single character.
-   *
-   * @param string $content
-   * @param string $separator
-   *
-   * @return string
-   */
+    /**
+     * Convert all separator founds with followed single character with uppercase single character.
+     *
+     * @return string
+     */
     public static function convertToCamelCase(string $content, string $separator = '_')
     {
         return preg_replace_callback(

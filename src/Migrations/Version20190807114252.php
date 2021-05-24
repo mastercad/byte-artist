@@ -12,19 +12,19 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20190807114252 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return 'CREATE SYSTEM USER';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         $this->addSql("INSERT INTO `user` (`id`, `username`, `roles`, `password`, `email`) VALUES ('1', 'SYSTEM', ".
             "'{\"role\":\"ROLE_SUPER_ADMIN\"}', '', '');");
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
-        $this->addSql("DELETE `user` FROM `user` WHERE `id` = 1");
+        $this->addSql('DELETE `user` FROM `user` WHERE `id` = 1');
     }
 }

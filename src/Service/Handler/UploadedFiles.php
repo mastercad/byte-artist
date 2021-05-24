@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\File\File;
 
 class UploadedFiles
 {
-  /** string absolute path to project root */
+    /** string absolute path to project root */
     private Path $pathGenerator;
 
     private User $user;
@@ -52,7 +52,7 @@ class UploadedFiles
             }
         }
 
-      // @TODO ADJUST THIS BEHAVIOUR, ALSO THE PREV PIC SHOULD HANDLED LIKE THE OTHER IMAGES IN UPLOAD!
+        // @TODO ADJUST THIS BEHAVIOUR, ALSO THE PREV PIC SHOULD HANDLED LIKE THE OTHER IMAGES IN UPLOAD!
         $previewFilePath = $this->pathGenerator->getProjectRootPath().'/public'.$entity->getPreviewPicture();
         if (file_exists($previewFilePath)
             && is_file($previewFilePath)
@@ -60,7 +60,7 @@ class UploadedFiles
             $file = new File($previewFilePath);
             $targetAbsolutePublicPath = $this->pathGenerator->generateAbsolutePublicImagesPath($entity);
             $file->move($targetAbsolutePublicPath, $file->getFilename());
-            $entity->setPreviewPicture($targetPublicPath.'/'. $file->getFilename());
+            $entity->setPreviewPicture($targetPublicPath.'/'.$file->getFilename());
         }
 
         return $this;

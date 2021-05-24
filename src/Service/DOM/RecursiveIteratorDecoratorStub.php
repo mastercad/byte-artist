@@ -3,7 +3,7 @@
 namespace App\Service\DOM;
 
 /**
- * Decorator Stub class for a RecursiveIterator
+ * Decorator Stub class for a RecursiveIterator.
  *
  * @TODO woz
  */

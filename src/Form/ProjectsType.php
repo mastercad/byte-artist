@@ -3,12 +3,12 @@
 namespace App\Form;
 
 use App\Entity\Projects;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -30,8 +30,8 @@ class ProjectsType extends AbstractType
                             'minMessage' => 'The name should be at least {{ limit }} characters',
                             // max length allowed by Symfony for security reasons
                             'max' => 4096,
-                        ])
-                    ]
+                        ]),
+                    ],
                 ]
             )
             ->add('shortDescription')
@@ -47,13 +47,13 @@ class ProjectsType extends AbstractType
                         'filebrowserImageUploadRoute' => 'app_project_image_upload',
                         'filebrowserImageUploadRouteParameters' => [
                             'type' => 'project',
-                            'id' => print_r($builder->getData()->getId(), true)
+                            'id' => print_r($builder->getData()->getId(), true),
                         ],
                         'filebrowserBrowseRoute' => 'app_project_image_browser',
                         'filebrowserBrowseRouteParameters' => [
                             'type' => 'project',
-                            'id' => print_r($builder->getData()->getId(), true)
-                        ]
+                            'id' => print_r($builder->getData()->getId(), true),
+                        ],
                     ],
                 ]
             )
@@ -67,8 +67,8 @@ class ProjectsType extends AbstractType
                     'constraints' => [
                         new NotBlank([
                             'message' => 'Please enter a valid project name!',
-                        ])
-                    ]
+                        ]),
+                    ],
                 ]
             )
             ->add('link', TextType::class)

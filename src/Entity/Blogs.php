@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Blogs
+ * Blogs.
  *
  * @ORM\Table(
  *  name="blog",

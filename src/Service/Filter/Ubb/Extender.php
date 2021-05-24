@@ -6,37 +6,37 @@ use App\Service\DOM\TagMerge;
 
 /**
  * Klasse erweitert übergebene informationen in ubb tags um statische inhalte, wie z.b. die namen von YT Videos
- * zum tag der speicherung oder die namen von mitgliedern beim speichern des textes
+ * zum tag der speicherung oder die namen von mitgliedern beim speichern des textes.
  */
 class Extender
 {
     /**
-     * string
+     * string.
      */
-    const REGEX = 'regex';
+    public const REGEX = 'regex';
 
     /**
-     * string
+     * string.
      */
-    const REPLACE_FUNCTION = 'replace_function';
+    public const REPLACE_FUNCTION = 'replace_function';
 
     /**
      * @var array enhält alle erlaubten tags, die replaced werden sollen
      */
-    protected $aAllowdTags = array(
+    protected $aAllowdTags = [
         '[VIDEO]' => ['[VIDEO]', '[/VIDEO]'],
-    );
+    ];
 
     /**
      * @var array enthält das Tag und dazu den regex sowie den funktionsaufruf
      */
-    protected $aMapTagToFunction = array(
-        '[VIDEO]' => array(
+    protected $aMapTagToFunction = [
+        '[VIDEO]' => [
 //            self::REGEX => '/(\[VIDEO\])(.*?)(\[\/VIDEO\])/i',
             self::REGEX => '/(\[(VIDEO:|VIDEO=)([^\]]*)\]|\[VIDEO\])([^(\[\\)]*)\[\/(VIDEO)\]/i',
-            self::REPLACE_FUNCTION => 'addVideoInformation'
-        ),
-    );
+            self::REPLACE_FUNCTION => 'addVideoInformation',
+        ],
+    ];
 
     public function __construct()
     {
@@ -46,7 +46,7 @@ class Extender
     }
 
     /**
-     * @var string $sText
+     * @var string
      *
      * @return $string
      */
@@ -58,7 +58,7 @@ class Extender
 
                 $sText = preg_replace_callback(
                     $aCurrentMap[self::REGEX],
-                    array(&$this, $aCurrentMap[self::REPLACE_FUNCTION]),
+                    [&$this, $aCurrentMap[self::REPLACE_FUNCTION]],
                     $sText
                 );
             }
@@ -70,12 +70,11 @@ class Extender
     }
 
     /**
-     *
      * Group1 : Video Tag and possible Options
      * Group2 : Video Tag and Separator (:|= or nothing)
      * Group3 : possible Options
      * Group4 : VideoURL
-     * Group5 : Video End Tag
+     * Group5 : Video End Tag.
      *
      * @return string
      */
@@ -86,7 +85,7 @@ class Extender
             if (preg_match('/^http[s]{0,1}:\/\/www\.youtu.*/i', $matches[4])
                 || preg_match('/^http[s]{0,1}:\/\/youtu.*/i', $matches[4])
             ) {
-                $tagName = $matches[5] . ':';
+                $tagName = $matches[5].':';
                 $name = $this->retrieveYoutubeVideoInformation($this->parseYoutubeVideoUrl($matches[4]));
                 $options = [];
                 // options already exists
@@ -101,9 +100,10 @@ class Extender
                 $options['name'] = $name;
                 $optionsString = $this->generateOptionsString($options);
 
-                return '[' . $tagName . $optionsString . ']' . $matches[4] . '[/' . $matches[5] . ']';
+                return '['.$tagName.$optionsString.']'.$matches[4].'[/'.$matches[5].']';
             }
-        };
+        }
+
         return $matches[0];
     }
 
@@ -111,15 +111,13 @@ class Extender
     {
         $optionsString = '';
         foreach ($options as $key => $value) {
-            $optionsString .= $key . '=' . $value . '|';
+            $optionsString .= $key.'='.$value.'|';
         }
         $optionsString = substr($optionsString, 0, -1);
+
         return $optionsString;
     }
 
-    /**
-     *
-     */
     private function retrieveYoutubeVideoInformation($videoId)
     {
         $content = str_replace('|', ' ', $this->retrieveYoutubeTitle($videoId));
@@ -128,9 +126,6 @@ class Extender
         return $content;
     }
 
-    /**
-     *
-     */
     private function parseYoutubeVideoUrl($videoUrl)
     {
         $sVideoId = $videoUrl;
@@ -141,6 +136,7 @@ class Extender
         ) {
             $sVideoId = $aMatches[1];
         }
+
         return trim($sVideoId);
     }
 
@@ -153,8 +149,8 @@ class Extender
 
     private function retrieveYoutubeInformation($videoId)
     {
-        $jsonString = file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=" . $videoId .
-                "&key=" . GOOGLE_API_KEY . "&part=snippet,contentDetails,statistics,status");
+        $jsonString = file_get_contents('https://www.googleapis.com/youtube/v3/videos?id='.$videoId.
+                '&key='.GOOGLE_API_KEY.'&part=snippet,contentDetails,statistics,status');
 
         $json = json_decode($jsonString, true);
 

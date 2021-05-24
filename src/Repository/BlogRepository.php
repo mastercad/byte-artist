@@ -31,7 +31,7 @@ class BlogRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-    
+
     public function findNewest(int $limit = 0)
     {
         return $this->createQueryBuilder('b')

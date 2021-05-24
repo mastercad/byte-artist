@@ -16,7 +16,7 @@ class UploadController extends AbstractController
     public function index()
     {
         return new JsonResponse(['uploaded']);
-        
+
         return $this->render('about/index.html.twig', [
             'controller_name' => 'AboutController',
         ]);

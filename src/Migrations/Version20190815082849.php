@@ -12,12 +12,12 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20190815082849 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return 'CREATE TABLE blog_group_blog';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         $this->addSql('CREATE TABLE `blog_group_blog` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -37,7 +37,7 @@ final class Version20190815082849 extends AbstractMigration
             CONSTRAINT `FK_F8928DABC06EA63` FOREIGN KEY (`creator`) REFERENCES `user` (`id`)
            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
 
-        /** Schema */
+        /* Schema */
         /*
         $this->addSql('CREATE TABLE `blog_group_blog` (
             `id` int(11) NOT NULL,
@@ -50,7 +50,7 @@ final class Version20190815082849 extends AbstractMigration
             `modifier` int(11) UNSIGNED DEFAULT NULL
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8;');
         */
-        /** Indizes */
+        /* Indizes */
         /*
         $this->addSql('ALTER TABLE `blog_group_blog`
             ADD PRIMARY KEY (`id`),
@@ -59,7 +59,7 @@ final class Version20190815082849 extends AbstractMigration
             ADD KEY `fk_blog_group_blog_fk` (`blog_fk`),
             ADD KEY `fk_blog_group_blog_group_fk` (`group_fk`);');
         */
-        /** AUTO_INCREMENT */
+        /* AUTO_INCREMENT */
         /*
         $this->addSql('ALTER TABLE `blog_group_blog`
             MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
@@ -67,7 +67,7 @@ final class Version20190815082849 extends AbstractMigration
         */
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         $this->addSql('DROP TABLE blog_group_blog');
     }

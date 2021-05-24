@@ -15,7 +15,7 @@ class FixPreviewPathsCommand extends Command
 {
     private array $possibleTables = [
         'projects',
-        'blogs'
+        'blogs',
     ];
 
     protected static $defaultName = 'app:fix-preview-paths';
@@ -55,6 +55,7 @@ class FixPreviewPathsCommand extends Command
 
         if (!$this->tableName) {
             $io->error(sprintf('Required argument table missing!'));
+
             return Command::FAILURE;
         }
 
@@ -62,13 +63,14 @@ class FixPreviewPathsCommand extends Command
             && !in_array($this->tableName, $this->possibleTables)
         ) {
             $io->error(sprintf('Table %s unknown!', $this->tableName));
+
             return Command::FAILURE;
         }
 
         $io->note(sprintf('Check for Table: %s', $this->tableName));
 
         if ($dryRun) {
-            $io->note("and only check if missing entries exists!");
+            $io->note('and only check if missing entries exists!');
         }
 
         $entities = $this->entityManager->getRepository('App\Entity\\'.ucfirst($this->tableName))->findAll();
@@ -110,6 +112,7 @@ class FixPreviewPathsCommand extends Command
             ) {
                 $entity->setPreviewPicture($publicPath);
                 $entity->setModified(new DateTime());
+
                 return true;
             }
         }
@@ -123,6 +126,7 @@ class FixPreviewPathsCommand extends Command
             ) {
                 $entity->setPreviewPicture($publicPath);
                 $entity->setModified(new DateTime());
+
                 return true;
             }
         }
@@ -138,16 +142,17 @@ class FixPreviewPathsCommand extends Command
             ) {
                 $entity->setPreviewPicture($publicPath);
                 $entity->setModified(new DateTime());
+
                 return true;
             }
         }
+
         return false;
     }
 
     /**
-     * Undocumented function
+     * Undocumented function.
      *
-     * @param EntityManagerInterface $entityManager
      * @return void
      *
      * @required

@@ -3,12 +3,12 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * User
+ * User.
  *
  * @ORM\Table(
  *  name="user",
@@ -84,16 +84,16 @@ class User implements UserInterface
 
     public function getRoles(): array
     {
-        /**@var array $roles */
+        /** @var array $roles */
         $roles = $this->roles;
         // damit mindestens eine Rolle gesetzt wird
         $roles[] = 'ROLE_USER';
-    
+
         return array_unique($roles);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getSalt()
     {

@@ -12,12 +12,12 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20190815080521 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return 'Create project_states Table';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         $this->addSql('CREATE TABLE `project_states` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -37,19 +37,19 @@ final class Version20190815080521 extends AbstractMigration
                 'RESTRICT ON UPDATE RESTRICT
            ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8');
 
-        $this->addSql("INSERT INTO `project_states` (`id`, `name`, `seo_link`, `description`, `created`, `creator`, ".
+        $this->addSql('INSERT INTO `project_states` (`id`, `name`, `seo_link`, `description`, `created`, `creator`, '.
             "`modified`, `modifier`) VALUES
             (1, 'In Planung', 'in-planung', 'Unter \"In Planung\" liegt alles, was ich in absehbarer Zeit oder auch ".
                 "in weiter Ferne in Planung habe. Diese Projekte sind sortiert nach dem Eintragdatum, absteigend.', '".
-                date("Y-m-d H:i:s")."', 1, NULL, NULL),
+                date('Y-m-d H:i:s')."', 1, NULL, NULL),
             (2, 'In Arbeit', 'in-arbeit', 'Hier sind alle Projekte festgehalten, die ich aktuell in Arbeit habe. ".
-                "Sortiert sind die Projekte absteigend nach dem Eintragdatum', '".date("Y-m-d H:i:s")."', 1, NULL, ".
+                "Sortiert sind die Projekte absteigend nach dem Eintragdatum', '".date('Y-m-d H:i:s')."', 1, NULL, ".
                 "NULL),
             (3, 'Abgeschlossen', 'abgeschlossen', 'Hier finden Sie alle Projekte die ich bereits abgeschlossen habe, ".
-                "sortiert nach dem Abschlußdatum absteigend.', '".date("Y-m-d H:i:s")."', 1, NULL, NULL);");
+                "sortiert nach dem Abschlußdatum absteigend.', '".date('Y-m-d H:i:s')."', 1, NULL, NULL);");
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         $this->addSql('DROP TABLE project_states');
     }

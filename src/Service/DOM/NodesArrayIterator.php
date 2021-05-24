@@ -10,9 +10,6 @@ class NodesArrayIterator implements \Iterator
     private $nodes;
     private $virtual;
 
-    /**
-     * @param array $DOMNodes
-     */
     public function __construct(array $DOMNodes)
     {
         $this->nodes = $DOMNodes;
@@ -24,23 +21,28 @@ class NodesArrayIterator implements \Iterator
     public function current()
     {
         $keys = array_keys($this->nodes);
+
         return $this->nodes[$keys[$this->virtual]];
     }
 
     /**
-     * Move forward to next element
-     * @link http://php.net/manual/en/iterator.next.php
-     * @return void Any returned value is ignored.
+     * Move forward to next element.
+     *
+     * @see http://php.net/manual/en/iterator.next.php
+     *
+     * @return void any returned value is ignored
      */
     public function next()
     {
-        $this->virtual++;
+        ++$this->virtual;
     }
 
     /**
-     * Return the key of the current element
-     * @link http://php.net/manual/en/iterator.key.php
-     * @return int|string scalar on success, integer 0 on failure.
+     * Return the key of the current element.
+     *
+     * @see http://php.net/manual/en/iterator.key.php
+     *
+     * @return int|string scalar on success, integer 0 on failure
      */
     public function key()
     {
@@ -48,10 +50,12 @@ class NodesArrayIterator implements \Iterator
     }
 
     /**
-     * Checks if current position is valid
-     * @link http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
-     *      Returns true on success or false on failure.
+     * Checks if current position is valid.
+     *
+     * @see http://php.net/manual/en/iterator.valid.php
+     *
+     * @return bool The return value will be casted to boolean and then evaluated.
+     *              Returns true on success or false on failure.
      */
     public function valid()
     {
@@ -59,9 +63,11 @@ class NodesArrayIterator implements \Iterator
     }
 
     /**
-     * Rewind the Iterator to the first element
-     * @link http://php.net/manual/en/iterator.rewind.php
-     * @return void Any returned value is ignored.
+     * Rewind the Iterator to the first element.
+     *
+     * @see http://php.net/manual/en/iterator.rewind.php
+     *
+     * @return void any returned value is ignored
      */
     public function rewind()
     {
