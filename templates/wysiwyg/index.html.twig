@@ -1,0 +1,527 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | WYSIWYG{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        input, textarea {
+            border: 0;
+            background-color: transparent;
+        }
+
+        .placeholder {
+            color: gray;
+            background-color: yellow;
+        }
+
+        .headline {
+            text-align: center;
+            font-size: 2.5em;
+        }
+
+        .headline1 {
+        }
+
+        .headline textarea {
+            text-align: center;
+        }
+
+        .resize-height {
+            z-index: 1000;
+            cursor: row-resize;
+        }
+
+        .resize-width {
+            z-index: 1000;
+            cursor: col-resize;
+        }
+
+        .cad-editor-container {
+            padding: 20px;
+        }
+
+        .content {
+            display: flex;
+            position: relative;
+        }
+
+        .box:hover > .box-options,
+        .box > .box:hover .box-options {
+            display: block;
+        }
+
+        .box {
+            border-radius: 2px;
+/*            white-space: pre; sorgt für blöde lücken *//*pre-wrap*/
+            display: -webkit-flex; /* Safari */
+            -webkit-flex-direction: column; /* Safari 6.1+ */
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+/*            flex-wrap: wrap; */ /* sorgt dafür, dass der container nicht komplett alle divs umspannnt */
+/*            justify-content: space-evenly;*/ /* machte probleme mit content, der außerhalb der top view ist...*/
+            position: relative;
+            border: 1px dashed lightgrey;
+        }
+
+        .box:empty:after,
+        .item:empty:after {
+           content: "\00a0";
+        }
+
+        .item {
+            margin: 2px;
+            position: relative;
+            background-color: #FFCB44;
+            border: 1px solid #B2840C;
+            border-radius: 2px;
+            flex: 1;
+        }
+
+        .item:empty {
+            padding: 20px;
+        }
+
+        .ui-sortable-placeholder {
+            border: 1px dotted black;
+            visibility: visible !important;
+            background-color: inherit;
+            flex: 1;
+            min-height: 20px;
+        }
+
+        .box-options {
+            position: absolute;
+            display: none;
+            top: -20px;
+            right: 0;
+            z-index: 1001;
+            padding: 10px;
+            background-color: lightblue;
+        }
+
+        #global_editor_menu {
+            position: fixed;
+            top: 60px;
+            right: 50px;
+            z-index: 9999;
+        }
+
+        #main_container {
+/*            height: 100vh;*/
+/*            width: 100vw;*/
+        }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="cad-editor-container">
+    <div class="headline" data-placeholder="Überschrift hier...">
+    </div>
+    <div class="content">
+        <div class="box" id="main_container">
+            <div class="box" style="flex-direction: row;">
+                <div class="box" cad-clone="true">1</div>
+                <div class="box" cad-copy="false">2</div>
+            </div>
+            <div class="box" cad-copy="true">3</div>
+            <div class="box" cad-clone="false">4</div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="module" type="text/javascript" language="javascript">
+
+        import CAD_WYSIWYG_Editor from './CAD_WYSIWYG_Editor.js';
+
+        $(document).ready(function() {
+
+            CAD_WYSIWYG_Editor.init();
+
+            initHeadline();
+//            initResizing();
+//            initEditorMenu();
+//            initBox();
+//            initItem();
+//            initDragBox();
+//            initTextMode();
+//            initLayoutContainerOptions();
+        });
+
+        let editMode = false;
+        let editTarget = undefined;
+        let imageCount = 0;
+
+/*
+        function initLayoutContainerOptions() {
+            $('.content, div.content > div.box').each(function() {
+                $(this).unbind('mouseover').on('mouseover', function() {
+                });
+            });
+
+            $('.content, div.content > div.box').find('.change-direction').unbind('click').on('click', function(event) {
+                let wrapper = $(this).parent().parent();
+                let currentDirection = wrapper.css('flex-direction');
+                let otherDirection = currentDirection == "row" ? "column" : "row";
+                wrapper.css({'flex-direction': otherDirection});
+            })
+        }
+*/
+/*
+        function initBox() {
+            $('.box').unbind('mouseover').on('mouseover', function(event, ui) {
+                console.log("BOX HOVER!");
+                console.log(event);
+                console.log(ui);
+            });
+        }
+
+        function initItem() {
+            $('.item').unbind('mouseover').on('mouseover', function(event, ui) {
+                console.log("ITEM HOVER!");
+                console.log(event);
+                console.log(ui);
+            });
+        }
+*/
+        function initResizing() {
+            let resizeTarget = undefined;
+            let resizeDirection = undefined;
+            let resizePosition = undefined;
+
+            $('body').on('mouseup', function() {
+                if (resizeTarget) {
+                    resizeTarget=undefined;
+                    console.log("Verschiebe nicht mehr!");
+                }
+            });
+
+            function resizeBoxHorizontal(event, direction) {
+                let targetAdd = "increase" == resizePosition ? 1 : -1;
+                let boxCount = $(resizeTarget).parent().find('.item').length;
+
+                // decrease target size
+                if ("left" == direction
+                    && "right" == resizePosition
+                ) {
+                    let previousSiblings = $(resizeTarget).nextAll('.item');
+                    let boxRight = previousSiblings.length;
+
+                    $(previousSiblings).each(function(index, sibling) {
+                        let siblingFlex = $(sibling).css("flex").split(" ");
+                        let flex = parseInt(siblingFlex[0]);
+                        if (flex <= boxRight) {
+                            $(sibling).css({'flex': (++flex) + " "+siblingFlex[1]+" "+siblingFlex[2]});
+                        }
+                    });
+                    let flexData = $(resizeTarget).css("flex").split(" ");
+                    let flex = parseInt(flexData[0]);
+                    if (1 < flex) {
+                        $(resizeTarget).css({'flex': (--flex) + " "+flexData[1]+" "+flexData[2]});
+                    }
+                // decrease target size
+                } else if ("right" == direction
+                    && "left" == resizePosition
+                ) {
+                    let previousSiblings = $(resizeTarget).prevAll('.item');
+                    let boxLeft = previousSiblings.length;
+
+                    $(previousSiblings).each(function(index, sibling) {
+                        let siblingFlex = $(sibling).css("flex").split(" ");
+                        let flex = parseInt(siblingFlex[0]);
+                        if (flex <= boxLeft) {
+                            $(sibling).css({'flex': (++flex) + " "+siblingFlex[1]+" "+siblingFlex[2]});
+                        }
+                    });
+                    let flexData = $(resizeTarget).css("flex").split(" ");
+                    let flex = parseInt(flexData[0]);
+                    if (1 < flex) {
+                        $(resizeTarget).css({'flex': (--flex) + " "+flexData[1]+" "+flexData[2]});
+                    }
+                // increate target size
+                } else if ("left" == direction
+                    && "left" == resizePosition
+                ) {
+                    let previousSiblings = $(resizeTarget).prevAll('.item');
+                    let boxLeft = previousSiblings.length;
+
+                    $(previousSiblings).each(function(index, sibling) {
+                        let siblingFlex = $(sibling).css("flex").split(" ");
+                        let flex = parseInt(siblingFlex[0]);
+                        if (1 < flex) {
+                            $(sibling).css({'flex': (--flex) + " "+siblingFlex[1]+" "+siblingFlex[2]});
+                        }
+                    });
+                    let flexData = $(resizeTarget).css("flex").split(" ");
+                    let flex = parseInt(flexData[0]);
+                    if (flex <= boxCount) {
+                        $(resizeTarget).css({'flex': (++flex) + " "+flexData[1]+" "+flexData[2]});
+                    }
+                // increase target size
+                } else if ("right" == direction
+                    && "right" == resizePosition
+                ) {
+                    let previousSiblings = $(resizeTarget).nextAll('.item');
+                    let boxRight = previousSiblings.length;
+
+                    $(previousSiblings).each(function(index, sibling) {
+                        let siblingFlex = $(sibling).css("flex").split(" ");
+                        let flex = parseInt(siblingFlex[0]);
+                        if (1 < flex) {
+                            $(sibling).css({'flex': (--flex) + " "+siblingFlex[1]+" "+siblingFlex[2]});
+                        }
+                    });
+                    let flexData = $(resizeTarget).css("flex").split(" ");
+                    let flex = parseInt(flexData[0]);
+                    if (flex <= boxCount) {
+                        $(resizeTarget).css({'flex': (++flex) + " "+flexData[1]+" "+flexData[2]});
+                    }
+                }
+            }
+
+            $('body').on('mousemove', function(event) {
+                if (resizeTarget) {
+                    if ($(event.target).has('.resize-width')) {
+                        let currentX = event.pageX;
+                        let startX = parseInt($(resizeTarget).data('current-x'));
+                        let targetWidth = parseInt($(resizeTarget).width());
+                        let distance = parseInt(startX - currentX);
+                        let distancePercentage = parseInt((100 / targetWidth) * distance);
+
+                        // movespace should represent part of current element width
+                        if (distance % 30) {
+                            return true;
+                        }
+
+                        let direction = startX > currentX ? 'left' : 'right';
+                        resizeBoxHorizontal(event, direction);
+                    } else if ($(event.target).has('resize-height')) {
+                        let currentY = event.pageY;
+                        let startY = $(resizeTarget).data('current-y');
+                        let targetHeight = $(resizeTarget).height();
+                        let distance = parseInt(startY - currentY);
+                        let distancePercentage = parseInt((100 / targetHeight) * distance);
+
+                        // movespace should represent part of current element width
+                        if (distancePercentage % 30) {
+                            return true;
+                        }
+
+//                        $(resizeTarget).data('current-x', currentX);
+                        let direction = startY > currentY ? 'left' : 'right';
+                        resizeBoxVertical(event, direction);
+                    }
+                }
+            });
+
+            $('.resize-width')
+                .unbind('click')
+                .on('mousedown', function(event) {
+                    
+                    resizeTarget = $(this).parent();
+                    resizeTarget
+                        .data('current-flex', $(this).parent().css('flex').split(" ")[0])
+                        .data('current-x', event.pageX)
+                        .data('current-y', event.pageY);
+                    resizeDirection = 'horizontal';
+                    resizePosition = $(this).data('position');
+
+                    event.preventDefault();
+                });
+
+            $('.resize-height').unbind('click').on('mousedown', function() {
+                console.log("resize top <-> bottom");
+                resizeDirection = 'vertical';
+            });
+        }
+
+        function getElementPosition(event, element) {
+            var parentOffset = $(element).parent().offset(); 
+            //or $(this).offset(); if you really just want the current element's offset
+            var relX = event.pageX - parentOffset.left;
+            var relY = event.pageY - parentOffset.top;
+
+            return {x: relX, y: relY};
+        }
+
+        function initHeadline() {
+            let headlineContainer = $('.headline');
+            let headlineText = $('.headline').text().trim();
+            let placeholderText = $(headlineContainer).data('placeholder');
+
+            $(headlineContainer).unbind('click').on('click', function(event) {
+                $(this).attr('contentEditable', true);
+                let headlineText = $(headlineContainer).text().trim();
+
+                if (placeholderText === headlineText) {
+                    $(headlineContainer).selectText();
+                }
+                headlineContainer.focus();
+                event.preventDefault();
+
+                headlineContainer.on('blur', function() {
+                    let newHeadlineText = $(this).text().trim().replace(/<(.|\n)*?>/g, '').replace(/(?:\r\n|\r|\n)/g, '<br>');
+                    if (0 === newHeadlineText.length
+                        || placeholderText === newHeadlineText
+                    ) {
+                        headlineContainer.html(placeholderText).addClass('placeholder');
+                    } else {
+                        headlineContainer.html(newHeadlineText).removeClass('placeholder');
+                    }
+                    $(this).attr('contentEditable', false);
+                });
+            });
+
+            if (0 === headlineText.length
+                || placeholderText === headlineText
+            ) {
+                headlineContainer.text(headlineContainer.data('placeholder')).addClass('placeholder');
+            }
+        }
+
+        function initHeadlineOld() {
+            let placeholderHeadlineText = 'Überschrift hier...';
+            let placeholderHeadline = '<span class="placeholder headline1">'+placeholderHeadlineText+'</span>';
+            let headlineContainer = $('.headline');
+            let headlineContent = $('.headline').text().trim();
+
+            if (0 === headlineContent.length) {
+                $('.headline').append(placeholderHeadline);
+            }
+
+            $('.headline').unbind('click').on('click', function(event) {
+                if ('TEXTAREA' === event.target.tagName) {
+                    return true;
+                }
+                let currentHeadline = headlineContainer.find('.headline1');
+                let currentHeadlineContent = currentHeadline.html().trim().replace(/<br\s*[\/]?>/gi, "\n");
+                let headlineInput = $('<textarea style="resize: none; height: '+currentHeadline.height()+'px; overflow: auto; width: 100%;"></textarea>');
+                headlineInput.val(placeholderHeadlineText === currentHeadlineContent ? '' : currentHeadlineContent);
+                currentHeadline.html(headlineInput);
+                headlineInput.textareaAutoSize();
+
+                headlineInput.on('blur', function() {
+                    let newHeadlineContent = $(this).val().trim().replace(/<(.|\n)*?>/g, '').replace(/(?:\r\n|\r|\n)/g, '<br>');
+                    if (0 === newHeadlineContent.length) {
+                        headlineContainer.html(placeholderHeadline);
+                    } else {
+                        currentHeadline.html(newHeadlineContent).removeClass('placeholder');
+                    }
+                });
+                headlineInput.focus();
+            });
+        }
+        
+        function getCaretPosition (node) {
+            var range = window.getSelection().getRangeAt(0),
+                preCaretRange = range.cloneRange(),
+                caretPosition,
+                tmp = document.createElement("div");
+
+            preCaretRange.selectNodeContents(node);
+            preCaretRange.setEnd(range.endContainer, range.endOffset);
+            tmp.appendChild(preCaretRange.cloneContents());
+            caretPosition = tmp.innerHTML.length;
+            return caretPosition;
+        }
+
+        function getHTMLCaretPosition(element) {
+            var textPosition = getCaretPosition(element),
+                htmlContent = element[0].innerHTML,
+                textIndex = 0,
+                htmlIndex = 0,
+                insideHtml = false,
+                htmlBeginChars = ['&', '<'],
+                htmlEndChars = [';', '>'];
+
+            if (textPosition == 0) {
+                return 0;
+            }
+
+            console.log("TextPosition: "+textPosition);
+
+            while(textIndex < textPosition) {
+                htmlIndex++;
+//                console.log("HTML Char:");
+//                console.log(htmlContent.charAt(htmlIndex));
+
+                // check if next character is html and if it is, iterate with htmlIndex to the next non-html character
+                while(-1 < htmlBeginChars.indexOf(htmlContent.charAt(htmlIndex))) {
+                    console.log('encountered HTML');
+                    // now iterate to the ending char
+                    insideHtml = true;
+
+                    while(insideHtml) {
+                        if (-1 < htmlEndChars.indexOf(htmlContent.charAt(htmlIndex))) {
+                            if (';' === htmlContent.charAt(htmlIndex)) {
+                                htmlIndex--; // entity is char itself
+                            }
+//                            console.log('encountered end of HTML');
+                            insideHtml = false;
+                        }
+                        htmlIndex++;
+                    }
+                }
+                textIndex++;
+                console.log("textIndex: "+textIndex);
+                console.log("HtmlIndex: "+htmlIndex);
+            }
+
+            //console.log(htmlIndex);
+            //console.log(textPosition);
+            // in htmlIndex is caret position inside html
+            return htmlIndex;
+        }
+
+        /** autosize for textarea */
+        !function(t,e,i,n){function s(e,i){this.element=e,this.$element=t(e),this.init()}var h="textareaAutoSize",o="plugin_"+h,r=function(t){return t.replace(/\s/g,"").length>0};s.prototype={init:function(){var i=parseInt(this.$element.css("paddingBottom"))+parseInt(this.$element.css("paddingTop"))+parseInt(this.$element.css("borderTopWidth"))+parseInt(this.$element.css("borderBottomWidth"))||0;r(this.element.value)&&this.$element.height(this.element.scrollHeight-i),this.$element.on("input keyup",function(n){var s=t(e),h=s.scrollTop();t(this).height(0).height(this.scrollHeight-i),s.scrollTop(h)})}},t.fn[h]=function(e){return this.each(function(){t.data(this,o)||t.data(this,o,new s(this,e))}),this}}(jQuery,window,document);
+
+/**
+
+
+            function resizeBoxHorizontal(event, direction) {
+                let moveTargetContainer = $(resizeTarget).parent();
+//                    let nextSibling = $($(resizeTarget).parent().parent().next('.box')[0]);
+                let nextSibling = $(resizeTarget).parent().parent().next('.box');
+                console.log(nextSibling);
+                console.log("*"+$(nextSibling).css("flex")+"*");
+                let nextSiblingFlex = parseInt($(nextSibling).css("flex").split(" ")[0]);
+                console.log("NextSiblingFlex: "+nextSiblingFlex);
+
+                // is the smallest and should smaller => resize sibling
+                if (1 == resizeTarget.data('current-flex')
+                    && 'left' === direction
+                ) {
+                    console.log("Vergrößere Flex vom Sibling!");
+                    console.log(nextSiblingFlex + 1);
+                    $(nextSibling).css({'flex': (nextSiblingFlex + 1) + " 1 auto"});
+                // reduce own flex value
+                } else if ('left' === direction) {
+                    console.log("Verringere eigenes Flex!");
+                    let currentFlex = parseInt($(moveTargetContainer).parent().css('flex').split(" ")[0]);
+                    console.log(currentFlex + 1);
+                    $(moveTargetContainer).parent().css({'flex': (currentFlex - 1) + " 1 auto"});
+                // next sibling has 1 => increase own flex 
+                } else if (1 >= nextSiblingFlex
+                    && 'right' === direction
+                ) {
+                    let currentFlex = parseInt($(moveTargetContainer).parent().css('flex').split(" ")[0]);
+                    console.log(currentFlex + 1);
+                    $(moveTargetContainer).parent().css({'flex': (currentFlex + 1) + " 1 auto"});
+                    console.log("Vergrößere eigenes Flex!");
+                } else if ('right' === direction) {
+                    console.log("Verringere Flex von sibling!");
+                    $(nextSibling).css({'flex': (nextSiblingFlex - 1) + " 1 auto"});
+                }
+            }
+**/
+
+    </script>
+{% endblock %}
+

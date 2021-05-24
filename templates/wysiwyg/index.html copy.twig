@@ -1,0 +1,260 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | WYSIWYG{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+
+        .placeholder {
+            color: gray;
+        }
+        .headline {
+            text-align: center;
+        }
+        .headline1 {
+            font-size: 2.5em;
+        }
+
+        .headline textarea {
+            text-align: center;
+/*            font-size: 2.5em;*/
+        }
+        input, textarea {
+            border: 0;
+/*            padding: 20px;*/
+            background-color: transparent;
+        }
+
+        .resize-height {
+            z-index: 1000;
+            cursor: row-resize;
+        }
+
+        .resize-width {
+            z-index: 1000;
+            cursor: col-resize;
+        }
+
+        .box {
+            min-height: 200px;
+            background-color: #4474FF;
+            border: 1px solid #1E44B2;
+            border-radius: 2px;
+            display: inline-block;
+            padding: 10px;
+        }
+
+        .box .box {
+            min-height: 10px;
+            background-color: #45FF41;
+            border: 1px solid #04B200;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="cad-editor-container">
+    <div class="headline">
+
+    <span class="placeholder headline1">Überschrift hier...</span></div>
+    <div class="content" style="padding: 20px; display: flex; position: relative;">
+        <div class="box ui-sortable" style="flex: 1; background-color: yellow; display: flex; flex-direction: column; position: relative;">
+<!--            <div class="tool resize-width" style="z-index: 1000; position: absolute; width: 1%; height: 100%; background-color: lightblue; opacity: 0.5; top: 0; right: 0;"></div>-->
+<!--            <div class="tool resize-height" style="z-index: 1000; position: absolute; width: 100%; height: 20%; background-color: lightblue; opacity: 0.5;"></div>-->
+
+        <div class="box-wrapper ui-sortable-handle" style="">
+                <div class="box ui-sortable" style="flex: 1; background-color: green; position: relative;">
+                    <div class="tool resize-width ui-sortable-handle" style="z-index: 1000; position: absolute; width: 1%; height: 100%; background-color: lightblue; opacity: 0.5; top: 0; right: 0;"></div>
+                    <div class="tool resize-width ui-sortable-handle" style="z-index: 1000; position: absolute; width: 1%; height: 100%; background-color: lightblue; opacity: 0.5;"></div>
+                    <div class="tool resize-height ui-sortable-handle" style="z-index: 1000; position: absolute; width: 100%; height: 20%; background-color: lightblue; opacity: 0.5;"></div>
+                    <div class="tool resize-height ui-sortable-handle" style="z-index: 1000; position: absolute; width: 100%; height: 20%; background-color: lightblue; opacity: 0.5; bottom: 0; left: 0;"></div>
+                    A
+                </div>
+                <div class="box ui-sortable" style="flex: 3; background-color: red; display: flex; flex-direction: column; position: relative;">C</div>
+            </div></div>
+        <div class="box ui-sortable" style="flex: 1; background-color: blue; position: relative;">B<div class="box-wrapper ui-sortable-handle" style="">
+        <div class="box ui-sortable">
+            <div class="item ui-sortable-handle"></div>
+            <div class="item ui-sortable-handle"></div>
+            <div class="item ui-sortable-handle"></div>
+        </div>
+    </div></div>
+    </div>
+</div>
+
+<div class="box">
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+</div>
+<div class="box">
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+</div>
+<div class="box">
+    <div class="item"></div>
+    <div class="box-wrapper">
+        <div class="box">
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+        </div>
+    </div>
+    <div class="item"></div>
+</div>
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" language="javascript">
+
+        $(document).ready(function() {
+            initHeadline();
+            initResizing();
+            initEditorMenu();
+            initDragBox();
+        });
+
+        function initDragBox() {
+            $('.box').sortable({
+                connectWith: '.box',
+//                items: 'div[class!=tool]'
+                cancel: ".tool"
+            });
+        }
+
+        function initResizing() {
+            let moveTarget = undefined;
+
+            $('body').on('mouseup', function() {
+                if (moveTarget) {
+                    $(moveTarget).blur();
+                    moveTarget=undefined;
+                    console.log("Verschiebe nicht mehr!");
+                }
+            });
+
+            $('body').on('mousemove', function(event) {
+                if (moveTarget) {
+                    let currentX = event.pageX;
+                    let startX = $(moveTarget).data('current-x');
+                    let targetWidth = $(moveTarget).width;
+                    let distancePercentage = (100 / targetWidth) * (startX - currentX);
+
+                    // movespace should represent part of current element width
+                    if (10 > distancePercentage) {
+                        return true;
+                    }
+                    let direction = startX > currentX ? 'left' : 'right';
+
+                    let moveTargetContainer = $(moveTarget).parent();
+//                    let nextSibling = $($(moveTarget).parent().parent().next('.box')[0]);
+                    let nextSibling = $(moveTarget).parent().parent().next('.box');
+                    console.log(nextSibling);
+                    console.log("*"+$(nextSibling).css("flex")+"*");
+                    let nextSiblingFlex = parseInt($(nextSibling).css("flex").split(" ")[0]);
+                    console.log("NextSiblingFlex: "+nextSiblingFlex);
+                    $(moveTarget).data('current-x', currentX);
+
+                    // is the smallest and should smaller => resize sibling
+                    if (1 == moveTarget.data('current-flex')
+                        && 'left' === direction
+                    ) {
+                        console.log("Vergrößere Flex vom Sibling!");
+                        console.log(nextSiblingFlex + 1);
+                        $(nextSibling).css({'flex': (nextSiblingFlex + 1) + " 1 auto"});
+                    // reduce own flex value
+                    } else if ('left' === direction) {
+                        console.log("Verringere eigenes Flex!");
+                        let currentFlex = parseInt($(moveTargetContainer).parent().css('flex').split(" ")[0]);
+                        console.log(currentFlex + 1);
+                        $(moveTargetContainer).parent().css({'flex': (currentFlex - 1) + " 1 auto"});
+                    // next sibling has 1 => increase own flex 
+                    } else if (1 >= nextSiblingFlex
+                        && 'right' === direction
+                    ) {
+                        let currentFlex = parseInt($(moveTargetContainer).parent().css('flex').split(" ")[0]);
+                        console.log(currentFlex + 1);
+                        $(moveTargetContainer).parent().css({'flex': (currentFlex + 1) + " 1 auto"});
+                        console.log("Vergrößere eigenes Flex!");
+                    } else if ('right' === direction) {
+                        console.log("Verringere Flex von sibling!");
+                        $(nextSibling).css({'flex': (nextSiblingFlex - 1) + " 1 auto"});
+                    }
+                }
+            });
+
+            $('.resize-width')
+            .unbind('click')
+            .on('mousedown', function(event) {
+                $(this)
+                    .data('current-flex', $(this).parent().css('flex').split(" ")[0])
+                    .data('current-x', event.pageX);
+
+                moveTarget = $(this);
+            });
+
+            $('.resize-height').unbind('click').on('mousedown', function() {
+                console.log("resize top <-> bottom");
+            });
+        }
+
+        function getElementPosition(event, element) {
+            var parentOffset = $(element).parent().offset(); 
+            //or $(this).offset(); if you really just want the current element's offset
+            var relX = event.pageX - parentOffset.left;
+            var relY = event.pageY - parentOffset.top;
+
+            return {x: relX, y: relY};
+        }
+
+        function initEditorMenu() {
+
+        }
+
+        function initHeadline() {
+            let placeholderHeadlineText = 'Überschrift hier...';
+            let placeholderHeadline = '<span class="placeholder headline1">'+placeholderHeadlineText+'</span>';
+            let headlineContainer = $('.headline');
+            let headlineContent = $('.headline').text().trim();
+
+            if (0 === headlineContent.length) {
+                $('.headline').append(placeholderHeadline);
+            }
+
+            $('.headline').unbind('click').on('click', function(event) {
+                if ('TEXTAREA' === event.target.tagName) {
+                    return true;
+                }
+                let currentHeadlineContent = $(this).find('.headline1').html().trim().replace(/<br\s*[\/]?>/gi, "\n");
+                let headlineInput = $('<textarea style="resize: none; height: 50px; overflow: auto; width: 100%;"></textarea>');
+                headlineInput.val(placeholderHeadlineText === currentHeadlineContent ? '' : currentHeadlineContent);
+                headlineContainer.find('.headline1').html(headlineInput);
+                headlineInput.textareaAutoSize();
+
+                headlineInput.on('blur', function() {
+                    let newHeadlineContent = $(this).val().trim().replace(/<(.|\n)*?>/g, '').replace(/(?:\r\n|\r|\n)/g, '<br>');
+                    if (0 === newHeadlineContent.length) {
+                        headlineContainer.html(placeholderHeadline);
+                    } else {
+                        headlineContainer.find('.headline1').html(newHeadlineContent).removeClass('placeholder');
+                    }
+                });
+                headlineInput.focus();
+
+            });
+        }
+
+        /** autosize for textarea */
+        !function(t,e,i,n){function s(e,i){this.element=e,this.$element=t(e),this.init()}var h="textareaAutoSize",o="plugin_"+h,r=function(t){return t.replace(/\s/g,"").length>0};s.prototype={init:function(){var i=parseInt(this.$element.css("paddingBottom"))+parseInt(this.$element.css("paddingTop"))+parseInt(this.$element.css("borderTopWidth"))+parseInt(this.$element.css("borderBottomWidth"))||0;r(this.element.value)&&this.$element.height(this.element.scrollHeight-i),this.$element.on("input keyup",function(n){var s=t(e),h=s.scrollTop();t(this).height(0).height(this.scrollHeight-i),s.scrollTop(h)})}},t.fn[h]=function(e){return this.each(function(){t.data(this,o)||t.data(this,o,new s(this,e))}),this}}(jQuery,window,document);
+
+    </script>
+{% endblock %}
