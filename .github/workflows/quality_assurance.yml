@@ -12,7 +12,6 @@ jobs:
   quality-assurance:
     name: "Quality Assurance"
     runs-on: ubuntu-latest
-
     steps:
     - name: Setup PHP with PECL extension
       uses: shivammathur/setup-php@v2
@@ -35,7 +34,7 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+      run: composer install --prefer-dist --no-progress --no-interaction
 
     - name: provide secrets
       env:
