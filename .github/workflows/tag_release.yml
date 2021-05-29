@@ -7,8 +7,8 @@ on:
       - "v*"
 
 jobs:
-  tagged-release:
-    name: "Tagged Release"
+  tag-release:
+    name: "Tag Release"
     runs-on: "ubuntu-latest"
 
     steps:
