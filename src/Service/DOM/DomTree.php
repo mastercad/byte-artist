@@ -40,8 +40,7 @@ class DomTree
     /**
      * @static
      *
-     * @param DOMNode $node
-     * @param int     $maxDepth (optional)
+     * @param int $maxDepth (optional)
      *
      * @return string
      */
