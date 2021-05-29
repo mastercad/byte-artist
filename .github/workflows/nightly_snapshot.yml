@@ -1,27 +1,26 @@
 name: "Nightly Snapshot"
 
 on:
-  push:
-    branches: [ main ]
-    # Sequence of patterns matched against refs/tags
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-#  schedule:
-#  - cron: "59 23 * * *"
+  schedule:
+    - cron: '59 23 * * *'
 
 jobs:
-  nightly-snapshot:
-    name: "Nightly Snapshot"
+  Tag:
     runs-on: ubuntu-latest
     steps:
-      - name: Create tag
-        uses: actions/github-script@v3
+      - uses: actions/checkout@v2
+      - uses: fregante/daily-version-action@v1
         with:
-          github-token: ${{ github.token }}
-          script: |
-            github.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/nightly",
-              sha: context.sha
-            })
+          prefix: v
+        name: Create tag if necessary
+        id: daily-version
+    outputs: # Shares the action’s outputs to the Next jobs
+      created: ${{ steps.daily-version.outputs.created }}
+      version: ${{ steps.daily-version.outputs.version }}
+
+  Next:
+    needs: Tag
+    if: needs.Tag.outputs.created
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo It looks like ${{ needs.Tag.outputs.version }} was created!
