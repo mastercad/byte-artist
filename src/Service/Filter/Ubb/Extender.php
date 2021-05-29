@@ -40,15 +40,15 @@ class Extender
 
     public function __construct()
     {
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
+        ini_set('display_errors', '1');
+        ini_set('display_startup_errors', '1');
         error_reporting(E_ALL | E_STRICT);
     }
 
     /**
      * @var string
      *
-     * @return $string
+     * @return string
      */
     public function filter($sText)
     {
@@ -150,7 +150,7 @@ class Extender
     private function retrieveYoutubeInformation($videoId)
     {
         $jsonString = file_get_contents('https://www.googleapis.com/youtube/v3/videos?id='.$videoId.
-                '&key='.GOOGLE_API_KEY.'&part=snippet,contentDetails,statistics,status');
+                '&key='.$_ENV['GOOGLE_API_KEY'].'&part=snippet,contentDetails,statistics,status');
 
         $json = json_decode($jsonString, true);
 

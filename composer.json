@@ -76,8 +76,8 @@
         "symfony/polyfill-php56": "*"
     },
     "scripts": {
-        "phpstan": "phpstan analyse -c phpstan.neon src tests --level 7 --no-progress",
-        "tests": "phpunit",
+        "phpstan": "phpstan analyse -c phpstan.neon src tests --level 5 --no-progress",
+        "tests": "bin/phpunit",
         "ci": [
             "@phpstan",
             "@tests"

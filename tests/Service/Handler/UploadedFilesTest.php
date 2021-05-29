@@ -9,6 +9,8 @@ use App\Service\Generator\Path;
 use App\Service\Handler\UploadedFiles;
 use Countable;
 use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamContent;
+use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -17,17 +19,17 @@ class UploadedFilesTest extends TestCase
   /**
    * Undocumented function
    *
-   * @param [] $structure
+   * @param array $structure
    * @param string|null $description
    * @param string|null $previewPicture
    * @param int $userId
    * @param int $projectId
-   * @param [] $expectedStructure
+   * @param array $expectedStructure
    * @param string $expectedDescription
    * @param string $expectedPreviewPicture
-   * 
+   *
    * @return void
-   * 
+   *
    * @dataProvider uploadedFilesDataProvider
    */
   public function testUploadedFiles($structure, $description, $previewPicture, $userId, $projectId, $expectedStructure, $expectedDescription, $expectedPreviewPicture)
@@ -475,7 +477,8 @@ class UploadedFilesTest extends TestCase
    * This function is not final because there are to many type tests.
    *
    * @param array $expectedStructure
-   * @param [type] $fileSystem
+   * @param vfsStreamDirectory|vfsStreamContent|array $fileSystem
+   *
    * @return void
    */
   private function assertStructureEquals(array $expectedStructure, $fileSystem)
@@ -483,19 +486,19 @@ class UploadedFilesTest extends TestCase
     if ($fileSystem instanceof Countable
       || is_array($fileSystem)
     ) {
-      $this->assertSame(count($expectedStructure), count($fileSystem), "Expected: ".print_r($expectedStructure, true)." / Actual: ".print_r($fileSystem, true));
-    } else {
-      $this->assertSame(count($expectedStructure), count($fileSystem->getChildren()), "Expected: ".print_r($expectedStructure, true)." / Actual: ".print_r($fileSystem, true));
+      $this->assertCount(count($expectedStructure), $fileSystem, "Expected: ".print_r($expectedStructure, true)." / Actual: ".print_r($fileSystem, true));
+    } else if ($fileSystem instanceof vfsStreamDirectory) {
+      $this->assertCount(count($expectedStructure), $fileSystem->getChildren(), "Expected: ".print_r($expectedStructure, true)." / Actual: ".print_r($fileSystem, true));
     }
 
     foreach ($expectedStructure as $name => $expectedPart) {
       if (is_array($expectedPart)) {
         if (is_array($fileSystem)) {
           $this->assertStructureEquals($expectedPart, $fileSystem[$name]);
-        } else {
+        } else if ($fileSystem instanceof vfsStreamDirectory) {
           $this->assertStructureEquals($expectedPart, $fileSystem->getChild((string)$name));
         }
-      } else {
+      } else if ($fileSystem instanceof vfsStreamDirectory) {
         $this->assertTrue($fileSystem->hasChild((string)$name), "Filesystem should have entry ".$name);
         $this->assertSame($expectedPart, file_get_contents($fileSystem->getChild((string)$name)->url()));
       }

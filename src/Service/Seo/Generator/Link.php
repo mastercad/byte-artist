@@ -3,7 +3,7 @@
 namespace App\Service\Seo\Generator;
 
 use App\Service\Util\Strings;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Persistence\ObjectRepository;
 
 /**
  * This class is responsible for generating unique seo links.
@@ -12,11 +12,11 @@ use Doctrine\ORM\EntityRepository;
  */
 class Link
 {
-    private EntityRepository $entityRepository;
+    private ObjectRepository $entityRepository;
 
     private string $memberName;
 
-    public function __construct(EntityRepository $entityRepository, string $memberName)
+    public function __construct(ObjectRepository $entityRepository, string $memberName)
     {
         $this->entityRepository = $entityRepository;
         $this->memberName = $memberName;

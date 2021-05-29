@@ -24,7 +24,7 @@ class Pagination
         return $paginator;
     }
 
-    public function lastPage(Paginator $paginator): int
+    public function lastPage(Paginator $paginator): float
     {
         return ceil($paginator->count() / $paginator->getQuery()->getMaxResults());
     }
@@ -36,6 +36,6 @@ class Pagination
 
     public function currentPageHasNoResult(Paginator $paginator): bool
     {
-        return !$paginator->getIterator()->count();
+        return !iterator_count($paginator->getIterator());
     }
 }

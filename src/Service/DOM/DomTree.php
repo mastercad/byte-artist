@@ -13,6 +13,9 @@
 
 namespace App\Service\DOM;
 
+use DOMNode;
+use DOMNodeList;
+
 class DomTree
 {
     /**
@@ -42,7 +45,7 @@ class DomTree
      *
      * @return string
      */
-    public static function asString(\DOMNode $node, $maxDepth = 0)
+    public static function asString(DOMNode $node, $maxDepth = 0)
     {
         ob_start();
         self::dump($node, $maxDepth);

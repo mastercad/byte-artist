@@ -343,7 +343,7 @@ class Replace
     /**
      * @var string
      *
-     * @return $string
+     * @return string
      */
     public function filter($sText)
     {
@@ -696,7 +696,7 @@ class Replace
      * @todo weitere weichen und HTML5 Code für embedded videos implementieren
      * ich brauchte jetzt erstmal nur youtube :D
      *
-     * @param $aMatches
+     * @param array $aMatches
      *
      * Group1 : Video Tag and possible Options
      * Group2 : Video Tag and Separator (:|= or nothing)
@@ -712,9 +712,9 @@ class Replace
         ) {
             $sVideoUrl = $aMatches[4];
             if (preg_match('/^http[s]{0,1}:\/\/www\.youtube\..*/i', $sVideoUrl)) {
-                return $this->addYoutubeVideo($sVideoUrl, isset($aMatches[3]) ? $aMatches[3] : null);
+                return $this->addYoutubeVideo($sVideoUrl, isset($aMatches[3]) ? $aMatches[3] : '');
             } elseif (preg_match('/^http[s]{0,1}:\/\/youtu\..*/i', $sVideoUrl)) {
-                return $this->addYoutubeVideo($sVideoUrl, isset($aMatches[3]) ? $aMatches[3] : null);
+                return $this->addYoutubeVideo($sVideoUrl, isset($aMatches[3]) ? $aMatches[3] : '');
             } else {
                 return '<script type="text/javascript" '.
                             'src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>'.
@@ -725,7 +725,7 @@ class Replace
             }
         }
 
-        return null;
+        return '';
     }
 
     public function addYoutubeVideo($videoUrl, $options = null)
@@ -963,7 +963,7 @@ class Replace
 
     private function dankeThread($text)
     {
-        if (ereg('\[DANKE](.*)\[\/DANKE\]', $text)) {
+        if (preg_match('/\[DANKE\](.*)\[\/DANKE\]/Uis', $text)) {
             return true;
         }
 
@@ -975,7 +975,7 @@ class Replace
         $text = stripslashes($text);
 
         if (preg_match('/\{ULISTE\}(.*)\{\/ULISTE\}/Usi', $text)) {
-            preg_replace('/\{ULISTE\}(.*)\{\/ULISTE\}/Usei', '$self->erstelleListe( $1)', $text);
+            preg_replace_callback('/\{ULISTE\}(.*)\{\/ULISTE\}/Usi', call_user_func($this, 'erstelleListe($1)'), $text);
         }
 
         $a_listen_punkte = preg_split('/\n|\r|\<br \/>/Ui', $text);
@@ -1003,7 +1003,7 @@ class Replace
         $bild_array = [];
 
         // suchen, ob von extern geöffnet werden soll
-        if (preg_match('/http://|http:\\\\|https://|https:\\\\|www./i', $text)) {
+        if (preg_match('/http:\/\/|http:\\\\|https:\/\/|https:\\\\|www\./i', $text)) {
             $bild_array = @getimagesize($text);
         //ansonsten aus lokalem ordner öffnen
         } else {
@@ -1082,7 +1082,7 @@ class Replace
 
     private function imageEinfuegenNeu($imagePathName, $params, $generateWithContainer = true)
     {
-        $name = null;
+        $name = '';
 
         $imagePathName = $this->ersetzeUmlaute($imagePathName);
         $imageContent = $this->generateImageContent($imagePathName, $params);

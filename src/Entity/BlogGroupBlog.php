@@ -55,7 +55,7 @@ class BlogGroupBlog
     private $ordering;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      *
      * @ORM\Column(name="created", type="datetime", nullable=false)
      */
@@ -72,7 +72,7 @@ class BlogGroupBlog
     private $creator;
 
     /**
-     * @var \DateTime|null
+     * @var \DateTimeInterface|null
      *
      * @ORM\Column(name="modified", type="datetime", nullable=true)
      */
