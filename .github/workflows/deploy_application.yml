@@ -1,0 +1,52 @@
+name: Deploy Application
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  create-deployment-artifacts:
+    name: Create deployment artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Configure PHP 7.4
+      uses: shivammathur/setup-php@master
+      with:
+        php-version: 7.4
+        extensions: imagick, swoole, zip, mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo
+
+    - uses: actions/checkout@v2
+
+    - name: Composer install
+      run: |
+        composer install --no-dev --no-interaction --prefer-dist
+
+    - name: Install assets
+      run: |
+        composer install assets:install public
+
+    - name: Install ckeditor
+      run: |
+        ckeditor:install --clear=drop
+
+    - name: provide secrets
+      env:
+        SYMFONY_DECRYPTION_SECRET: ${{ secrets.SYMFONY_DECRYPTION_SECRET }}
+      run: php bin/console secrets:decrypt-to-local --force --env=prod
+
+#    - name: Compile CSS and Javascript
+#      run: |
+#        npm install
+#        npm run prod
+
+    - name: Create deployment artifact
+      env:
+        GITHUB_SHA: ${{ github.sha }}
+      run: tar -czf "${GITHUB_SHA}".tar.gz --exclude=*.git --exclude=node_modules --exclude=tests --exclude=var --exclude=assets --exclude=.github --exclude=build *
+
+    - name: Store artifact for distribution
+      uses: actions/upload-artifact@v2
+      with:
+        name: app-build
+        path: ${{ github.sha }}.tar.gz
