@@ -59,7 +59,7 @@ jobs:
     - name: Create deployment artifact
       env:
         GITHUB_SHA: ${{ github.sha }}
-      run: tar -czf "${GITHUB_SHA}".tar.gz --exclude=*.git --exclude=node_modules --exclude=tests --exclude=var --exclude=assets --exclude=.github --exclude=./build --exclude=.docker --exclude=docker-compose.yml --exclude=phpcs.xml.dist --exclude=phpmd.xml --exclude=phpstan.neon --exclude=phpstan-tests.neon --exclude=phpunit.xml.dist *
+      run: tar -cvzf "${GITHUB_SHA}".tar.gz --exclude=*.git --exclude=node_modules --exclude=tests --exclude=var --exclude=assets --exclude=.github --exclude=./build --exclude=.docker --exclude=docker-compose.yml --exclude=phpcs.xml.dist --exclude=phpmd.xml --exclude=phpstan.neon --exclude=phpstan-tests.neon --exclude=phpunit.xml.dist *
 
     - name: Store artifact for distribution
       uses: actions/upload-artifact@v2
