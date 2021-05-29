@@ -34,7 +34,7 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-interaction
+      run: composer install --no-interaction --prefer-dist --no-progress
 
     - name: provide secrets
       env:
