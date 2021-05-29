@@ -24,11 +24,27 @@ jobs:
 
     - name: Install assets
       run: |
-        composer install assets:install public
+        bin/console assets:install public
 
     - name: Install ckeditor
       run: |
-        ckeditor:install --clear=drop
+        bin/console ckeditor:install --clear=drop
+
+    - name: Cache node_modules
+      uses: actions/cache@v1
+      id: yarn-cache-node-modules
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-yarn-cache-node-modules-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-cache-node-modules-
+
+    - name: Yarn install
+      if: steps.yarn-cache-node-modules.outputs.cache-hit != 'true'
+      run: yarn install
+
+    - name: Yarn build
+      run: yarn run encore production
 
     - name: provide secrets
       env:
