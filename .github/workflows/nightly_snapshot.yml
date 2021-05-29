@@ -1,4 +1,4 @@
-name: Nightly Snapshot
+name: "Nightly Snapshot"
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   nightly-snapshot:
-    name: Release
+    name: "Nightly Snapshot"
     runs-on: ubuntu-latest
     steps:
       - name: Create tag
