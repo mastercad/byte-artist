@@ -4,10 +4,8 @@ namespace App\Service\Security;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
-use KnpU\OAuth2ClientBundle\Client\Provider\GoogleClient;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
 use League\OAuth2\Client\Provider\GoogleUser;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -31,9 +29,6 @@ class GoogleAuthenticator extends SocialAuthenticator
 
     /**
      * GoogleAuthenticator constructor.
-     *
-     * @param ClientRegistry $clientRegistry
-     * @param EntityManagerInterface   $entityManager
      */
     public function __construct(ClientRegistry $clientRegistry, EntityManagerInterface $entityManager)
     {

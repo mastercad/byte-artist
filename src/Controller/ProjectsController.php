@@ -352,8 +352,6 @@ class ProjectsController extends AbstractController
     /**
      * Consider tags for given Projects.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param Projects $project
      * @param array $projectTags
      *
      * @return Projects
