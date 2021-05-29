@@ -355,7 +355,7 @@ class ProjectsController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @param Projects $project
      * @param array $projectTags
-     * 
+     *
      * @return Projects
      */
     private function considerTags(EntityManagerInterface $entityManager, Projects $project, $projectTags)
