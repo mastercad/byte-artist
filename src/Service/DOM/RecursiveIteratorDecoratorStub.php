@@ -4,8 +4,6 @@ namespace App\Service\DOM;
 
 /**
  * Decorator Stub class for a RecursiveIterator.
- *
- * @TODO woz
  */
 abstract class RecursiveIteratorDecoratorStub extends \IteratorIterator implements \RecursiveIterator
 {
@@ -21,6 +19,6 @@ abstract class RecursiveIteratorDecoratorStub extends \IteratorIterator implemen
 
     public function getChildren()
     {
-        return new static($this->getInnerIterator()->getChildren());
+        return new self($this->getInnerIterator()->getChildren());
     }
 }

@@ -52,7 +52,6 @@ class BlogVoter extends Voter
             case 'show':
                 // visible for all, also unauth users.
                 return true;
-                break;
         }
 
         return false;

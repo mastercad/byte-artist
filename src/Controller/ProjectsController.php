@@ -220,7 +220,7 @@ class ProjectsController extends AbstractController
     /**
      * @Route("/project/save", name="project_save", methods={"POST"})
      *
-     * @return void
+     * @return JsonResponse
      */
     public function saveAction(Request $request, EntityManagerInterface $entityManager, LinkFactory $seoLinkFactory)
     {
@@ -272,12 +272,12 @@ class ProjectsController extends AbstractController
 
         $seoLinkGenerator->extendWithSeoLink($project);
         $entityManager->persist($project);
-        $entityManager->flush($project);
+        $entityManager->flush();
 
         $this->handleUploadFiles($project);
         $this->clearUploadFolder();
 
-        $entityManager->flush($project);
+        $entityManager->flush();
 
         $project = $this->considerTags($entityManager, $project, $currentProjectTagsRequest);
 
@@ -287,7 +287,7 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @return void
+     * @return $this
      */
     private function handleUploadFiles(Projects $project)
     {
@@ -330,6 +330,11 @@ class ProjectsController extends AbstractController
         return $this;
     }
 
+    /**
+     * Clear upload folder.
+     *
+     * @return $this
+     */
     private function clearUploadFolder()
     {
         $folderPath = __DIR__.'/../../public/images/upload/'.$this->getUser()->getId().'/projects';
@@ -344,7 +349,16 @@ class ProjectsController extends AbstractController
         return $this;
     }
 
-    private function considerTags(EntityManagerInterface $entityManager, $project, $projectTags)
+    /**
+     * Consider tags for given Projects.
+     *
+     * @param EntityManagerInterface $entityManager
+     * @param Projects $project
+     * @param array $projectTags
+     * 
+     * @return Projects
+     */
+    private function considerTags(EntityManagerInterface $entityManager, Projects $project, $projectTags)
     {
         $currentProjectTags = $this->getDoctrine()->getRepository(ProjectTags::class)->findBy(['project' => $project]);
         $oldProjectTags = [];
@@ -487,7 +501,7 @@ class ProjectsController extends AbstractController
     /**
      * @Route("/projects/upload/delete", name="app_project_delete_upload")
      *
-     * @return void
+     * @return JsonResponse
      */
     public function clearUploadFolderAction()
     {

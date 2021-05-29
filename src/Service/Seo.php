@@ -123,7 +123,7 @@ class Seo
             $columnName = $this->getTableFieldName();
         }
 
-        if (!strlen(trim($str_link_name))) {
+        if (!strlen(trim($linkName))) {
             // echo "Habe nicht alle nötigen Parameter! Breche ab!<br />";
             return false;
         }
@@ -132,7 +132,7 @@ class Seo
         $str_seo_name = $str_base_seo_name;
 
         /** @var EntityRepository $entityRepository */
-        if ($entityRepository
+        if ($entityRepository instanceof EntityRepository
             && $columnName
         ) {
             $i_max_count = 100;
@@ -151,7 +151,7 @@ class Seo
                     || $row[$this->getTableFieldIdName()] == $this->getTableFieldId()
                 ) {
                     break;
-                } elseif ($row
+                } elseif (is_array($row)
                     && $row[$this->getTableFieldIdName()] == $this->getTableFieldId()
                 ) {
                     break;

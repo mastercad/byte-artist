@@ -2,6 +2,8 @@
 
 namespace App\Service\DOM;
 
+use DOMNode;
+
 class NodesArrayIterator implements \Iterator
 {
     /**
@@ -46,7 +48,7 @@ class NodesArrayIterator implements \Iterator
      */
     public function key()
     {
-        $this->virtual;
+        return $this->virtual;
     }
 
     /**

@@ -37,8 +37,8 @@ class ClassNameTest extends TestCase
   /**
    * @dataProvider extractClassNameFromFqdnDataProvider
    *
-   * @param [type] $className
-   * @param [type] $expectation
+   * @param string $className
+   * @param string $expectation
    * @return void
    */
   public function testExtractClassNameFromFqdn($className, $expectation)

@@ -107,7 +107,7 @@ class BlogController extends AbstractController
             && $form->isValid()
         ) {
             $entityManager->persist($blog);
-            $entityManager->flush($blog);
+            $entityManager->flush();
 
             $blog = $this->considerTags($entityManager, $blog, $currentBlogTagsRequest);
         }

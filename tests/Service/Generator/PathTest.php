@@ -38,7 +38,7 @@ class PathTest extends TestCase
 
   public function testGeneratePublicImagesPath()
   {
-    /** @var ClassName */
+    /** @var ClassName|MockObject */
     $classNameExtractorMock = $this->createMock(ClassName::class);
     $classNameExtractorMock->method('extractClassName')->willReturn('Projects');
 

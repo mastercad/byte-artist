@@ -56,9 +56,10 @@ class StringsTest extends TestCase
   /**
    * @dataProvider convertFromCamelCaseProvider
    *
-   * @param [type] $content
-   * @param [type] $separator
-   * @param [type] $expectation
+   * @param string $content
+   * @param string $separator
+   * @param string $expectation
+   *
    * @return void
    */
   public function testConvertFromCamelCase($content, $separator, $expectation)
@@ -96,9 +97,9 @@ class StringsTest extends TestCase
   /**
    * @dataProvider makeStringLinkSaveProvider
    *
-   * @param [type] $content
-   * @param [type] $expectation
-   * 
+   * @param string $content
+   * @param string $expectation
+   *
    * @return void
    */
   public function testMakeStringLinkSave($content, $expectation)

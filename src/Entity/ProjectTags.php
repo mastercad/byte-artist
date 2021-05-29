@@ -31,14 +31,14 @@ class ProjectTags
     private $id;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      *
      * @ORM\Column(name="created", type="datetime", nullable=false)
      */
     private $created;
 
     /**
-     * @var \DateTime|null
+     * @var \DateTimeInterface|null
      *
      * @ORM\Column(name="modified", type="datetime", nullable=true)
      */

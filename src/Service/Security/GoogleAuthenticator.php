@@ -6,6 +6,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
 use KnpU\OAuth2ClientBundle\Client\Provider\GoogleClient;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
 use League\OAuth2\Client\Provider\GoogleUser;
@@ -31,8 +32,8 @@ class GoogleAuthenticator extends SocialAuthenticator
     /**
      * GoogleAuthenticator constructor.
      *
-     * @param EntityManagerInterface $em
-     * @param UserManagerInterface   $userManager
+     * @param ClientRegistry $clientRegistry
+     * @param EntityManagerInterface   $entityManager
      */
     public function __construct(ClientRegistry $clientRegistry, EntityManagerInterface $entityManager)
     {
@@ -73,7 +74,7 @@ class GoogleAuthenticator extends SocialAuthenticator
         $email = $googleUser->getEmail();
 
         // 1) have they logged in with Google before? Easy!
-        $existingUser = $this->em->getRepository(User::class)
+        $existingUser = $this->entityManager->getRepository(User::class)
             ->findOneBy(['googleId' => $googleUser->getId()]);
 
         if ($existingUser) {
@@ -88,7 +89,7 @@ class GoogleAuthenticator extends SocialAuthenticator
                 $user = new User();
                 $user->setEmail($email);
                 $user->setUsername('your chosen username');
-                $user->setPlainPassword('your chosen password');
+                $user->setPassword('your chosen password');
             }
         }
 
@@ -103,7 +104,7 @@ class GoogleAuthenticator extends SocialAuthenticator
     }
 
     /**
-     * @return GoogleClient
+     * @return OAuth2ClientInterface
      */
     private function getGoogleClient()
     {
