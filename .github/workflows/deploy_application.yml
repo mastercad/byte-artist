@@ -133,14 +133,14 @@ jobs:
         GITHUB_SHA: ${{ github.sha }}
         RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
         ACTIVE_RELEASE_PATH: ${{ matrix.server.path }}/current
-        STORAGE_PATH: ${{ matrix.server.path }}/storage
+#        STORAGE_PATH: ${{ matrix.server.path }}/storage
         BASE_PATH: ${{ matrix.server.path }}
       with:
         host: ${{ matrix.server.ip }}
         username: ${{ matrix.server.username }}
         key: ${{ secrets.SSH_KEY }}
         port: ${{ matrix.server.port }}
-        envs: envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,STORAGE_PATH,BASE_PATH
+        envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,BASE_PATH
         script: |
           ${{ matrix.server.beforeHooks }}
 
