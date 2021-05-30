@@ -219,7 +219,7 @@ jobs:
           password: ${{ secrets.WEB_USER_PASSWORD }}
 #          key: ${{ secrets.SSH_KEY }}
           port: ${{ matrix.server.port }}
-          envs: RELEASES_PATH
+          envs: RELEASE_PATH,ARTIFACTS_PATH
           script: |
-            cd $RELEASES_PATH && ls -t -1 | tail -n +6 | xargs rm -rf
-            cd $ARTIFACTS_PATH && ls -t -1 | tail -n +6 | xargs rm -rf
+            cd ${{ matrix.server.path }}/releases && ls -t -1 | tail -n +6 | xargs rm -rf
+            cd ${{ matrix.server.path }}/artifacts && ls -t -1 | tail -n +6 | xargs rm -rf
