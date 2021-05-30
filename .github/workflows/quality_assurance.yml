@@ -115,6 +115,56 @@ jobs:
       # uses: chindit/actions-phpunit-symfony@c02bff1f84d757d030c15e2985be601cdba3039e
       uses: chindit/actions-phpunit-symfony@1.0.0
 
+#    - name: Test Reporter
+#      uses: dorny/test-reporter@v1.4.3
+#      with:
+#        # Name or regex of artifact containing test results
+##        artifact: # optional
+#        # Name of the check run
+#        name: phpunit test results
+#        # Coma separated list of paths to test results
+#
+##        Supports wildcards via [fast-glob](https://github.com/mrmlnc/fast-glob)
+##        All matched result files must be of same format
+#
+#        path: ./build/reports/junit.xml
+#          # Format of test results. Supported options:
+##          - dart-json
+##          - dotnet-trx
+##          - flutter-json
+##          - java-junit
+##          - jest-junit
+##          - mocha-json
+#
+#        reporter: all
+#          # Limits which test suites are listed. Supported options:
+##          - all
+##          - only-failed
+#
+#        list-suites: all # default is all
+#          # Limits which test cases are listed. Supported options:
+##        - all
+##        - only-failed
+##        - none
+#
+#        list-tests: all # default is all
+#        # Limits number of created annotations with error message and stack trace captured during test execution.
+#        # Must be less or equal to 50.
+#        max-annotations: 10 # default is 10
+#        # Set this action as failed if test report contain any failed test
+#        fail-on-error: true # default is true
+#        # Relative path under $GITHUB_WORKSPACE where the repository was checked out
+#        working-directory: . # optional
+#        # GitHub Access Token
+#        token: ${{ github.token }} # optional, default is ${{ github.token }}
+
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        files: build/reports/*.xml
+        github_token: ${{ github.token }}
+
     - name: SonarCloud Scan
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

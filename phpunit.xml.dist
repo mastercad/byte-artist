@@ -5,6 +5,16 @@
          xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.1/phpunit.xsd"
          backupGlobals="false"
          colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         forceCoversAnnotation="false"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="false"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         stopOnRisky="false"
          bootstrap="tests/bootstrap.php"
 >
     <php>
@@ -36,10 +46,20 @@
     </php>
 
     <testsuites>
-        <testsuite name="Translation Tool (XLIFF) Test Suite">
+        <testsuite name="Byte Artist Homepage Test Suite">
             <directory>tests/</directory>
         </testsuite>
     </testsuites>
+
+    <logging>
+        <log type="coverage-html" target="build/reports/coverage" lowUpperBound="35" highLowerBound="70"/>
+        <log type="coverage-clover" target="build/reports/coverage-clover.xml"/>
+        <log type="coverage-php" target="build/reports/coverage.serialized"/>
+<!--        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/> -->
+        <log type="junit" target="build/reports/juinit.xml"/>
+        <log type="testdox-html" target="build/reports/testdox.html"/>
+        <log type="testdox-text" target="build/reports/testdox.txt"/>
+    </logging>
 
     <filter>
         <whitelist>

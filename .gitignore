@@ -3,6 +3,7 @@ tmp-phpqa
 /.vscode/
 .env.local
 .env.test
+/build/coverage
 /public/images/content/dynamisch
 
 ###> symfony/framework-bundle ###
