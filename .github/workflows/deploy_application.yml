@@ -99,7 +99,6 @@ jobs:
           port: ${{ matrix.server.port }}
           source: ${{ github.sha }}.tar.gz
           target: ${{ matrix.server.path }}/artifacts
-          rm: true
           overwrite: true
 
       - name: Extract archive and create directories
@@ -222,4 +221,4 @@ jobs:
           envs: RELEASES_PATH
           script: |
             cd $RELEASES_PATH && ls -t -1 | tail -n +6 | xargs rm -rf
-            cd $ARTIFACTS_PATH && ls -t -1 | tail -n +6 | xargs rm -rf
+            rm -rf $ARTIFACTS_PATH
