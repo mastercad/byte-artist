@@ -6,6 +6,6 @@
     "port": "22",
     "beforeHooks": "",
     "afterHooks": "",
-    "path": ""
+    "path": "/var/www/vhosts/byte-artist.de"
   }
 ]
