@@ -90,30 +90,30 @@ jobs:
         with:
           name: app-build
 
-#      - name: Upload
-#        uses: appleboy/scp-action@master
-#        with:
-#          host: ${{ matrix.server.ip }}
-#          username: ${{ matrix.server.username }}
-#          password: ${{ secrets.WEB_USER_PASSWORD }}
-##          key: ${{ secrets.SSH_KEY }}
-#          port: ${{ matrix.server.port }}
-#          source: ${{ github.sha }}.tar.gz
-#          target: ${{ matrix.server.path }}/artifacts
-#          debug: true
-#          rm: true
-#          overwrite: true
-
-      - name: Publish
-        uses: nogsantos/scp-deploy@master
+      - name: Upload
+        uses: appleboy/scp-action@master
         with:
-          src: ${{ github.sha }}.tar.gz
           host: ${{ matrix.server.ip }}
-          remote: ${{ matrix.server.path }}/artifacts
-          port: ${{ matrix.server.port }}
-          user: ${{ matrix.server.username }}
-#          key: ${{ secrets.SSH_KEY }}
+          username: ${{ matrix.server.username }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
+#          key: ${{ secrets.SSH_KEY }}
+          port: ${{ matrix.server.port }}
+          source: ${{ github.sha }}.tar.gz
+          target: ${{ matrix.server.path }}/artifacts
+          debug: true
+          rm: true
+          overwrite: true
+
+#      - name: Publish
+#        uses: nogsantos/scp-deploy@master
+#        with:
+#          src: ${{ github.sha }}.tar.gz
+#          host: ${{ matrix.server.ip }}
+#          remote: ${{ matrix.server.path }}/artifacts
+#          port: ${{ matrix.server.port }}
+#          user: ${{ matrix.server.username }}
+##          key: ${{ secrets.SSH_KEY }}
+#          password: ${{ secrets.WEB_USER_PASSWORD }}
 
       - name: Extract archive and create directories
         uses: appleboy/ssh-action@master
