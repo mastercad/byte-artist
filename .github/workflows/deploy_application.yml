@@ -99,6 +99,7 @@ jobs:
           port: ${{ matrix.server.port }}
           source: ${{ github.sha }}.tar.gz
           target: ${{ matrix.server.path }}/artifacts
+          rm: true
           overwrite: true
 
       - name: Extract archive and create directories
