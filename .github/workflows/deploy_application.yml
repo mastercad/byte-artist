@@ -99,19 +99,8 @@ jobs:
 #          key: ${{ secrets.SSH_KEY }}
           port: ${{ matrix.server.port }}
           source: ${{ github.sha }}.tar.gz
-          target: artifacts
+          target: ${{ matrix.server.path }}/artifacts
           overwrite: true
-
-#      - name: Publish
-#        uses: nogsantos/scp-deploy@master
-#        with:
-#          src: ${{ github.sha }}.tar.gz
-#          host: ${{ matrix.server.ip }}
-#          remote: ${{ matrix.server.path }}/artifacts
-#          port: ${{ matrix.server.port }}
-#          user: ${{ matrix.server.username }}
-##          key: ${{ secrets.SSH_KEY }}
-#          password: ${{ secrets.WEB_USER_PASSWORD }}
 
       - name: Extract archive and create directories
         uses: appleboy/ssh-action@master
