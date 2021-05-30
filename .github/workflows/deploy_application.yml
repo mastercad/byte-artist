@@ -99,9 +99,7 @@ jobs:
 #          key: ${{ secrets.SSH_KEY }}
           port: ${{ matrix.server.port }}
           source: ${{ github.sha }}.tar.gz
-          target: ${{ matrix.server.path }}/artifacts
-          debug: true
-          rm: true
+          target: artifacts
           overwrite: true
 
 #      - name: Publish
