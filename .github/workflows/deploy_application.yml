@@ -47,10 +47,10 @@ jobs:
     - name: Yarn build
       run: yarn run encore production
 
-    - name: provide secrets
-      env:
-        SYMFONY_DECRYPTION_SECRET: ${{ secrets.SYMFONY_DECRYPTION_SECRET }}
-      run: php bin/console secrets:decrypt-to-local --force --env=prod
+#    - name: provide secrets
+#      env:
+#        SYMFONY_DECRYPTION_SECRET: ${{ secrets.SYMFONY_DECRYPTION_SECRET }}
+#      run: php bin/console secrets:decrypt-to-local --force --env=prod
 
 #    - name: Compile CSS and Javascript
 #      run: |
@@ -106,6 +106,7 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           GITHUB_SHA: ${{ github.sha }}
+          SYMFONY_DECRYPTION_SECRET: ${{ secrets.SYMFONY_DECRYPTION_SECRET }}
         with:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
@@ -116,6 +117,8 @@ jobs:
           script: |
             mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
             tar xzf ${{ matrix.server.path }}/artifacts/${GITHUB_SHA}.tar.gz -C "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
+            "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" secrets:decrypt-to-local --force --env=prod
+
 #            rm -rf ${{ matrix.server.path }}/releases/${GITHUB_SHA}/storage
 
 #            mkdir -p ${{ matrix.server.path }}/storage/{app,public,framework,logs}
