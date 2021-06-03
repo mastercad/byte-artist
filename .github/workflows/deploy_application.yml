@@ -121,8 +121,8 @@ jobs:
             rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var/log"
             rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content/dynamisch"
             rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/upload"
-            mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content
-            mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var
+            mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content"
+            mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var"
 
 #            rm -rf ${{ matrix.server.path }}/releases/${GITHUB_SHA}/storage
 
