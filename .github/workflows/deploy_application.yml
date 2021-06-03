@@ -113,7 +113,7 @@ jobs:
 #          key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA
+          envs: GITHUB_SHA,SYMFONY_DECRYPTION_SECRET
           script: |
             mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
             tar xzf ${{ matrix.server.path }}/artifacts/${GITHUB_SHA}.tar.gz -C "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
