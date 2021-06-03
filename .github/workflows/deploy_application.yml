@@ -118,6 +118,9 @@ jobs:
             tar xzf ${{ matrix.server.path }}/artifacts/${GITHUB_SHA}.tar.gz -C "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
             chmod +x "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console"
             export SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }} && "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" secrets:decrypt-to-local --force --env=prod
+            rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var/log
+            rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content/dynamisch
+            rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/upload
 
 #            rm -rf ${{ matrix.server.path }}/releases/${GITHUB_SHA}/storage
 
@@ -176,6 +179,9 @@ jobs:
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,BASE_PATH,ENV_PATH
           script: |
+            ln -s -n -f $ACTIVE_RELEASE_PATH/var/log/ $RELEASE_PATH/var/log
+            ln -s -n -f $ACTIVE_RELEASE_PATH/public/images/content/dynamisch/ $RELEASE_PATH/public/images/content/dynamisch
+            ln -s -n -f $ACTIVE_RELEASE_PATH/public/upload/ $RELEASE_PATH/public/upload
             ln -s -n -f $RELEASE_PATH $ACTIVE_RELEASE_PATH
 
   run-after-hooks:
