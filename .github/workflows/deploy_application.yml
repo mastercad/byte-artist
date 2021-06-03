@@ -118,7 +118,7 @@ jobs:
             mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
             tar xzf ${{ matrix.server.path }}/artifacts/${GITHUB_SHA}.tar.gz -C "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
             chmod +x "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console"
-            env && "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" secrets:decrypt-to-local --force --env=prod
+            export SYMFONY_DECRYPTION_SECRET=${{ SYMFONY_DECRYPTION_SECRET }} && "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" secrets:decrypt-to-local --force --env=prod
 
 #            rm -rf ${{ matrix.server.path }}/releases/${GITHUB_SHA}/storage
 
