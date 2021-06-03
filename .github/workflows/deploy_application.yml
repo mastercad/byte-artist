@@ -179,9 +179,9 @@ jobs:
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,BASE_PATH,ENV_PATH
           script: |
-            ln -s -n -f $ACTIVE_RELEASE_PATH/var/log/ $RELEASE_PATH/var/log
-            ln -s -n -f $ACTIVE_RELEASE_PATH/public/images/content/dynamisch/ $RELEASE_PATH/public/images/content/dynamisch
-            ln -s -n -f $ACTIVE_RELEASE_PATH/public/upload/ $RELEASE_PATH/public/upload
+            ln -s -n -f $BASE_PATH/var/log/ $ACTIVE_RELEASE_PATH/var/log
+            ln -s -n -f $BASE_PATH/public/images/content/dynamisch/ $ACTIVE_RELEASE_PATH/public/images/content/dynamisch
+            ln -s -n -f $BASE_PATH/public/upload/ $ACTIVE_RELEASE_PATH/public/upload
             ln -s -n -f $RELEASE_PATH $ACTIVE_RELEASE_PATH
 
   run-after-hooks:
