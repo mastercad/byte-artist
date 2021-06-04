@@ -27,7 +27,7 @@
                             Der byte-artist ist meine Hauptseite und damit mein privater Webauftritt. <br />
                             Auf dieser Seite stelle ich meine Projekte und deren Status vor. Außerdem enthält diese Seite einen Blog, auf dem ich
                             immer wieder aktuelle Themen, Projekte, Erfahrungen und Gedanken festhalten werde. In Planung sind ebenfalls Einblicke in
-                            Unternehmungen wie Wanderungen und Ausflüge. 
+                            Unternehmungen wie Wanderungen und Ausflüge.
                         </p>
                         <h4>
                             Merkmale:
@@ -105,12 +105,12 @@
             Projekte
         </h3>
     </div>
-    
+
     <div class="card-deck">
         {% for project in projects %}
         <div class="card shadow-sm">
-            <a href="/project/{{ project.seoLink}}">
-                <img class="card-img-top" src="/images/content/dynamisch/projects/{{ project.id}}/{{ project.previewPicture }}" alt="Card image cap">
+            <a href="/project/{{ project.seoLink }}">
+                <img class="card-img-top" src="{{ project.previewPicture }}" alt="Card image cap">
             </a>
             <article class="card-body d-flex flex-column">
                 <h4 class="card-title">
@@ -126,9 +126,9 @@
             <div class="card-footer">
                 <small class="text-muted">
                     {% if project.modified %}
-                        last update on {{ project.modified | date("d.m.Y H:i:s", "Europe/Berlin") }}
+                        last update on {{ project.modified|date("d.m.Y H:i:s", "Europe/Berlin") }}
                     {% else %}
-                        created on {{ project.created | date("d.m.Y H:i:s", "Europe/Berlin") }}
+                        created on {{ project.created|date("d.m.Y H:i:s", "Europe/Berlin") }}
                     {% endif %}
                 </small>
             </div>
@@ -147,8 +147,8 @@
     <div class="card-deck">
         {% for blog in blogs %}
         <div class="card shadow-sm">
-            <a href="/blog/{{ blog.seoLink}}">
-                <img class="card-img-top" src="/images/content/dynamisch/blogs/{{ blog.id }}/{{ blog.previewPicture }}" alt="Card image cap">
+            <a href="/blog/{{ blog.seoLink }}">
+                <img class="card-img-top" src="{{ blog.previewPicture }}" alt="Card image cap">
             </a>
             <article class="card-body d-flex flex-column">
                 <h4 class="card-title">
@@ -157,16 +157,16 @@
                 <p class="card-text">
                     {{ blog.shortDescription }}
                 </p>
-                <a href="/blog/{{ blog.seoLink}}" class="btn btn-primary waves-effect waves-light mt-auto">
+                <a href="/blog/{{ blog.seoLink }}" class="btn btn-primary waves-effect waves-light mt-auto">
                     zum Blog Beitrag
                 </a>
             </article>
             <div class="card-footer">
                 <small class="text-muted">
                     {% if blog.modified %}
-                        last update on {{ blog.modified | date("d.m.Y H:i:s", "Europe/Berlin") }}
+                        last update on {{ blog.modified|date("d.m.Y H:i:s", "Europe/Berlin") }}
                     {% else %}
-                        created on {{ blog.created | date("d.m.Y H:i:s", "Europe/Berlin") }}
+                        created on {{ blog.created|date("d.m.Y H:i:s", "Europe/Berlin") }}
                     {% endif %}</small>
             </div>
         </div>
