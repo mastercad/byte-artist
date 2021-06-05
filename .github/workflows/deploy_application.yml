@@ -129,21 +129,6 @@ jobs:
             mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content"
             mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var"
 
-      - name: Provide secrets
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-#          key: ${{ secrets.SSH_KEY }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA
-          script: |
-            chmod +x "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console"
-            export SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }} && "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" secrets:decrypt-to-local --force --env=prod
-
       - name: Composer install
         run: composer install --no-dev --no-interaction --prefer-dist --no-progress
 
@@ -168,6 +153,21 @@ jobs:
 
       - name: Yarn build
         run: yarn run encore production
+
+      - name: Provide secrets
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+#          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.WEB_USER_PASSWORD }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA
+          script: |
+            chmod +x "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console"
+            export SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }} && "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" secrets:decrypt-to-local --force --env=prod
 
   run-before-hooks:
     name: "${{ matrix.server.name }}: Before hook"
