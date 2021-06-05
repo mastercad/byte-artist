@@ -141,7 +141,7 @@ jobs:
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
           script: |
-            composer install --no-dev --no-interaction --prefer-dist --no-progress
+            cd "${{ matrix.server.path }}/releases/${GITHUB_SHA}" && composer install --no-dev --no-interaction --prefer-dist --no-progress
 
       - name: Install assets
         uses: appleboy/scp-action@master
@@ -194,7 +194,7 @@ jobs:
           envs: GITHUB_SHA
           if: steps.yarn-cache-node-modules.outputs.cache-hit != 'true'
           script: |
-            yarn install
+            cd "${{ matrix.server.path }}/releases/${GITHUB_SHA}" && yarn install
 
       - name: Yarn build
         uses: appleboy/scp-action@master
@@ -207,7 +207,7 @@ jobs:
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
-            yarn run encore production
+            cd "${{ matrix.server.path }}/releases/${GITHUB_SHA}" && yarn run encore production
 
       - name: Provide secrets
         uses: appleboy/ssh-action@master
