@@ -28,6 +28,7 @@
         "symfony/monolog-bundle": "^3.4",
         "symfony/orm-pack": "^1.0",
         "symfony/requirements-checker": "^2.0",
+        "symfony/runtime": "^5.2",
         "symfony/security-bundle": "^5.2",
         "symfony/translation": "^5.2",
         "symfony/twig-bundle": "^5.2",
