@@ -11,24 +11,24 @@ use App\Service\DOM\TagMerge;
 class Extender
 {
     /**
-     * string.
+     * @var string
      */
     public const REGEX = 'regex';
 
     /**
-     * string.
+     * @var string
      */
     public const REPLACE_FUNCTION = 'replaceFunction';
 
     /**
-     * @var array contains all allowed tags for replacement.
+     * @var array contains all allowed tags for replacement
      */
     private array $aAllowedTags = [
         '[VIDEO]' => ['[VIDEO]', '[/VIDEO]'],
     ];
 
     /**
-     * @var array map of tag and regex.
+     * @var array map of tag and regex
      */
     private array $aMapTagToFunction = [
         '[VIDEO]' => [
