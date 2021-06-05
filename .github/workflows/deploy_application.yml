@@ -22,31 +22,6 @@ jobs:
 
     - uses: actions/checkout@v2
 
-    - name: Composer install
-      run: composer install --no-dev --no-interaction --prefer-dist --no-progress
-
-    - name: Install assets
-      run: php bin/console assets:install public
-
-    - name: Install ckeditor
-      run: php bin/console ckeditor:install public/build/ckeditor --clear=drop --release=custom --custom-build-id=0097efeeee383ee7fcc427e86e6f0229
-
-    - name: Cache node_modules
-      uses: actions/cache@v1
-      id: yarn-cache-node-modules
-      with:
-        path: node_modules
-        key: ${{ runner.os }}-yarn-cache-node-modules-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-cache-node-modules-
-
-    - name: Yarn install
-      if: steps.yarn-cache-node-modules.outputs.cache-hit != 'true'
-      run: yarn install
-
-    - name: Yarn build
-      run: yarn run encore production
-
 #    - name: provide secrets
 #      env:
 #        SYMFONY_DECRYPTION_SECRET: ${{ secrets.SYMFONY_DECRYPTION_SECRET }}
@@ -116,19 +91,82 @@ jobs:
           script: |
             mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
             tar xzf ${{ matrix.server.path }}/artifacts/${GITHUB_SHA}.tar.gz -C "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
-            chmod +x "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console"
-            export SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }} && "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" secrets:decrypt-to-local --force --env=prod
-            rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var/log"
-            rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content/dynamisch"
-            rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/upload"
-            mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content"
-            mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var"
 
 #            rm -rf ${{ matrix.server.path }}/releases/${GITHUB_SHA}/storage
 
 #            mkdir -p ${{ matrix.server.path }}/storage/{app,public,framework,logs}
 #            mkdir -p ${{ matrix.server.path }}/storage/framework/{cache,sessions,testing,views}
 #            chmod -R 0777 ${{ matrix.server.path }}/storage
+
+      - name: Cleanup directories
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+#          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.WEB_USER_PASSWORD }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA
+          script: |
+            rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var/log"
+            rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content/dynamisch"
+            rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/upload"
+
+      - name: Create directories
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+#          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.WEB_USER_PASSWORD }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA
+          script: |
+            mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content"
+            mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var"
+
+      - name: Provide secrets
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+#          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.WEB_USER_PASSWORD }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA
+          script: |
+            chmod +x "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console"
+            export SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }} && "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" secrets:decrypt-to-local --force --env=prod
+
+      - name: Composer install
+
+      - name: Install assets
+        run: php bin/console assets:install public
+
+      - name: Install ckeditor
+        run: php bin/console ckeditor:install public/build/ckeditor --clear=drop --release=custom --custom-build-id=0097efeeee383ee7fcc427e86e6f0229
+
+      - name: Cache node_modules
+        uses: actions/cache@v1
+        id: yarn-cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-yarn-cache-node-modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-cache-node-modules-
+
+      - name: Yarn install
+        if: steps.yarn-cache-node-modules.outputs.cache-hit != 'true'
+        run: yarn install
+
+      - name: Yarn build
+        run: yarn run encore production
 
   run-before-hooks:
     name: "${{ matrix.server.name }}: Before hook"

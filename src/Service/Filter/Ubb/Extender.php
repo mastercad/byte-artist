@@ -5,8 +5,8 @@ namespace App\Service\Filter\Ubb;
 use App\Service\DOM\TagMerge;
 
 /**
- * Klasse erweitert übergebene informationen in ubb tags um statische inhalte, wie z.b. die namen von YT Videos
- * zum tag der speicherung oder die namen von mitgliedern beim speichern des textes.
+ * Class extends given Information in ubb tags with static content, for example name of an YouTube Video or
+ * name of user for saved text.
  */
 class Extender
 {
@@ -18,26 +18,28 @@ class Extender
     /**
      * string.
      */
-    public const REPLACE_FUNCTION = 'replace_function';
+    public const REPLACE_FUNCTION = 'replaceFunction';
 
     /**
-     * @var array enhält alle erlaubten tags, die replaced werden sollen
+     * @var array contains all allowed tags for replacement.
      */
-    protected $aAllowdTags = [
+    private array $aAllowedTags = [
         '[VIDEO]' => ['[VIDEO]', '[/VIDEO]'],
     ];
 
     /**
-     * @var array enthält das Tag und dazu den regex sowie den funktionsaufruf
+     * @var array map of tag and regex.
      */
-    protected $aMapTagToFunction = [
+    private array $aMapTagToFunction = [
         '[VIDEO]' => [
-//            self::REGEX => '/(\[VIDEO\])(.*?)(\[\/VIDEO\])/i',
             self::REGEX => '/(\[(VIDEO:|VIDEO=)([^\]]*)\]|\[VIDEO\])([^(\[\\)]*)\[\/(VIDEO)\]/i',
             self::REPLACE_FUNCTION => 'addVideoInformation',
         ],
     ];
 
+    /**
+     * CTOR.
+     */
     public function __construct()
     {
         ini_set('display_errors', '1');
@@ -46,13 +48,15 @@ class Extender
     }
 
     /**
+     * Main entry function to replace given context.
+     *
      * @var string
      *
      * @return string
      */
     public function filter($sText)
     {
-        foreach ($this->aAllowdTags as $sAllowedTag => $params) {
+        foreach ($this->aAllowedTags as $sAllowedTag => $params) {
             if (array_key_exists($sAllowedTag, $this->aMapTagToFunction)) {
                 $aCurrentMap = $this->aMapTagToFunction[$sAllowedTag];
 
@@ -78,30 +82,31 @@ class Extender
      *
      * @return string
      */
-    public function addVideoInformation($matches)
+    private function addVideoInformation($matches)
     {
-        if (true === is_array($matches) && array_key_exists(4, $matches)
-        ) {
-            if (preg_match('/^http[s]{0,1}:\/\/www\.youtu.*/i', $matches[4])
+        if (true === is_array($matches)
+            && array_key_exists(4, $matches)
+            && (preg_match('/^http[s]{0,1}:\/\/www\.youtu.*/i', $matches[4])
                 || preg_match('/^http[s]{0,1}:\/\/youtu.*/i', $matches[4])
-            ) {
-                $tagName = $matches[5].':';
-                $name = $this->retrieveYoutubeVideoInformation($this->parseYoutubeVideoUrl($matches[4]));
-                $options = [];
-                // options already exists
-                if (array_key_exists(2, $matches)
-                    && 0 < strlen(trim($matches[2]))
-                    && array_key_exists(3, $matches)
-                    && 0 < strlen(trim($matches[3]))
-                ) {
-                    $tagName = $matches[2];
-                    $options = $this->parseOptions($matches[3]);
-                }
-                $options['name'] = $name;
-                $optionsString = $this->generateOptionsString($options);
+            )
+        ) {
+            $tagName = $matches[5].':';
+            $name = $this->retrieveYouTubeVideoInformation($this->parseYouTubeVideoUrl($matches[4]));
+            $options = [];
 
-                return '['.$tagName.$optionsString.']'.$matches[4].'[/'.$matches[5].']';
+            // options already exists
+            if (array_key_exists(2, $matches)
+                && 0 < strlen(trim($matches[2]))
+                && array_key_exists(3, $matches)
+                && 0 < strlen(trim($matches[3]))
+            ) {
+                $tagName = $matches[2];
+                $options = $this->parseOptions($matches[3]);
             }
+            $options['name'] = $name;
+            $optionsString = $this->generateOptionsString($options);
+
+            return '['.$tagName.$optionsString.']'.$matches[4].'[/'.$matches[5].']';
         }
 
         return $matches[0];
@@ -118,15 +123,15 @@ class Extender
         return $optionsString;
     }
 
-    private function retrieveYoutubeVideoInformation($videoId)
+    private function retrieveYouTubeVideoInformation($videoId)
     {
-        $content = str_replace('|', ' ', $this->retrieveYoutubeTitle($videoId));
+        $content = str_replace('|', ' ', $this->retrieveYouTubeTitle($videoId));
         $content = str_replace('=', ' ', $content);
 
         return $content;
     }
 
-    private function parseYoutubeVideoUrl($videoUrl)
+    private function parseYouTubeVideoUrl($videoUrl)
     {
         $sVideoId = $videoUrl;
 
@@ -140,28 +145,20 @@ class Extender
         return trim($sVideoId);
     }
 
-    private function retrieveYoutubeTitle($videoId)
+    private function retrieveYouTubeTitle($videoId)
     {
-        $videoInformation = $this->retrieveYoutubeInformation($videoId);
+        $videoInformation = $this->retrieveYouTubeInformation($videoId);
 
         return $videoInformation['items'][0]['snippet']['title'];
     }
 
-    private function retrieveYoutubeInformation($videoId)
+    private function retrieveYouTubeInformation($videoId)
     {
         $jsonString = file_get_contents('https://www.googleapis.com/youtube/v3/videos?id='.$videoId.
                 '&key='.$_ENV['GOOGLE_API_KEY'].'&part=snippet,contentDetails,statistics,status');
 
-        $json = json_decode($jsonString, true);
-
-        return $json;
+        return json_decode($jsonString, true);
     }
-
-//    private function parseOptions($optionsString) {
-//        $options = explode('|', $optionsString);
-//
-//        return $options;
-//    }
 
     private function parseOptions($optionsString)
     {

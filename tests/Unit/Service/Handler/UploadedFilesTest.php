@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\Handler;
+namespace App\Tests\Unit\Tests\Service\Handler;
 
 use App\Entity\Projects;
 use App\Entity\User;

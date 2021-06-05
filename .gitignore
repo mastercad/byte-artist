@@ -4,7 +4,9 @@ tmp-phpqa
 .env.local
 .env.test
 /build/coverage
+/build/reports
 /public/images/content/dynamisch
+/bin
 
 ###> symfony/framework-bundle ###
 /.env.local
