@@ -55,7 +55,8 @@
         "preferred-install": {
             "*": "dist"
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "bin-dir": "bin"
     },
     "autoload": {
         "psr-4": {
@@ -64,7 +65,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "App\\Tests\\": "tests"
         }
     },
     "replace": {
@@ -77,7 +78,7 @@
     },
     "scripts": {
         "phpstan": "phpstan analyse -c phpstan.neon src tests --level 5 --no-progress",
-        "tests": "bin/phpunit",
+        "tests": "bin/simple-phpunit",
         "ci": [
             "@phpstan",
             "@tests"

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Service\Generator;
+namespace App\Tests\Unit\Service\Generator;
 
 use App\Entity\Projects;
 use App\Entity\User;
 use App\Service\Extractor\ClassName;
+use App\Service\Generator\Path;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

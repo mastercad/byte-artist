@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\Seo\Generator;
+namespace App\Tests\Unit\Tests\Service\Seo\Generator;
 
 use App\Entity\Projects;
 use App\Repository\ProjectsRepository;
