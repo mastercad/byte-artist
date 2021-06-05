@@ -130,13 +130,46 @@ jobs:
             mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var"
 
       - name: Composer install
-        run: composer install --no-dev --no-interaction --prefer-dist --no-progress
+        uses: appleboy/scp-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+#          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.WEB_USER_PASSWORD }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA
+          script: |
+            composer install --no-dev --no-interaction --prefer-dist --no-progress
 
       - name: Install assets
-        run: php bin/console assets:install public
+        uses: appleboy/scp-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+#          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.WEB_USER_PASSWORD }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA
+          script: |
+            chmod +x "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console"
+            php "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" assets:install public
 
       - name: Install ckeditor
-        run: php bin/console ckeditor:install public/build/ckeditor --clear=drop --release=custom --custom-build-id=0097efeeee383ee7fcc427e86e6f0229
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+#          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.WEB_USER_PASSWORD }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA
+          script: |
+            php "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" ckeditor:install public/build/ckeditor --clear=drop --release=custom --custom-build-id=0097efeeee383ee7fcc427e86e6f0229
 
       - name: Cache node_modules
         uses: actions/cache@v1
@@ -148,11 +181,32 @@ jobs:
             ${{ runner.os }}-yarn-cache-node-modules-
 
       - name: Yarn install
-        if: steps.yarn-cache-node-modules.outputs.cache-hit != 'true'
-        run: yarn install
+        uses: appleboy/scp-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+#          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.WEB_USER_PASSWORD }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA
+          if: steps.yarn-cache-node-modules.outputs.cache-hit != 'true'
+          script: |
+            yarn install
 
       - name: Yarn build
-        run: yarn run encore production
+        uses: appleboy/scp-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+#          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.WEB_USER_PASSWORD }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA
+            yarn run encore production
 
       - name: Provide secrets
         uses: appleboy/ssh-action@master
@@ -166,7 +220,6 @@ jobs:
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
           script: |
-            chmod +x "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console"
             export SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }} && "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" secrets:decrypt-to-local --force --env=prod
 
   run-before-hooks:
