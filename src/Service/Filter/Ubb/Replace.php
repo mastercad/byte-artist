@@ -534,7 +534,7 @@ class Replace
         $sRegEx = $this->aMapTagToFunction['[FONT=]'][self::REGEX];
 
         if (is_array($mInput)) {
-            $mInput = '<span style="font-family: '.$mInput[2].';">'.$mInput[4].'</span>';
+            $mInput = '<span style="font-family: '.$mInput[2].', Helvetica, Arial, Verdana, Tahoma;">'.$mInput[4].'</span>';
         }
 
         return preg_replace_callback($sRegEx, [&$this, 'replaceFont'], $mInput);
@@ -713,16 +713,17 @@ class Replace
             $sVideoUrl = $aMatches[4];
             if (preg_match('/^http[s]{0,1}:\/\/www\.youtube\..*/i', $sVideoUrl)) {
                 return $this->addYoutubeVideo($sVideoUrl, isset($aMatches[3]) ? $aMatches[3] : '');
-            } elseif (preg_match('/^http[s]{0,1}:\/\/youtu\..*/i', $sVideoUrl)) {
-                return $this->addYoutubeVideo($sVideoUrl, isset($aMatches[3]) ? $aMatches[3] : '');
-            } else {
-                return '<script type="text/javascript" '.
-                            'src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>'.
-                        '<script type="text/javascript" src="/js/jwplayer.js"></script>'.
-                        '<embed flashvars="file=$1&autostart=false" allowfullscreen="true" '.
-                        'allowscripaccess="always" id="player1" name="player1" src="'.$sVideoUrl.'" '.
-                        'width="480" height="270"/>';
             }
+            if (preg_match('/^http[s]{0,1}:\/\/youtu\..*/i', $sVideoUrl)) {
+                return $this->addYoutubeVideo($sVideoUrl, isset($aMatches[3]) ? $aMatches[3] : '');
+            }
+
+            return '<script type="text/javascript" '.
+                        'src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>'.
+                    '<script type="text/javascript" src="/js/jwplayer.js"></script>'.
+                    '<embed flashvars="file=$1&autostart=false" allowfullscreen="true" '.
+                    'allowscripaccess="always" id="player1" name="player1" src="'.$sVideoUrl.'" '.
+                    'width="480" height="270"/>';
         }
 
         return '';

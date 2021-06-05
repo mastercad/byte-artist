@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\Util;
+namespace App\Tests\Unit\Tests\Service\Util;
 
 use App\Service\Util\Strings;
 use PHPUnit\Framework\TestCase;

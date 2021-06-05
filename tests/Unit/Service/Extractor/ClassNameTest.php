@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\Extractor;
+namespace App\Tests\Unit\Service\Extractor;
 
 use App\Service\Extractor\ClassName;
 use PHPUnit\Framework\TestCase;
