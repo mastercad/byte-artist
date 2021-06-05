@@ -145,6 +145,7 @@ jobs:
             export SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }} && "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" secrets:decrypt-to-local --force --env=prod
 
       - name: Composer install
+        run: composer install --no-dev --no-interaction --prefer-dist --no-progress
 
       - name: Install assets
         run: php bin/console assets:install public
