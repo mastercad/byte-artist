@@ -71,32 +71,24 @@ jobs:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
-#          key: ${{ secrets.SSH_KEY }}
           port: ${{ matrix.server.port }}
           source: ${{ github.sha }}.tar.gz
           target: ${{ matrix.server.path }}/artifacts
           overwrite: true
 
-      - name: Extract archive and create directories
+      - name: Extract archive
         uses: appleboy/ssh-action@master
         env:
           GITHUB_SHA: ${{ github.sha }}
         with:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
-#          key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
           script: |
             mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
             tar xzf ${{ matrix.server.path }}/artifacts/${GITHUB_SHA}.tar.gz -C "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
-
-#            rm -rf ${{ matrix.server.path }}/releases/${GITHUB_SHA}/storage
-
-#            mkdir -p ${{ matrix.server.path }}/storage/{app,public,framework,logs}
-#            mkdir -p ${{ matrix.server.path }}/storage/framework/{cache,sessions,testing,views}
-#            chmod -R 0777 ${{ matrix.server.path }}/storage
 
       - name: Cleanup directories
         uses: appleboy/ssh-action@master
@@ -105,7 +97,6 @@ jobs:
         with:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
-#          key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
@@ -121,7 +112,6 @@ jobs:
         with:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
-#          key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
@@ -136,7 +126,6 @@ jobs:
         with:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
-#          key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
@@ -150,7 +139,6 @@ jobs:
         with:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
-#          key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
@@ -165,7 +153,6 @@ jobs:
         with:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
-#          key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
@@ -188,7 +175,6 @@ jobs:
         with:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
-#          key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
@@ -203,7 +189,6 @@ jobs:
         with:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
-#          key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
@@ -216,7 +201,6 @@ jobs:
         with:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
-#          key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
@@ -237,12 +221,10 @@ jobs:
         GITHUB_SHA: ${{ github.sha }}
         RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
         ACTIVE_RELEASE_PATH: ${{ matrix.server.path }}/current
-#        STORAGE_PATH: ${{ matrix.server.path }}/storage
         BASE_PATH: ${{ matrix.server.path }}
       with:
         host: ${{ matrix.server.ip }}
         username: ${{ matrix.server.username }}
-#        key: ${{ secrets.SSH_KEY }}
         password: ${{ secrets.WEB_USER_PASSWORD }}
         port: ${{ matrix.server.port }}
         envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,BASE_PATH
@@ -263,13 +245,10 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
           RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
           ACTIVE_RELEASE_PATH: ${{ matrix.server.path }}/current
-#          STORAGE_PATH: ${{ matrix.server.path }}/storage
           BASE_PATH: ${{ matrix.server.path }}
-#          LARAVEL_ENV: ${{ secrets.LARAVEL_ENV }}
         with:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
-#          key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,BASE_PATH,ENV_PATH
@@ -298,7 +277,6 @@ jobs:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
-#          key: ${{ secrets.SSH_KEY }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,STORAGE_PATH,BASE_PATH
           script: |
@@ -321,7 +299,6 @@ jobs:
           host: ${{ matrix.server.ip }}
           username: ${{ matrix.server.username }}
           password: ${{ secrets.WEB_USER_PASSWORD }}
-#          key: ${{ secrets.SSH_KEY }}
           port: ${{ matrix.server.port }}
           envs: RELEASE_PATH,ARTIFACTS_PATH
           script: |
