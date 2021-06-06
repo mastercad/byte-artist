@@ -121,6 +121,9 @@ jobs:
         # Folder to check code style
         dir: src
 
+    - name: output bin content for debug
+      run: ls -lisa ./bin/
+
     - name: PHPUnit
 #      uses: chindit/actions-phpunit-symfony@1.0.0
 #      uses: php-actions/phpunit@v2
