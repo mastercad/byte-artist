@@ -35,7 +35,7 @@ jobs:
     - name: Create deployment artifact
       env:
         GITHUB_SHA: ${{ github.sha }}
-      run: tar -cpzf /tmp/"${GITHUB_SHA}".tar.gz --one-file-system --exclude=.git* --exclude=node_modules --exclude=tests --exclude=var --exclude=assets --exclude=./build --exclude=.docker --exclude=docker-compose.yml --exclude=phpcs.xml* --exclude=phpmd.xml --exclude=phpstan* --exclude=phpunit.xml* --exclude=.php-cs* --exclude=sonar-project.properties .
+      run: tar -cpzf /tmp/"${GITHUB_SHA}".tar.gz --one-file-system --exclude=.git* --exclude=node_modules --exclude=tests --exclude=var --exclude=./build --exclude=.docker --exclude=docker-compose.yml --exclude=phpcs.xml* --exclude=phpmd.xml --exclude=phpstan* --exclude=phpunit.xml* --exclude=.php-cs* --exclude=sonar-project.properties .
 
     - name: Store artifact for distribution
       uses: actions/upload-artifact@v2
