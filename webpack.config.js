@@ -30,7 +30,7 @@ Encore
     .addEntry('magnific-popup', './assets/js/jquery.magnific-popup.min.js')
     .addEntry('balanced-gallery', './assets/js/jquery.balanced-gallery.js')
     .copyFiles([
-//        {from: './assets/ckeditor/build', to: 'ckeditor/[path][name].[ext]'}
+        {from: './assets/ckeditor/build', to: 'ckeditor/[path][name].[ext]'}
 //        {from: './vendor/friendsofsymfony/ckeditor-bundle/src/Resources/public/', to: 'ckeditor/[path][name].[ext]', pattern: /\.(js|css)$/, includeSubdirectories: false},
 //        {from: './vendor/friendsofsymfony/ckeditor-bundle/src/Resources/public/adapters', to: 'ckeditor/adapters/[path][name].[ext]'},
 //        {from: './vendor/friendsofsymfony/ckeditor-bundle/src/Resources/public/lang', to: 'ckeditor/lang/[path][name].[ext]'},
