@@ -170,6 +170,7 @@ jobs:
 
       - name: Yarn install
         uses: appleboy/ssh-action@master
+        if: steps.yarn-cache-node-modules.outputs.cache-hit != 'true'
         env:
           GITHUB_SHA: ${{ github.sha }}
         with:
@@ -178,7 +179,6 @@ jobs:
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
-          if: steps.yarn-cache-node-modules.outputs.cache-hit != 'true'
           script: |
             cd "${{ matrix.server.path }}/releases/${GITHUB_SHA}" && yarn install
 
@@ -192,6 +192,7 @@ jobs:
           password: ${{ secrets.WEB_USER_PASSWORD }}
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
+          script: |
             cd "${{ matrix.server.path }}/releases/${GITHUB_SHA}" && yarn run encore production
 
       - name: Provide secrets
