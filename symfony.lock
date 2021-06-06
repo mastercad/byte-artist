@@ -110,7 +110,10 @@
             "branch": "master",
             "version": "2.0",
             "ref": "8eb1cd0962ded6a6d6e1e5a9b6d3e888f9f94ff6"
-        }
+        },
+        "files": [
+            "config/packages/fos_ckeditor.yaml"
+        ]
     },
     "geshi/geshi": {
         "version": "v1.0.9.1"
@@ -134,7 +137,10 @@
             "branch": "master",
             "version": "1.20",
             "ref": "80acc9223a205cbf5d9828fd616c82a374d281dd"
-        }
+        },
+        "files": [
+            "config/packages/knpu_oauth2_client.yaml"
+        ]
     },
     "laminas/laminas-code": {
         "version": "4.3.0"
