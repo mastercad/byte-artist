@@ -123,16 +123,16 @@ jobs:
 
     - name: PHPUnit
 #      uses: chindit/actions-phpunit-symfony@1.0.0
-#      uses: php-actions/phpunit@v2
-#      with:
-#        version: 7.5
-#        configuration: ./phpunit.xml.dist
-#        memory_limit: 256M
-#        php_extensions: xdebug
-      run: ./bin/simple-phpunit
+      uses: php-actions/phpunit@v2
+      with:
+        version: 7.5
+        configuration: ./phpunit.xml.dist
+        memory_limit: 256M
+        php_extensions: xdebug
+#      run: ./bin/simple-phpunit
 
-    - name: DEBUG OUTPUT PHPUNIT SYMLINK
-      run: ls -lisa bin/.phpunit/phpunit-7.5-0/vendor/symfony/phpunit-bridge
+#    - name: DEBUG OUTPUT PHPUNIT SYMLINK
+#      run: ls -lisa bin/.phpunit/phpunit-7.5-0/vendor/symfony/phpunit-bridge
 #      ln -s ../../../../../vendor/symfony/phpunit-bridge /var/www/app/bin/.phpunit/phpunit-7.5-0/vendor/symfony/phpunit-bridge
 
 #    - name: Test Reporter
