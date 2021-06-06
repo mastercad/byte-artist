@@ -41,7 +41,7 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Prepare environment
-      run: echo 'APP_ENV=prod' => .env.local
+      run: echo 'APP_ENV=dev' > .env.local
 
     - name: Install dependencies
       run: composer install --no-interaction --prefer-dist --no-progress
