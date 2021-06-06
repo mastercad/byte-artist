@@ -40,6 +40,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
+    - name: Prepare environment
+      run: echo 'APP_ENV=prod' => .env.local
+
     - name: Install dependencies
       run: composer install --no-interaction --prefer-dist --no-progress
 
@@ -115,10 +118,15 @@ jobs:
         # Folder to check code style
         dir: src
 
-    - name: PHPUnit for Symfony
+    - name: PHPUnit
 #      uses: chindit/actions-phpunit-symfony@1.0.0
+#      uses: php-actions/phpunit@v2
+#      with:
+#        version: 7.5
+#        configuration: ./phpunit.xml.dist
+#        memory_limit: 256M
+#        php_extensions: xdebug
       run: bin/simple-phpunit
-
 
 #    - name: Test Reporter
 #      uses: dorny/test-reporter@v1.4.3
