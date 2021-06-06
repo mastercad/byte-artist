@@ -55,7 +55,7 @@ jobs:
       run: php bin/console secrets:decrypt-to-local --force --env=prod
 
     - name: Check that environment is configured correctly
-      run: php ./vendor/bin/requirements-checker
+      run: php ./bin/requirements-checker
 
     - name: PHP Security Checker
       # You may pin to the exact commit or the version.
