@@ -3,6 +3,12 @@
     "description": "web server environment for byte-artist web site",
     "type": "project",
     "license": "proprietary",
+    "repositories": {
+        "phpunit-bridge": {
+            "type": "path",
+            "url": "/builds/seams-cms/react-api/vendor/symfony/phpunit-bridge"
+        }
+    },
     "require": {
         "php": "^7.4",
         "ext-ctype": "*",
@@ -49,7 +55,7 @@
         "symfony/browser-kit": "^5.2",
         "symfony/css-selector": "^5.2",
         "symfony/maker-bundle": "^1.12",
-        "symfony/phpunit-bridge": "^5.2",
+        "symfony/phpunit-bridge": "^5.3",
         "symfony/profiler-pack": "^1.0"
     },
     "config": {
