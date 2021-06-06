@@ -19,7 +19,13 @@ jobs:
         php-version: '7.4'
         extensions: imagick, swoole, zip, mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo
 
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Optionally: unshallow as a separate operation
+    - name: Unshallow
+      run: git fetch --prune --unshallow
+#    - uses: actions/checkout@v2
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
