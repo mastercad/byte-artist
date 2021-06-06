@@ -132,6 +132,19 @@ jobs:
           script: |
             cd "${{ matrix.server.path }}/releases/${GITHUB_SHA}" && composer install --no-dev --no-interaction --prefer-dist --no-progress
 
+      - name: Download ckeditor
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+          password: ${{ secrets.WEB_USER_PASSWORD }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA
+          script: |
+            php "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" ckeditor:install assets/build/ckeditor --clear=drop --release=custom --custom-build-id=0097efeeee383ee7fcc427e86e6f0229
+
       - name: Install assets
         uses: appleboy/ssh-action@master
         env:
@@ -145,20 +158,7 @@ jobs:
           script: |
             chmod +x "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console"
             php "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" assets:install public
-
-      - name: Install ckeditor
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA
-          script: |
-            php "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" ckeditor:install public/build/ckeditor --clear=drop --release=custom --custom-build-id=0097efeeee383ee7fcc427e86e6f0229
-
+  
       - name: Cache node_modules
         uses: actions/cache@v1
         id: yarn-cache-node-modules
