@@ -143,7 +143,7 @@ jobs:
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
           script: |
-            php "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" ckeditor:install assets/build/ckeditor --clear=drop --release=custom --custom-build-id=0097efeeee383ee7fcc427e86e6f0229
+            php "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" ckeditor:install assets/build/ckeditor --clear=drop --release=custom --custom-build-id=ee064e47ec8943be855b785fa9c7146d
 
       - name: Install assets
         uses: appleboy/ssh-action@master
