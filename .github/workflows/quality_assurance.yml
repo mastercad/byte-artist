@@ -178,6 +178,9 @@ jobs:
         files: build/reports/*.xml
         github_token: ${{ github.token }}
 
+    - name: output reports content for debug
+      run: ls -lisa ./build/reports/
+
     - name: SonarCloud Scan
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
