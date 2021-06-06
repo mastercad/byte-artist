@@ -131,6 +131,10 @@ jobs:
 #        php_extensions: xdebug
       run: ./bin/simple-phpunit
 
+    - name: DEBUG OUTPUT PHPUNIT SYMLINK
+      run: ls -lisa bin/.phpunit/phpunit-7.5-0/vendor/symfony/phpunit-bridge
+#      ln -s ../../../../../vendor/symfony/phpunit-bridge /var/www/app/bin/.phpunit/phpunit-7.5-0/vendor/symfony/phpunit-bridge
+
 #    - name: Test Reporter
 #      uses: dorny/test-reporter@v1.4.3
 #      with:
