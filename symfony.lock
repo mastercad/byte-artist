@@ -1,4 +1,10 @@
 {
+    "composer/semver": {
+        "version": "3.2.5"
+    },
+    "composer/xdebug-handler": {
+        "version": "2.0.1"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -82,6 +88,18 @@
     "doctrine/sql-formatter": {
         "version": "1.1.1"
     },
+    "friendsofphp/php-cs-fixer": {
+        "version": "3.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "be2103eb4a20942e28a6dd87736669b757132435"
+        },
+        "files": [
+            ".php-cs-fixer.dist.php"
+        ]
+    },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
@@ -136,8 +154,32 @@
     "league/oauth2-google": {
         "version": "3.0.4"
     },
+    "mikey179/vfsstream": {
+        "version": "v1.6.8"
+    },
     "monolog/monolog": {
         "version": "2.2.0"
+    },
+    "nikic/php-parser": {
+        "version": "v4.10.5"
+    },
+    "php-cs-fixer/diff": {
+        "version": "v2.0.2"
+    },
+    "phpstan/extension-installer": {
+        "version": "1.1.0"
+    },
+    "phpstan/phpstan": {
+        "version": "0.12.88"
+    },
+    "phpstan/phpstan-doctrine": {
+        "version": "0.12.38"
+    },
+    "phpstan/phpstan-phpunit": {
+        "version": "0.12.19"
+    },
+    "phpstan/phpstan-symfony": {
+        "version": "0.12.35"
     },
     "psr/cache": {
         "version": "1.0.1"
@@ -172,7 +214,22 @@
             "config/packages/sensio_framework_extra.yaml"
         ]
     },
+    "squizlabs/php_codesniffer": {
+        "version": "3.6",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.6",
+            "ref": "1019e5c08d4821cb9b77f4891f8e9c31ff20ac6f"
+        },
+        "files": [
+            "phpcs.xml.dist"
+        ]
+    },
     "symfony/asset": {
+        "version": "v5.3.0"
+    },
+    "symfony/browser-kit": {
         "version": "v5.3.0"
     },
     "symfony/cache": {
@@ -196,6 +253,9 @@
             "bin/console"
         ]
     },
+    "symfony/css-selector": {
+        "version": "v5.3.0"
+    },
     "symfony/dependency-injection": {
         "version": "v5.3.0"
     },
@@ -204,6 +264,9 @@
     },
     "symfony/doctrine-bridge": {
         "version": "v5.1.11"
+    },
+    "symfony/dom-crawler": {
+        "version": "v5.3.0"
     },
     "symfony/dotenv": {
         "version": "v5.3.0"
@@ -269,6 +332,15 @@
     "symfony/http-kernel": {
         "version": "v5.3.1"
     },
+    "symfony/maker-bundle": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.0",
+            "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
+        }
+    },
     "symfony/mime": {
         "version": "v5.3.0"
     },
@@ -299,6 +371,21 @@
     "symfony/password-hasher": {
         "version": "v5.3.0"
     },
+    "symfony/phpunit-bridge": {
+        "version": "5.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "5.3",
+            "ref": "05aa34fc27227a46bb75872b0efff102bd7d77e0"
+        },
+        "files": [
+            ".env.test",
+            "bin/phpunit",
+            "phpunit.xml.dist",
+            "tests/bootstrap.php"
+        ]
+    },
     "symfony/polyfill-intl-grapheme": {
         "version": "v1.23.0"
     },
@@ -325,6 +412,12 @@
     },
     "symfony/polyfill-php81": {
         "version": "v1.23.0"
+    },
+    "symfony/process": {
+        "version": "v5.3.0"
+    },
+    "symfony/profiler-pack": {
+        "version": "v1.0.5"
     },
     "symfony/property-access": {
         "version": "v5.3.0"
@@ -440,6 +533,20 @@
     },
     "symfony/var-exporter": {
         "version": "v5.3.0"
+    },
+    "symfony/web-profiler-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "6bdfa1a95f6b2e677ab985cd1af2eae35d62e0f6"
+        },
+        "files": [
+            "config/packages/dev/web_profiler.yaml",
+            "config/packages/test/web_profiler.yaml",
+            "config/routes/dev/web_profiler.yaml"
+        ]
     },
     "symfony/webpack-encore-bundle": {
         "version": "1.9",
