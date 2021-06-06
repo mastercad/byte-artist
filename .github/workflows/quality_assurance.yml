@@ -110,17 +110,15 @@ jobs:
 ##        args: # optional
 
     - name: PHP Code Style Fixer (php-cs-fixer)
-      # You may pin to the exact commit or the version.
-      # uses: StephaneBour/actions-php-cs-fixer@51db30c2569c3a6e4ebf68d63d2bdb65a5b914e6
       uses: StephaneBour/actions-php-cs-fixer@8.0-v3
       with:
         # Folder to check code style
         dir: src
 
     - name: PHPUnit for Symfony
-      # You may pin to the exact commit or the version.
-      # uses: chindit/actions-phpunit-symfony@c02bff1f84d757d030c15e2985be601cdba3039e
-      uses: chindit/actions-phpunit-symfony@1.0.0
+#      uses: chindit/actions-phpunit-symfony@1.0.0
+      run: bin/simple-phpunit
+
 
 #    - name: Test Reporter
 #      uses: dorny/test-reporter@v1.4.3
