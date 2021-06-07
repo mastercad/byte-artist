@@ -181,6 +181,13 @@ jobs:
 #        # GitHub Access Token
 #        token: ${{ github.token }} # optional, default is ${{ github.token }}
 
+    - name: 'Cleanup Unit Reports'
+      shell: bash
+      run: |
+        sed -i 's+/home/runner/work/byte-artist/byte-artist/+g' build/reports/coverage-clover.xml
+        sed -i 's+/home/runner/work/byte-artist/byte-artist/+g' build/reports/junit.xml
+
+
     - name: Upload Unit Test Results
       if: always()
       uses: actions/upload-artifact@v2
