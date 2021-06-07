@@ -198,7 +198,8 @@ jobs:
       uses: EnricoMi/publish-unit-test-result-action@v1
       if: always()
       with:
-        files: build/reports/*.xml
+#        files: build/reports/**/*.xml
+        files: build/reports/junit.xml
         github_token: ${{ github.token }}
 
     - name: output reports content for debug
