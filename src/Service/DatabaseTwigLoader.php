@@ -22,7 +22,7 @@ class DatabaseTwigLoader // implements LoaderInterface
         $this->dbh = $dbh;
     }
 
-    public function getSourceContext($name)
+    public function getSourceContext($name): Source
     {
         if (false === $source = $this->getValue('source', $name)) {
             throw new LoaderError(sprintf('Template "%s" does not exist.', $name));
@@ -31,7 +31,7 @@ class DatabaseTwigLoader // implements LoaderInterface
         return new Source($source, $name);
     }
 
-    public function exists($name)
+    public function exists($name): bool
     {
         return $name === $this->getValue('name', $name);
     }
@@ -41,7 +41,7 @@ class DatabaseTwigLoader // implements LoaderInterface
         return $name;
     }
 
-    public function isFresh($name, $time)
+    public function isFresh($name, $time): bool
     {
         if (false === $lastModified = $this->getValue('last_modified', $name)) {
             return false;

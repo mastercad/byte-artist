@@ -7,6 +7,8 @@ tmp-phpqa
 /build/reports
 /public/images/content/dynamisch
 /bin
+.php_cs.cache
+
 
 ###> symfony/framework-bundle ###
 /.env.local
@@ -41,3 +43,8 @@ yarn-error.log
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###

@@ -19,7 +19,10 @@ class UploadedFiles
         $this->pathGenerator = $pathGenerator;
     }
 
-    public function handle($entity)
+    /**
+     * @return static
+     */
+    public function handle($entity): self
     {
         $publicUploadPath = $this->pathGenerator->generatePublicUploadPath($this->user);
         $absoluteUploadPath = $this->pathGenerator->generateAbsolutePublicUploadPath($this->user);
