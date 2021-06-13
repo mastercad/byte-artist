@@ -575,8 +575,6 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @return array
-     *
      * @psalm-return array<int|string, mixed>
      */
     private function extractErrorsFromForm(FormInterface $form): array
