@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Blogs;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr\Join;
 
 /**
@@ -42,7 +42,7 @@ class BlogRepository extends ServiceEntityRepository
         ;
     }
 
-    public function queryAllVisibleBlogs()
+    public function queryAllVisibleBlogs(): \Doctrine\ORM\Query
     {
         return $this->createQueryBuilder('b')
             ->orderBy('b.modified', 'DESC')
@@ -50,7 +50,7 @@ class BlogRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
-    public function queryAllBlogsByTag($seoLink)
+    public function queryAllBlogsByTag($seoLink): \Doctrine\ORM\Query
     {
         return $this->createQueryBuilder('b')
             ->innerJoin('App\Entity\BlogTags', 'bt', Join::WITH, 'bt.blog = b')

@@ -177,6 +177,6 @@ class ProjectTags
 
     public function __toString()
     {
-        return $this->getTag()->getName();
+        return (string) $this->getTag()->getName();
     }
 }

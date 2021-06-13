@@ -3,6 +3,7 @@
 namespace App\Service\Security;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
@@ -58,7 +59,7 @@ class GoogleAuthenticator extends SocialAuthenticator
     /**
      * @param mixed $credentials
      *
-     * @return User|object|\Symfony\Component\Security\Core\User\UserInterface|null
+     * @return \Symfony\Component\Security\Core\User\UserInterface|null
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
@@ -69,15 +70,17 @@ class GoogleAuthenticator extends SocialAuthenticator
         $email = $googleUser->getEmail();
 
         // 1) have they logged in with Google before? Easy!
-        $existingUser = $this->entityManager->getRepository(User::class)
-            ->findOneBy(['googleId' => $googleUser->getId()]);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        /** @var User $existingUser */
+        $existingUser = $userRepository->findOneBy(['googleId' => $googleUser->getId()]);
 
         if ($existingUser) {
             $user = $existingUser;
         } else {
             // 2) do we have a matching user by email?
-            $user = $this->entityManager->getRepository(User::class)
-                ->findOneBy(['email' => $email]);
+            /** @var User $user */
+            $user = $userRepository->findOneBy(['email' => $email]);
 
             if (!$user) {
                 /** @var User $user */

@@ -99,7 +99,7 @@ class FixPreviewPathsCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function fixMissingPreviewPath($entity)
+    private function fixMissingPreviewPath($entity): bool
     {
         $publicProjectPath = '/images/content/dynamisch/'.$this->tableName.'/'.$entity->getId().'/';
 
@@ -120,7 +120,6 @@ class FixPreviewPathsCommand extends Command
         if (preg_match('/^[^\/]+\.[a-z0-9]+$/i', $entity->getPreviewPicture())) {
             $publicPath = $publicProjectPath.$entity->getPreviewPicture();
             $expectedPath = $this->publicPath.$publicPath;
-            var_dump($expectedPath);
             if (file_exists($expectedPath)
                 && is_file($expectedPath)
             ) {

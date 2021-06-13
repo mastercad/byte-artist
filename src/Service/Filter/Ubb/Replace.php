@@ -387,72 +387,72 @@ class Replace
         return $oCadMerge->merge($sText);
     }
 
-    public function replaceTab()
+    public function replaceTab(): string
     {
         return '&nbsp;&nbsp;&nbsp;&nbsp;';
     }
 
-    public function replaceLineBreak()
+    public function replaceLineBreak(): string
     {
         return '<br />';
     }
 
-    public function replaceSmall($aMatches)
+    public function replaceSmall($aMatches): string
     {
         return '<s>'.$aMatches[1].'</s>';
     }
 
-    public function replaceNewLine()
+    public function replaceNewLine(): string
     {
         return '<br class="clearfix" />';
     }
 
-    public function replaceMarquee($aMatches)
+    public function replaceMarquee($aMatches): string
     {
         return '<marquee>'.$aMatches[2].'</marquee>';
     }
 
-    public function replaceFloat($aMatches)
+    public function replaceFloat($aMatches): string
     {
         return '<div style="float: left; display: inline;">'.$aMatches[2].'</div>';
     }
 
-    public function replaceRight($aMatches)
+    public function replaceRight($aMatches): string
     {
         return '<div style="text-align: right;">'.$aMatches[2].'<br style="clear: both;" /></div>';
     }
 
-    public function replaceLeft($aMatches)
+    public function replaceLeft($aMatches): string
     {
         return '<div style="text-align: left;">'.$aMatches[2].'<br style="clear: both;" /></div>';
     }
 
-    public function replaceCenter($aMatches)
+    public function replaceCenter($aMatches): string
     {
         return '<div style="text-align: center;">'.$aMatches[2].'<br style="clear: both;" /></div>';
     }
 
-    public function replaceBlock($aMatches)
+    public function replaceBlock($aMatches): string
     {
         return '<div style="text-align: justify;">'.$aMatches[2].'<br style="clear: both;" /></div>';
     }
 
-    public function replaceThanksText($aMatches)
+    public function replaceThanksText($aMatches): string
     {
         return $this->dankeText($aMatches[2]);
     }
 
-    public function replaceList($aMatches)
+    public function replaceList($aMatches): string
     {
         return $this->erstelleListe($aMatches[2]);
     }
 
-    public function replaceHeadline($aMatches)
+    public function replaceHeadline($aMatches): string
     {
         return '<h'.$aMatches[2].'>'.$aMatches[3].'</h'.$aMatches[2].'>';
     }
 
-    public function replaceColor($mInput)
+    public function replaceColor($mInput): ?string
     {
         $sRegEx = $this->aMapTagToFunction['[COLOR=]'][self::REGEX];
 
@@ -463,7 +463,7 @@ class Replace
         return preg_replace_callback($sRegEx, [&$this, 'replaceColor'], $mInput);
     }
 
-    public function replaceBackgroundColor($mInput)
+    public function replaceBackgroundColor($mInput): ?string
     {
         $sRegEx = $this->aMapTagToFunction['[BGCOLOR=]'][self::REGEX];
 
@@ -474,7 +474,7 @@ class Replace
         return preg_replace_callback($sRegEx, [&$this, 'replaceBackgroundColor'], $mInput);
     }
 
-    public function replaceBold($mInput)
+    public function replaceBold($mInput): ?string
     {
         $sRegEx = $this->aMapTagToFunction['[B]'][self::REGEX];
 
@@ -485,7 +485,7 @@ class Replace
         return preg_replace_callback($sRegEx, [&$this, 'replaceBold'], $mInput);
     }
 
-    public function replaceItalic($mInput)
+    public function replaceItalic($mInput): ?string
     {
         $sRegEx = $this->aMapTagToFunction['[I]'][self::REGEX];
 
@@ -496,7 +496,7 @@ class Replace
         return preg_replace_callback($sRegEx, [&$this, 'replaceItalic'], $mInput);
     }
 
-    public function replaceUnderlined($mInput)
+    public function replaceUnderlined($mInput): ?string
     {
         $sRegEx = $this->aMapTagToFunction['[U]'][self::REGEX];
 
@@ -507,7 +507,7 @@ class Replace
         return preg_replace_callback($sRegEx, [&$this, 'replaceUnderlined'], $mInput);
     }
 
-    public function replaceCode($mInput)
+    public function replaceCode($mInput): ?string
     {
         $sRegEx = $this->aMapTagToFunction['[CODE=]'][self::REGEX];
 
@@ -518,7 +518,7 @@ class Replace
         return preg_replace_callback($sRegEx, [&$this, 'replaceCode'], $mInput);
     }
 
-    public function replacePhpCode($mInput)
+    public function replacePhpCode($mInput): ?string
     {
         $sRegEx = $this->aMapTagToFunction['[PHP]'][self::REGEX];
 
@@ -529,7 +529,7 @@ class Replace
         return preg_replace_callback($sRegEx, [&$this, 'replaceCode'], $mInput);
     }
 
-    public function replaceFont($mInput)
+    public function replaceFont($mInput): ?string
     {
         $sRegEx = $this->aMapTagToFunction['[FONT=]'][self::REGEX];
 
@@ -541,7 +541,7 @@ class Replace
         return preg_replace_callback($sRegEx, [&$this, 'replaceFont'], $mInput);
     }
 
-    public function replaceSize($mInput)
+    public function replaceSize($mInput): ?string
     {
         $sRegEx = $this->aMapTagToFunction['[SIZE=]'][self::REGEX];
 
@@ -552,7 +552,7 @@ class Replace
         return preg_replace_callback($sRegEx, [&$this, 'replaceSize'], $mInput);
     }
 
-    public function replaceGlow($mInput)
+    public function replaceGlow($mInput): ?string
     {
         $sRegEx = $this->aMapTagToFunction['[GLOW]'][self::REGEX];
 
@@ -563,7 +563,7 @@ class Replace
         return preg_replace_callback($sRegEx, [&$this, 'replaceWave'], $mInput);
     }
 
-    public function replaceWave($mInput)
+    public function replaceWave($mInput): ?string
     {
         $sRegEx = $this->aMapTagToFunction['[WAVE]'][self::REGEX];
 
@@ -574,7 +574,7 @@ class Replace
         return preg_replace_callback($sRegEx, [&$this, 'replaceWave'], $mInput);
     }
 
-    public function replaceShadow($mInput)
+    public function replaceShadow($mInput): ?string
     {
         $sRegEx = $this->aMapTagToFunction['[SHADOW=]'][self::REGEX];
 
@@ -585,7 +585,7 @@ class Replace
         return preg_replace_callback($sRegEx, [&$this, 'replaceShadow'], $mInput);
     }
 
-    public function generateQuote($aMatches)
+    public function generateQuote($aMatches): string
     {
         if (6 == count($aMatches)) {
             return '<div class="quote" ><div class="quote_kopf"> Zitat von : '.$aMatches[2].
@@ -596,7 +596,7 @@ class Replace
         }
     }
 
-    public function generateMail($aMatches)
+    public function generateMail($aMatches): string
     {
         if (6 == count($aMatches)) {
             return '<a href="mailto:'.$aMatches[4].'">'.$aMatches[2].'</a>';
@@ -605,7 +605,7 @@ class Replace
         }
     }
 
-    public function generateTable($aMatches)
+    public function generateTable($aMatches): string
     {
         $rows = preg_split('/\r\n|\n/', $aMatches[2]);
         $content = '<table class="cad-table">';
@@ -622,7 +622,7 @@ class Replace
         return $content;
     }
 
-    public function generateImage($aMatches)
+    public function generateImage($aMatches): string
     {
         if (6 == count($aMatches)) {
             return $this->imageEinfuegenNeu($aMatches[4], $aMatches[2]);
@@ -631,7 +631,7 @@ class Replace
         }
     }
 
-    public function generateLine($aMatches)
+    public function generateLine($aMatches): string
     {
         return '<hr style="width: 100%; height: 2px; color: '.$aMatches[2].'; background: '.$aMatches[2].
             '; margin: 10px 0px; border: 0;" />';
@@ -646,7 +646,7 @@ class Replace
         }
     }
 
-    public function generateUrlImage($aMatches)
+    public function generateUrlImage($aMatches): string
     {
         return $this->ersetzeUrlImage($aMatches[4], $aMatches[2]);
     }
@@ -667,14 +667,14 @@ class Replace
         return $aMatches[2];
     }
 
-    public function generateLegend($aMatches)
+    public function generateLegend($aMatches): ?string
     {
         $content = $aMatches[1];
         $legend = '';
         if (preg_match_all('/(\<H([0-6])\>)(.*?)(\<\/H\2\>)/i', $content, $headings)) {
             $legend = '<div style="margin: 15px;"><p><strong>Legende :</strong></p>';
             foreach ($headings[0] as $pos => $baseHeading) {
-                $currentLevel = $headings[2][$pos];
+                $currentLevel = (int) $headings[2][$pos];
                 $anchorName = preg_replace('/\s/', '', $headings[3][$pos]);
                 $legend .= '<a href="#'.$anchorName.'" style="margin-left: '.(($currentLevel + 1) * 5).'px;">'.
                     $headings[3][$pos].'</a><br />';
@@ -730,7 +730,7 @@ class Replace
         return '';
     }
 
-    public function addYoutubeVideo($videoUrl, $options = null)
+    public function addYoutubeVideo($videoUrl, $options = null): string
     {
         $videoId = $this->parseYoutubeVideoUrl($videoUrl);
         $videoOptions = $this->parseOptions($options);
@@ -751,7 +751,12 @@ class Replace
         return $videoContent;
     }
 
-    private function parseOptions($optionsString)
+    /**
+     * @return string[]
+     *
+     * @psalm-return array<string, string>
+     */
+    private function parseOptions($optionsString): array
     {
         $rawOptions = explode('|', $optionsString);
         $options = [];
@@ -767,7 +772,7 @@ class Replace
         return $options;
     }
 
-    private function parseYoutubeVideoUrl($sVideoUrl)
+    private function parseYoutubeVideoUrl($sVideoUrl): string
     {
         $sVideoId = $sVideoUrl;
 
@@ -782,11 +787,11 @@ class Replace
         return trim($sVideoId);
     }
 
-    public function addKnownVideoFormat($aMatches)
+    public function addKnownVideoFormat($aMatches): void
     {
     }
 
-    public function addUnknownVideoFormat($aMatches)
+    public function addUnknownVideoFormat($aMatches): void
     {
     }
 
@@ -801,8 +806,7 @@ class Replace
         $hostname_url = parse_url($url, PHP_URL_HOST);
         $hostname_server = 'byte-artist.de';
 
-        if (is_array($_SERVER) &&
-                array_key_exists('SERVER_NAME', $_SERVER)) {
+        if (array_key_exists('SERVER_NAME', $_SERVER)) {
             $hostname_server = $_SERVER['SERVER_NAME'];
         }
 
@@ -827,14 +831,13 @@ class Replace
         return $link;
     }
 
-    public function ersetzeUrlImage($url, $image)
+    public function ersetzeUrlImage($url, $image): string
     {
         $link = '';
         $hostname_url = parse_url($url, PHP_URL_HOST);
         $hostname_server = 'byte-artist.de';
 
-        if (is_array($_SERVER) &&
-                array_key_exists('SERVER_NAME', $_SERVER)) {
+        if (array_key_exists('SERVER_NAME', $_SERVER)) {
             $hostname_server = $_SERVER['SERVER_NAME'];
         }
 
@@ -878,7 +881,7 @@ class Replace
         }
     }
 
-    public function codeString($sLanguage, $sSource)
+    public function codeString($sLanguage, $sSource): ?string
     {
         /*
           $code_container = '<code class="blog-code lang-' . $sLanguage . '" ><pre>' . $sSource . '</pre></code>';
@@ -954,6 +957,9 @@ class Replace
         return $sSource;
     }
 
+    /**
+     * @return null|string
+     */
     private function charEinfuegen($text)
     {
         if (preg_match('/^\#[0-9]{3,4}$/', $text)) {
@@ -963,7 +969,7 @@ class Replace
         }
     }
 
-    private function dankeThread($text)
+    private function dankeThread($text): bool
     {
         if (preg_match('/\[DANKE\](.*)\[\/DANKE\]/Uis', $text)) {
             return true;
@@ -972,7 +978,7 @@ class Replace
         return false;
     }
 
-    public function erstelleListe($text)
+    public function erstelleListe($text): string
     {
         $text = stripslashes($text);
 
@@ -1047,7 +1053,7 @@ class Replace
         return $text;
     }
 
-    private function imageEinfuegen($bild, $name = null)
+    private function imageEinfuegen($bild, $name = null): string
     {
         $localHostName = null;
 
@@ -1082,7 +1088,7 @@ class Replace
         return $bild_link;
     }
 
-    private function imageEinfuegenNeu($imagePathName, $params, $generateWithContainer = true)
+    private function imageEinfuegenNeu($imagePathName, $params, $generateWithContainer = true): string
     {
         $name = '';
 
@@ -1128,7 +1134,7 @@ class Replace
         return $returnContent;
     }
 
-    private function generateImageContent($imagePathName, $params = '')
+    private function generateImageContent($imagePathName, $params = ''): string
     {
         $imagePathName = $this->ersetzeUmlaute($imagePathName);
 
@@ -1179,7 +1185,7 @@ class Replace
         return $imagePathNameFormatted;
     }
 
-    public function setBilderPfad($str_pfad)
+    public function setBilderPfad($str_pfad): void
     {
         $this->str_bilder_pfad = $str_pfad;
     }
@@ -1189,7 +1195,7 @@ class Replace
         return $this->str_bilder_pfad;
     }
 
-    public function setTempBilderPfad($str_pfad)
+    public function setTempBilderPfad($str_pfad): void
     {
         $this->str_temp_bilder_pfad = $str_pfad;
     }
@@ -1199,7 +1205,7 @@ class Replace
         return $this->str_temp_bilder_pfad;
     }
 
-    private function sonderzeichenErsetzen($text)
+    private function sonderzeichenErsetzen($text): ?string
     {
         $replace = [
             '/ä/' => '&auml;',
@@ -1216,21 +1222,21 @@ class Replace
         return $text;
     }
 
-    private function erstelleListenpunkt($text)
+    private function erstelleListenpunkt($text): string
     {
         $text = '<li style="margin-left: 20px;">'.$text.'</li>';
 
         return $text;
     }
 
-    private function erstelleListenueberschrift($text)
+    private function erstelleListenueberschrift($text): string
     {
         $text = '<span style="margin-left: 16px;">'.$text.'</span>';
 
         return $text;
     }
 
-    private function ersetzeUmlaute($text)
+    private function ersetzeUmlaute($text): string
     {
         $text = str_replace(
             ['ä', 'ö', 'ü', 'ß', 'Ä', 'Ö', 'Ü'],
@@ -1247,7 +1253,7 @@ class Replace
         return $text;
     }
 
-    private function detectUTF8($string)
+    private function detectUTF8($string): bool
     {
         return (bool) preg_match('%(?:
             [\xC2-\xDF][\x80-\xBF]        # non-overlong 2-byte
@@ -1260,7 +1266,7 @@ class Replace
             )+%xs', $string);
     }
 
-    private function smileyReplace($sText)
+    private function smileyReplace($sText): ?string
     {
         $this->prepareSmileys();
 
@@ -1269,7 +1275,7 @@ class Replace
         return $sText;
     }
 
-    private function prepareSmileys()
+    private function prepareSmileys(): void
     {
         $sTheme = 'standart';
 
@@ -1295,25 +1301,27 @@ class Replace
         }
     }
 
-    private function escapeRegEx($sText)
+    private function escapeRegEx($sText): ?string
     {
         return preg_replace('/([\-|\.|\(|\)|\/|\?|\\\])/', '\\\$1', $sText);
     }
 
-    public function dankeText($sText)
+    public function dankeText($sText): string
     {
         return 'Danke, '.$sText.'!';
     }
 
-    public function getNews($aMatches)
+    public function getNews($aMatches): string
     {
         return __METHOD__.'NEWS';
     }
 
     /**
      * @param bool $bWithoutLinks
+     *
+     * @return static
      */
-    public function setWithoutLinks($bWithoutLinks)
+    public function setWithoutLinks($bWithoutLinks): self
     {
         $this->bWithoutLinks = $bWithoutLinks;
 
@@ -1338,8 +1346,10 @@ class Replace
 
     /**
      * @param array $aAllowdTags
+     *
+     * @return void
      */
-    public function setAllowdTags($aAllowdTags)
+    public function setAllowdTags($aAllowdTags): void
     {
         $this->allowdTags = $aAllowdTags;
     }
@@ -1354,8 +1364,10 @@ class Replace
 
     /**
      * @param array $aMapTagToFunction
+     *
+     * @return void
      */
-    public function setMapTagToFunction($aMapTagToFunction)
+    public function setMapTagToFunction($aMapTagToFunction): void
     {
         $this->aMapTagToFunction = $aMapTagToFunction;
     }
@@ -1370,8 +1382,10 @@ class Replace
 
     /**
      * @param bool $bRemoveDeniedTags
+     *
+     * @return void
      */
-    public function setRemoveDeniedTags($bRemoveDeniedTags)
+    public function setRemoveDeniedTags($bRemoveDeniedTags): void
     {
         $this->removeDeniedTags = $bRemoveDeniedTags;
     }
@@ -1386,8 +1400,10 @@ class Replace
 
     /**
      * @param bool $solveVideoInformation
+     *
+     * @return void
      */
-    public function setSolveVideoInformation($solveVideoInformation)
+    public function setSolveVideoInformation($solveVideoInformation): void
     {
         $this->solveSourceInformation = $solveVideoInformation;
     }

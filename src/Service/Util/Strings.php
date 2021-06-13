@@ -4,7 +4,7 @@ namespace App\Service\Util;
 
 class Strings
 {
-    public static function makeStringLinkSave(string $content)
+    public static function makeStringLinkSave(string $content): ?string
     {
         $content = strtolower($content);
 
@@ -16,7 +16,7 @@ class Strings
         return $content;
     }
 
-    public static function replaceSpecialCharacters(string $content)
+    public static function replaceSpecialCharacters(string $content): ?string
     {
         $search = [
         '/ä/',
@@ -57,7 +57,7 @@ class Strings
         );
     }
 
-    public static function convertFromCamelCase(string $content, string $separator = '_')
+    public static function convertFromCamelCase(string $content, string $separator = '_'): ?string
     {
         return preg_replace_callback(
             '/([A-Z])/',

@@ -10,9 +10,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class ImpressumController extends AbstractController
 {
     /**
-     * @Route("/imprint", name="imprint")
+     * @Route ("/imprint", name="imprint")
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function index()
+    public function index(): \Symfony\Component\HttpFoundation\Response
     {
         return $this->render('impressum/index.html.twig', [
             'controller_name' => 'ImpressumController',

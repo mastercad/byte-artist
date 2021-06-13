@@ -309,7 +309,7 @@ class Projects
     }
 
     /**
-     * @return Collection|Tags[]
+     * @return Collection
      */
     public function getProjectTags(): Collection
     {
@@ -341,6 +341,6 @@ class Projects
 
     public function __toString()
     {
-        return $this->getName();
+        return (string) $this->getName();
     }
 }

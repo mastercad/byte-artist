@@ -39,6 +39,9 @@ class Seo
         }
     }
 
+    /**
+     * @return false|null|string
+     */
     public function replaceBadSigns($str_text = null)
     {
         if (!$str_text) {
@@ -79,14 +82,20 @@ class Seo
         return $str_text;
     }
 
-    public function createValidLinkName($str_link)
+    /**
+     * @return static
+     */
+    public function createValidLinkName($str_link): self
     {
         $this->setCleanLinkName($this->replaceBadSigns());
 
         return $this;
     }
 
-    public function createSeoLink($str_link_name = null, &$ref_obj_db = null, $str_table_field_name = null)
+    /**
+     * @return static
+     */
+    public function createSeoLink($str_link_name = null, &$ref_obj_db = null, $str_table_field_name = null): self
     {
         if ($str_link_name) {
             $this->setLinkName($str_link_name);
@@ -107,6 +116,8 @@ class Seo
     /**
      * function zum erstellen eines eindeutigen seo link namens an hand eines
      * übergebenen string und der datenbank.
+     *
+     * @return false|static
      */
     public function createUniqueDbEntry($linkName = null, EntityRepository $entityRepository = null, $columnName = '')
     {
@@ -148,7 +159,9 @@ class Seo
                 $row = $entityRepository->findOneBy([$columnName => $str_seo_name]);
 
                 if (!$row
-                    || $row[$this->getTableFieldIdName()] == $this->getTableFieldId()
+                    || (is_array($row) 
+                        && $row[$this->getTableFieldIdName()] == $this->getTableFieldId()
+                    )
                 ) {
                     break;
                 } elseif (is_array($row)
@@ -167,7 +180,10 @@ class Seo
         return $this;
     }
 
-    public function setDbTable(&$ref_db_table)
+    /**
+     * @return static
+     */
+    public function setDbTable(&$ref_db_table): self
     {
         $this->ref_db_table = $ref_db_table;
 
@@ -179,7 +195,10 @@ class Seo
         return $this->ref_db_table;
     }
 
-    public function setTableFieldName($str_table_field_name)
+    /**
+     * @return static
+     */
+    public function setTableFieldName($str_table_field_name): self
     {
         $this->str_table_field_name = trim($str_table_field_name);
 
@@ -191,7 +210,10 @@ class Seo
         return $this->str_table_field_name;
     }
 
-    public function setTableFieldId($i_table_field_id)
+    /**
+     * @return static
+     */
+    public function setTableFieldId($i_table_field_id): self
     {
         $this->i_table_field_id = $i_table_field_id;
 
@@ -203,7 +225,10 @@ class Seo
         return $this->i_table_field_id;
     }
 
-    public function setTableFieldIdName($str_table_field_id_name)
+    /**
+     * @return static
+     */
+    public function setTableFieldIdName($str_table_field_id_name): self
     {
         $this->str_table_field_id_name = trim($str_table_field_id_name);
 
@@ -215,7 +240,10 @@ class Seo
         return $this->str_table_field_id_name;
     }
 
-    public function setLinkName($str_link_name)
+    /**
+     * @return static
+     */
+    public function setLinkName($str_link_name): self
     {
         $this->str_link_name = strtolower(trim($str_link_name));
 
@@ -227,7 +255,10 @@ class Seo
         return $this->str_link_name;
     }
 
-    public function setCleanLinkName($str_clean_link_name)
+    /**
+     * @return static
+     */
+    public function setCleanLinkName($str_clean_link_name): self
     {
         $this->str_clean_link_name = trim($str_clean_link_name);
 
@@ -239,7 +270,10 @@ class Seo
         return $this->str_clean_link_name;
     }
 
-    public function setSeoName($str_seo_name)
+    /**
+     * @return static
+     */
+    public function setSeoName($str_seo_name): self
     {
         $this->str_seo_name = trim($str_seo_name);
 
@@ -251,7 +285,10 @@ class Seo
         return $this->str_seo_name;
     }
 
-    public function setMaxCount($i_max_count)
+    /**
+     * @return static
+     */
+    public function setMaxCount($i_max_count): self
     {
         $this->i_max_count = $i_max_count;
 

@@ -13,9 +13,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class IndexController extends AbstractController
 {
     /**
-     * @Route("/", name="index")
+     * @Route ("/", name="index")
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function index()
+    public function index(): \Symfony\Component\HttpFoundation\Response
     {
         /** @var BlogRepository $blogRepository */
         $blogRepository = $this->getDoctrine()->getRepository(Blogs::class);

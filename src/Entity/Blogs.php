@@ -264,7 +264,7 @@ class Blogs
     }
 
     /**
-     * @return Collection|BlogTags[]
+     * @return Collection
      */
     public function getBlogTags(): Collection
     {
@@ -296,6 +296,6 @@ class Blogs
 
     public function __toString()
     {
-        return $this->getName();
+        return (string) $this->getName();
     }
 }

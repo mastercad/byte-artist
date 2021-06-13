@@ -80,8 +80,10 @@ class File
      * mit sich in form eines arrays initialisiert
      *
      * @param string $str_source_path
+     *
+     * @return void
      */
-    public function setSourcePath($str_source_path)
+    public function setSourcePath($str_source_path): void
     {
         if ($this->checkDirExists($str_source_path)) {
             $str_source_path = $this->cleanPathName($str_source_path);
@@ -99,8 +101,10 @@ class File
      * ist, im negativen falle wird der übergebene pfad angefügt
      *
      * @param mixed $m_source_path
+     *
+     * @return void
      */
-    public function addSourcePath($m_source_path)
+    public function addSourcePath($m_source_path): void
     {
         if (is_array($m_source_path)) {
             foreach ($m_source_path as $str_path) {
@@ -125,7 +129,7 @@ class File
         }
     }
 
-    public function clearSourcePath()
+    public function clearSourcePath(): void
     {
         $this->a_source_paths = [];
     }
@@ -187,8 +191,10 @@ class File
      * function zum setzen des str_dest_path, dem zielpfad der dateien.
      *
      * @param string $str_dest_path
+     *
+     * @return void
      */
-    public function setDestPath($str_dest_path)
+    public function setDestPath($str_dest_path): void
     {
         $str_dest_path = $this->cleanPathName($str_dest_path);
         $this->str_dest_path = $str_dest_path;
@@ -213,8 +219,10 @@ class File
      * in jedem falle wird daraus ein array
      *
      * @param mixed $m_allowed_extensions
+     *
+     * @return void
      */
-    public function setAllowedExtensions($m_allowed_extensions)
+    public function setAllowedExtensions($m_allowed_extensions): void
     {
         if (is_array($m_allowed_extensions)) {
             foreach ($m_allowed_extensions as $str_allowed_extension) {
@@ -247,8 +255,10 @@ class File
      * bloßen dateinamen der pfad explizit gesetzt werden muss
      *
      * @param mixed $m_source_files
+     *
+     * @return void
      */
-    public function setSourceFiles($m_source_files)
+    public function setSourceFiles($m_source_files): void
     {
         if (is_array($m_source_files)) {
             $this->a_source_files = $m_source_files;
@@ -268,7 +278,7 @@ class File
         return $this->a_source_files;
     }
 
-    public function setDestFiles($m_dest_files)
+    public function setDestFiles($m_dest_files): void
     {
         /*
          * array wird an die entsprechenden geforderten keys angepasst
@@ -294,7 +304,7 @@ class File
         }
     }
 
-    public function getDestFiles()
+    public function getDestFiles(): array
     {
         return $this->a_dest_files;
     }
@@ -305,8 +315,10 @@ class File
      * direkt so übergeben.
      *
      * @param array $a_uploadet_files
+     *
+     * @return void
      */
-    public function setUploadetFiles($a_uploadet_files)
+    public function setUploadetFiles($a_uploadet_files): void
     {
         if (is_array($a_uploadet_files)) {
             $this->a_uploadet_files = $a_uploadet_files;
@@ -330,6 +342,8 @@ class File
      * welche vorher per setAllowedExtensions gesetzt wurde.
      *
      * return boolean
+     *
+     * @return false|null
      */
     public function moveUploadetFiles()
     {
@@ -428,7 +442,10 @@ class File
         return substr($str_path, 0, strrpos($str_path, '/') + 1);
     }
 
-    public function cleanDir($dir_path)
+    /**
+     * @return true
+     */
+    public function cleanDir($dir_path): bool
     {
         if (file_exists($dir_path) &&
                 is_dir($dir_path)) {
