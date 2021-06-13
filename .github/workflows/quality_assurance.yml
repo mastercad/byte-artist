@@ -132,7 +132,7 @@ jobs:
 #        configuration: ./phpunit.xml.dist
 #        memory_limit: 256M
 #        php_extensions: xdebug
-      run: ./bin/simple-phpunit
+      run: ./bin/phpunit
 
 #    - name: DEBUG OUTPUT PHPUNIT SYMLINK
 #      run: ls -lisa bin/.phpunit/phpunit-7.5-0/vendor/symfony/phpunit-bridge
