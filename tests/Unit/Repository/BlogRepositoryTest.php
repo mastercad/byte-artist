@@ -11,7 +11,7 @@ class BlogRepositoryTest extends WebTestCase
 {
     public function testFindLatest()
     {
-        $this->markSkippedForMissingDependecy("loadFixtures is unknown but it should from WebTestCase! Have to Fix it");
+        $this->markTestSkipped("loadFixtures is unknown but it should from WebTestCase! Have to Fix it");
         /*
         $this->loadFixtures(
             [
