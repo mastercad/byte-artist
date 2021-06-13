@@ -31,8 +31,11 @@ class ProjectsController extends AbstractController
     /**
      * @Route ("/projects", name="projects")
      */
-    public function indexAction(EntityManagerInterface $entityManager, Request $request, Pagination $pagination)
-        : Response
+    public function indexAction(
+        EntityManagerInterface $entityManager,
+        Request $request,
+        Pagination $pagination
+    ): Response
     {
         $projectTags = $this->getDoctrine()->getRepository(ProjectTags::class)->findAll();
 
@@ -415,8 +418,6 @@ class ProjectsController extends AbstractController
      * @Route ("/project/upload", name="app_project_image_upload", methods={"POST"})
      *
      * @see https://ckeditor.com/docs/ckeditor4/latest/guide/dev_file_upload.html
-     *
-     * @return JsonResponse
      */
     public function uploadImageAction(Request $request): JsonResponse
     {
@@ -465,8 +466,6 @@ class ProjectsController extends AbstractController
      * @Route ("/project/upload/preview", name="app_project_preview_upload", methods={"POST"})
      *
      * @see https://ckeditor.com/docs/ckeditor4/latest/guide/dev_file_upload.html
-     *
-     * @return JsonResponse
      */
     public function uploadPreviewAction(Request $request): JsonResponse
     {
@@ -524,10 +523,8 @@ class ProjectsController extends AbstractController
 
     /**
      * @Route ("/project/{projectId}", name="project_show_by_id", methods={"GET"}, requirements={"projectId"="\d+"})
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showByIdAction(int $projectId): \Symfony\Component\HttpFoundation\Response
+    public function showByIdAction(int $projectId): Response
     {
         $project = $this->getDoctrine()->getRepository(Projects::class)->find($projectId);
 
@@ -548,10 +545,8 @@ class ProjectsController extends AbstractController
      *      methods={"GET"},
      *      requirements={"projectSeoName"="[a-z0-9\_\-]+"}
      * )
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showBySeoNameAction(string $projectSeoName): \Symfony\Component\HttpFoundation\Response
+    public function showBySeoNameAction(string $projectSeoName): Response
     {
         $project = $this->getDoctrine()->getRepository(Projects::class)->findOneBy(['seoLink' => $projectSeoName]);
 
@@ -566,7 +561,7 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     private function generatePublicPicturePath($projectId = null)
     {
