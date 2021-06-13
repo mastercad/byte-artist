@@ -13,6 +13,7 @@ use App\Service\Pagination;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BlogController extends AbstractController
@@ -21,11 +22,9 @@ class BlogController extends AbstractController
 
     /**
      * @Route ("/blog", name="blog")
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function indexAction(EntityManagerInterface $entityManager, Request $request, Pagination $pagination):
-        \Symfony\Component\HttpFoundation\Response
+        Response
     {
         $blogTags = $this->getDoctrine()->getRepository(BlogTags::class)->findAll();
 
@@ -51,15 +50,13 @@ class BlogController extends AbstractController
      *      methods={"GET"},
      *      requirements={"tagSeoLink"="[a-z0-9\_\-]+"}
      * )
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function tagAction(
         EntityManagerInterface $entityManager,
         Request $request,
         Pagination $pagination,
         string $tagSeoLink
-    ): \Symfony\Component\HttpFoundation\Response {
+    ): Response {
         $blogTags = $this->getDoctrine()->getRepository(BlogTags::class)->findAll();
 
         /** @var BlogRepository $blogRepository */
@@ -80,11 +77,9 @@ class BlogController extends AbstractController
 
     /**
      * @Route ("/blog/create/{id}", name="blog_create", methods={"GET", "POST"}, requirements={"id"="\d+"})
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function createAction(EntityManagerInterface $entityManager, Request $request, int $id = null):
-        \Symfony\Component\HttpFoundation\Response
+        Response
     {
         $blog = null;
         $tags = $this->getDoctrine()->getRepository(Tags::class)->findAll();
@@ -186,8 +181,6 @@ class BlogController extends AbstractController
 
     /**
      * @Route ("/blog/{id}", name="blog_detail_by_id", methods={"GET"}, requirements={"id"="\d+"})
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function showAction(int $id): \Symfony\Component\HttpFoundation\Response
     {
@@ -206,8 +199,6 @@ class BlogController extends AbstractController
 
     /**
      * @Route ("/blog/{name}", name="blog_detail_by_name", methods={"GET"}, requirements={"name"="[a-z0-9\_\-]+"})
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function detailByNameAction(string $name): \Symfony\Component\HttpFoundation\Response
     {

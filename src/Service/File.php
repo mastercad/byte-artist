@@ -80,8 +80,6 @@ class File
      * mit sich in form eines arrays initialisiert
      *
      * @param string $str_source_path
-     *
-     * @return void
      */
     public function setSourcePath($str_source_path): void
     {
@@ -101,8 +99,6 @@ class File
      * ist, im negativen falle wird der übergebene pfad angefügt
      *
      * @param mixed $m_source_path
-     *
-     * @return void
      */
     public function addSourcePath($m_source_path): void
     {
@@ -219,8 +215,6 @@ class File
      * in jedem falle wird daraus ein array
      *
      * @param mixed $m_allowed_extensions
-     *
-     * @return void
      */
     public function setAllowedExtensions($m_allowed_extensions): void
     {
@@ -255,8 +249,6 @@ class File
      * bloßen dateinamen der pfad explizit gesetzt werden muss
      *
      * @param mixed $m_source_files
-     *
-     * @return void
      */
     public function setSourceFiles($m_source_files): void
     {
@@ -315,8 +307,6 @@ class File
      * direkt so übergeben.
      *
      * @param array $a_uploadet_files
-     *
-     * @return void
      */
     public function setUploadetFiles($a_uploadet_files): void
     {
@@ -442,9 +432,6 @@ class File
         return substr($str_path, 0, strrpos($str_path, '/') + 1);
     }
 
-    /**
-     * @return true
-     */
     public function cleanDir($dir_path): bool
     {
         if (file_exists($dir_path) &&

@@ -958,7 +958,7 @@ class Replace
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     private function charEinfuegen($text)
     {
@@ -1311,15 +1311,13 @@ class Replace
         return 'Danke, '.$sText.'!';
     }
 
-    public function getNews($aMatches): string
+    public function getNews(): string
     {
         return __METHOD__.'NEWS';
     }
 
     /**
      * @param bool $bWithoutLinks
-     *
-     * @return static
      */
     public function setWithoutLinks($bWithoutLinks): self
     {
@@ -1346,8 +1344,6 @@ class Replace
 
     /**
      * @param array $aAllowdTags
-     *
-     * @return void
      */
     public function setAllowdTags($aAllowdTags): void
     {
@@ -1364,8 +1360,6 @@ class Replace
 
     /**
      * @param array $aMapTagToFunction
-     *
-     * @return void
      */
     public function setMapTagToFunction($aMapTagToFunction): void
     {
@@ -1382,8 +1376,6 @@ class Replace
 
     /**
      * @param bool $bRemoveDeniedTags
-     *
-     * @return void
      */
     public function setRemoveDeniedTags($bRemoveDeniedTags): void
     {
@@ -1400,8 +1392,6 @@ class Replace
 
     /**
      * @param bool $solveVideoInformation
-     *
-     * @return void
      */
     public function setSolveVideoInformation($solveVideoInformation): void
     {

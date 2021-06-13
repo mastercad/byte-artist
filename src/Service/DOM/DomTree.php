@@ -23,8 +23,6 @@ class DomTree
      *
      * @param array|DOMNode|DOMNodeList $nodeOrNodes
      * @param int                       $maxDepth    (optional)
-     *
-     * @return void
      */
     public static function dump($nodeOrNodes, $maxDepth = 0): void
     {

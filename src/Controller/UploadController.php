@@ -12,8 +12,6 @@ class UploadController extends AbstractController
 {
     /**
      * @Route ("/upload", name="upload")
-     *
-     * @return JsonResponse
      */
     public function index(): JsonResponse
     {

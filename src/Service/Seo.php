@@ -40,7 +40,7 @@ class Seo
     }
 
     /**
-     * @return false|null|string
+     * @return false|string|null
      */
     public function replaceBadSigns($str_text = null)
     {

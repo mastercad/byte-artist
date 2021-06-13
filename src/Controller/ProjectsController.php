@@ -30,8 +30,6 @@ class ProjectsController extends AbstractController
 
     /**
      * @Route ("/projects", name="projects")
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function indexAction(EntityManagerInterface $entityManager, Request $request, Pagination $pagination)
         : Response
@@ -55,10 +53,8 @@ class ProjectsController extends AbstractController
 
     /**
      * @Route ("/project/create", name="project_create", methods={"GET"})
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function createAction(): \Symfony\Component\HttpFoundation\Response
+    public function createAction(): Response
     {
         $project = new Projects();
         $project->setCreated(new \DateTime());
@@ -80,10 +76,8 @@ class ProjectsController extends AbstractController
 
     /**
      * @Route ("/project/gallery", name="app_project_image_browser", methods={"GET"})
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function imageBrowserAction(Request $request): \Symfony\Component\HttpFoundation\Response
+    public function imageBrowserAction(Request $request): Response
     {
         $publicUploadPath = $this->generatePublicUploadPath();
         $rootPath = __DIR__.'/../../public';
@@ -113,8 +107,6 @@ class ProjectsController extends AbstractController
      *      methods={"GET"},
      *      requirements={"projectId"="\d+"}
      * )
-     *
-     * @return JsonResponse
      */
     public function deleteAction(int $projectId, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -150,15 +142,13 @@ class ProjectsController extends AbstractController
      *      methods={"GET"},
      *      requirements={"tagSeoLink"="[a-z0-9\_\-]+"}
      * )
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function tagAction(
         EntityManagerInterface $entityManager,
         Request $request,
         Pagination $pagination,
         string $tagSeoLink
-    ): \Symfony\Component\HttpFoundation\Response {
+    ): Response {
         $projectTags = $this->getDoctrine()->getRepository(ProjectTags::class)->findAll();
 
         /** @var ProjectsRepository */
@@ -184,10 +174,8 @@ class ProjectsController extends AbstractController
      *      methods={"GET", "POST"},
      *      requirements={"projectId"="\d+"}
      * )
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editByIdAction(int $projectId): \Symfony\Component\HttpFoundation\Response
+    public function editByIdAction(int $projectId): Response
     {
         $project = $this->getDoctrine()->getRepository(Projects::class)->find($projectId);
 
@@ -212,10 +200,8 @@ class ProjectsController extends AbstractController
      *      methods={"GET", "POST"},
      *      requirements={"projectSeoName"="[a-z0-9\_\-]+"}
      * )
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editBySeoNameAction(string $projectSeoName): \Symfony\Component\HttpFoundation\Response
+    public function editBySeoNameAction(string $projectSeoName): Response
     {
         $project = $this->getDoctrine()->getRepository(Projects::class)->findOneBy(['seoLink' => $projectSeoName]);
 
