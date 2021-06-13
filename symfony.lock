@@ -125,7 +125,10 @@
             "branch": "master",
             "version": "2.0",
             "ref": "8eb1cd0962ded6a6d6e1e5a9b6d3e888f9f94ff6"
-        }
+        },
+        "files": [
+            "config/packages/fos_ckeditor.yaml"
+        ]
     },
     "geshi/geshi": {
         "version": "v1.0.9.1"
@@ -149,7 +152,10 @@
             "branch": "master",
             "version": "1.20",
             "ref": "80acc9223a205cbf5d9828fd616c82a374d281dd"
-        }
+        },
+        "files": [
+            "config/packages/knpu_oauth2_client.yaml"
+        ]
     },
     "laminas/laminas-code": {
         "version": "4.3.0"
@@ -206,16 +212,16 @@
         "version": "1.1.0"
     },
     "phpstan/phpstan": {
-        "version": "0.12.88"
+        "version": "0.12.89"
     },
     "phpstan/phpstan-doctrine": {
-        "version": "0.12.38"
+        "version": "0.12.39"
     },
     "phpstan/phpstan-phpunit": {
         "version": "0.12.19"
     },
     "phpstan/phpstan-symfony": {
-        "version": "0.12.35"
+        "version": "0.12.36"
     },
     "phpunit/php-code-coverage": {
         "version": "9.2.6"
@@ -334,7 +340,10 @@
             "branch": "master",
             "version": "3.6",
             "ref": "1019e5c08d4821cb9b77f4891f8e9c31ff20ac6f"
-        }
+        },
+        "files": [
+            "phpcs.xml.dist"
+        ]
     },
     "symfony/asset": {
         "version": "v5.3.0"
@@ -592,9 +601,6 @@
     },
     "symfony/string": {
         "version": "v5.3.0"
-    },
-    "symfony/test-pack": {
-        "version": "v1.0.8"
     },
     "symfony/translation": {
         "version": "5.3",
