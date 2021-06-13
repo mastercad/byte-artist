@@ -27,8 +27,7 @@ class BlogController extends AbstractController
         EntityManagerInterface $entityManager,
         Request $request,
         Pagination $pagination
-    ): Response
-    {
+    ): Response {
         $blogTags = $this->getDoctrine()->getRepository(BlogTags::class)->findAll();
 
         /** @var BlogRepository $blogRepository */
@@ -85,8 +84,7 @@ class BlogController extends AbstractController
         EntityManagerInterface $entityManager,
         Request $request,
         int $id = null
-    ): Response
-    {
+    ): Response {
         $blog = null;
         $tags = $this->getDoctrine()->getRepository(Tags::class)->findAll();
 
