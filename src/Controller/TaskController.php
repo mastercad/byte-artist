@@ -11,8 +11,6 @@ class TaskController extends AbstractController
 {
     /**
      * @Route ("/task", name="task")
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function index(): \Symfony\Component\HttpFoundation\Response
     {

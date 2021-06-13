@@ -4,8 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Projects;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Projects|null find($id, $lockMode = null, $lockVersion = null)

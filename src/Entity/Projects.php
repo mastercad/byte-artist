@@ -308,9 +308,6 @@ class Projects
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getProjectTags(): Collection
     {
         return $this->projectTags;

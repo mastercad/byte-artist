@@ -263,9 +263,6 @@ class Blogs
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getBlogTags(): Collection
     {
         return $this->blogTags;

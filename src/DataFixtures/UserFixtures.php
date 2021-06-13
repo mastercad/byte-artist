@@ -10,7 +10,7 @@ class UserFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        $userEntity = new User;
+        $userEntity = new User();
         $userEntity->setEmail('testuser@email.de');
         $userEntity->setRoles(['testRole']);
         $userEntity->setUsername('TestUserName1');

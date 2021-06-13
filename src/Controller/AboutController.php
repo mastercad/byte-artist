@@ -11,8 +11,6 @@ class AboutController extends AbstractController
 {
     /**
      * @Route ("/about", name="about")
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function index(): \Symfony\Component\HttpFoundation\Response
     {
