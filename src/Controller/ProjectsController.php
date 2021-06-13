@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProjectsController extends AbstractController
@@ -32,7 +33,8 @@ class ProjectsController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(EntityManagerInterface $entityManager, Request $request, Pagination $pagination): \Symfony\Component\HttpFoundation\Response
+    public function indexAction(EntityManagerInterface $entityManager, Request $request, Pagination $pagination)
+        : Response
     {
         $projectTags = $this->getDoctrine()->getRepository(ProjectTags::class)->findAll();
 

@@ -159,7 +159,7 @@ class Seo
                 $row = $entityRepository->findOneBy([$columnName => $str_seo_name]);
 
                 if (!$row
-                    || (is_array($row) 
+                    || (is_array($row)
                         && $row[$this->getTableFieldIdName()] == $this->getTableFieldId()
                     )
                 ) {
