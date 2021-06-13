@@ -187,8 +187,6 @@ class File
      * function zum setzen des str_dest_path, dem zielpfad der dateien.
      *
      * @param string $str_dest_path
-     *
-     * @return void
      */
     public function setDestPath($str_dest_path): void
     {
