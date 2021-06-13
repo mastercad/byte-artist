@@ -24,7 +24,8 @@ class BlogController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(EntityManagerInterface $entityManager, Request $request, Pagination $pagination): \Symfony\Component\HttpFoundation\Response
+    public function indexAction(EntityManagerInterface $entityManager, Request $request, Pagination $pagination):
+        \Symfony\Component\HttpFoundation\Response
     {
         $blogTags = $this->getDoctrine()->getRepository(BlogTags::class)->findAll();
 
@@ -82,7 +83,8 @@ class BlogController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function createAction(EntityManagerInterface $entityManager, Request $request, int $id = null): \Symfony\Component\HttpFoundation\Response
+    public function createAction(EntityManagerInterface $entityManager, Request $request, int $id = null):
+        \Symfony\Component\HttpFoundation\Response
     {
         $blog = null;
         $tags = $this->getDoctrine()->getRepository(Tags::class)->findAll();
