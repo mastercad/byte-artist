@@ -35,8 +35,7 @@ class ProjectsController extends AbstractController
         EntityManagerInterface $entityManager,
         Request $request,
         Pagination $pagination
-    ): Response
-    {
+    ): Response {
         $projectTags = $this->getDoctrine()->getRepository(ProjectTags::class)->findAll();
 
         /** @var ProjectsRepository */
