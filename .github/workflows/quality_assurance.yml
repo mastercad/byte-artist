@@ -184,11 +184,11 @@ jobs:
 #        # GitHub Access Token
 #        token: ${{ github.token }} # optional, default is ${{ github.token }}
 
-    - name: Cleanup Report Results
-      shell: bash
-      run: |
-         sed -i 's/\(.*file="\).*byte_artist\/\(.*"\)/\1\2/g' build/reports/junit.xml
-         sed -i 's/\(.*name="\).*byte_artist\/\(.*"\)/\1\2/g' build/reports/coverage-clover.xml
+#    - name: Cleanup Report Results
+#      shell: bash
+#      run: |
+#         sed -i 's/\(.*file="\).*byte_artist\/\(.*"\)/\1\2/g' build/reports/junit.xml
+#         sed -i 's/\(.*name="\).*byte_artist\/\(.*"\)/\1\2/g' build/reports/coverage-clover.xml
 
     - name: Upload Unit Test Results
       if: always()
@@ -204,9 +204,7 @@ jobs:
       if: always()
       with:
 #        files: build/reports/**/*.xml
-        files: |
-          build/reports/junit.xml
-          build/reports/coverage-clover.xml
+        files: build/reports/junit.xml
         github_token: ${{ github.token }}
 
     - name: output reports content for debug
