@@ -15,7 +15,7 @@ class UppReplaceExtension extends AbstractExtension
         ];
     }
 
-    public function replace($content, $id)
+    public function replace($content, $id): string
     {
         $ubbReplacer = new Replace(true);
         $ubbReplacer->setBilderPfad('/images/content/dynamisch/blogs/'.$id.'/');

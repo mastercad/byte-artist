@@ -44,3 +44,13 @@ integrieren von OAuth für google und facebook:
 composer require knpuniversity/oauth2-client-bundle
 composer require league/oauth2-google
 composer require league/oauth2-facebook
+
+replace absolute paths in coverage-clover.xml
+sed -i 's/\(.*name="\).*byte_artist\/\(.*"\)/\1\2/g' build/reports/coverage-clover.xml
+
+########################################################################################################################
+######################           fixtures ##############################################################################
+########################################################################################################################
+
+
+

@@ -9,6 +9,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BlogType extends AbstractType
 {
+    /**
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -31,6 +34,9 @@ class BlogType extends AbstractType
         ;
     }
 
+    /**
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

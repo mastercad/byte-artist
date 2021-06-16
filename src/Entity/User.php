@@ -100,6 +100,9 @@ class User implements UserInterface
         return $this->salt;
     }
 
+    /**
+     * @return void
+     */
     public function eraseCredentials()
     {
 //        $this->password = '';
@@ -140,10 +143,10 @@ class User implements UserInterface
 
     public function __toString()
     {
-        return $this->getEmail();
+        return (string) $this->getEmail();
     }
 
-    public function getUserIdentifier()
+    public function getUserIdentifier(): string
     {
         return 'email';
     }

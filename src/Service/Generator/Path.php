@@ -17,29 +17,29 @@ class Path
         $this->classNameExtractor = $classNameExtractor;
     }
 
-    public function generatePublicUploadPath(User $user)
+    public function generatePublicUploadPath(User $user): string
     {
         return '/upload/'.$user->getId();
     }
 
-    public function generateAbsolutePublicUploadPath(User $user)
+    public function generateAbsolutePublicUploadPath(User $user): string
     {
         return $this->getProjectRootPath().'/public'.$this->generatePublicUploadPath($user);
     }
 
-    public function generatePublicImagesPath($entity)
+    public function generatePublicImagesPath($entity): string
     {
         $entityType = $this->classNameExtractor->extractClassName($entity);
 
         return '/images/content/dynamisch/'.strtolower($entityType).'/'.$entity->getId();
     }
 
-    public function generateAbsolutePublicImagesPath($entity)
+    public function generateAbsolutePublicImagesPath($entity): string
     {
         return $this->getProjectRootPath().'/public'.$this->generatePublicImagesPath($entity);
     }
 
-    public function getProjectRootPath()
+    public function getProjectRootPath(): string
     {
         return $this->projectRootPath;
     }

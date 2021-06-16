@@ -13,7 +13,7 @@ class LinkFactory
         $this->connection = $connection;
     }
 
-    public function create(string $entityClassName, string $columnName)
+    public function create(string $entityClassName, string $columnName): Link
     {
         $repository = $this->connection->getRepository($entityClassName);
 

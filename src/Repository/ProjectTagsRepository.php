@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\ProjectTags;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Projects|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,7 +19,7 @@ class ProjectTagsRepository extends ServiceEntityRepository
         parent::__construct($registry, ProjectTags::class);
     }
 
-    public function queryAllProjectsByTag($seoLink)
+    public function queryAllProjectsByTag($seoLink): \Doctrine\ORM\Query
     {
         return $this->createQueryBuilder('b')
             ->where('tags.tag.seoLink = :seoLink')

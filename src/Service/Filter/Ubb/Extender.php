@@ -112,6 +112,9 @@ class Extender
         return $matches[0];
     }
 
+    /**
+     * @return false|string
+     */
     private function generateOptionsString($options)
     {
         $optionsString = '';
@@ -123,7 +126,7 @@ class Extender
         return $optionsString;
     }
 
-    private function retrieveYouTubeVideoInformation($videoId)
+    private function retrieveYouTubeVideoInformation($videoId): string
     {
         $content = str_replace('|', ' ', $this->retrieveYouTubeTitle($videoId));
         $content = str_replace('=', ' ', $content);
@@ -131,7 +134,7 @@ class Extender
         return $content;
     }
 
-    private function parseYouTubeVideoUrl($videoUrl)
+    private function parseYouTubeVideoUrl($videoUrl): string
     {
         $sVideoId = $videoUrl;
 
@@ -160,7 +163,12 @@ class Extender
         return json_decode($jsonString, true);
     }
 
-    private function parseOptions($optionsString)
+    /**
+     * @return string[]
+     *
+     * @psalm-return array<string, string>
+     */
+    private function parseOptions($optionsString): array
     {
         $rawOptions = explode('|', $optionsString);
         $options = [];

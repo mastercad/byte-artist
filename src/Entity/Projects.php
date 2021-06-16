@@ -308,9 +308,6 @@ class Projects
         return $this;
     }
 
-    /**
-     * @return Collection|Tags[]
-     */
     public function getProjectTags(): Collection
     {
         return $this->projectTags;
@@ -341,6 +338,6 @@ class Projects
 
     public function __toString()
     {
-        return $this->getName();
+        return (string) $this->getName();
     }
 }

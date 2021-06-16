@@ -21,7 +21,10 @@ class TagMerge
         'class',
     ];
 
-    public function setString($sString)
+    /**
+     * @return static
+     */
+    public function setString($sString): self
     {
         $this->sString = $sString;
 
@@ -50,7 +53,7 @@ class TagMerge
         return $this->getString();
     }
 
-    private function splitStringInEmptyTags()
+    private function splitStringInEmptyTags(): bool
     {
         $bReturn = false;
         $regex = '/<span\s*([a-z0-9,\.;:\|\s=\-_#\'"]*)>\s*<span\s*([\sa-z0-9,\.;:\|=\-_"#\']*)>(.*?)<\/span>\s*'.
@@ -65,7 +68,7 @@ class TagMerge
         return $bReturn;
     }
 
-    private function replaceMergedContent($sMergedContent)
+    private function replaceMergedContent($sMergedContent): ?string
     {
         $regex = '/<span\s*[a-z0-9,\.;:\|\s=\-_#\'"]*>\s*<span\s*[\sa-z0-9,\.;:\|=\-_"#\']*>.*?<\/span>\s*<\/span>/is';
         $sContent = preg_replace($regex, '<span '.$sMergedContent.'>'.$this->sContent.'</span>', $this->getString());
@@ -73,7 +76,12 @@ class TagMerge
         return $sContent;
     }
 
-    private function extractAttributesFromString($sString)
+    /**
+     * @return string[]
+     *
+     * @psalm-return array<string, string>
+     */
+    private function extractAttributesFromString($sString): array
     {
         $mReturn = [];
         /* @fixme hier gibts noch einen bug wenn ein attribute value keine anführungszeichen hat
@@ -94,7 +102,7 @@ class TagMerge
         return $mReturn;
     }
 
-    private function mergeAttributes($aFirstAttributes, $aSecondAttributes)
+    private function mergeAttributes($aFirstAttributes, $aSecondAttributes): string
     {
         $sAttributes = '';
         $aProcessedAttributes = [];
@@ -134,7 +142,7 @@ class TagMerge
         return trim($sAttributes);
     }
 
-    private function mergeStyleAttributes($sValuesFirst, $sValuesSecond)
+    private function mergeStyleAttributes($sValuesFirst, $sValuesSecond): string
     {
         $sValuesFirst = trim($sValuesFirst);
         $sValuesSecond = trim($sValuesSecond);
@@ -149,7 +157,7 @@ class TagMerge
         return $sValuesFirst.'; '.$sValuesSecond;
     }
 
-    private function mergeClassAttributes($sValuesFirst, $sValuesSecond)
+    private function mergeClassAttributes($sValuesFirst, $sValuesSecond): string
     {
         $sValuesFirst = trim($sValuesFirst);
         $sValuesSecond = trim($sValuesSecond);

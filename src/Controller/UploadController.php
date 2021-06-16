@@ -11,9 +11,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class UploadController extends AbstractController
 {
     /**
-     * @Route("/upload", name="upload")
+     * @Route ("/upload", name="upload")
      */
-    public function index()
+    public function index(): JsonResponse
     {
         return new JsonResponse(['uploaded']);
     }
