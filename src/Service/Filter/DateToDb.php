@@ -4,6 +4,9 @@ namespace App\Service\Filter;
 
 class DateToDb
 {
+    /**
+     * @return false|string
+     */
     public function filter($datum)
     {
         if (preg_match('/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/', $datum, $matches)) {

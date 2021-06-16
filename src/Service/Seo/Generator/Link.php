@@ -44,10 +44,10 @@ class Link
         return $this->extendWithSeoLink($entity, $this->incrementSeoLink($seoLink));
     }
 
-    private function incrementSeoLink($seoLink)
+    private function incrementSeoLink($seoLink): string
     {
         if (preg_match('/^(.*?)(\-)([0-9]{1,})$/', $seoLink, $matches)) {
-            $newCount = ++$matches[3];
+            $newCount = intval($matches[3]) + 1;
 
             return $matches[1].'-'.$newCount;
         }

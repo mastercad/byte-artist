@@ -10,9 +10,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class AboutController extends AbstractController
 {
     /**
-     * @Route("/about", name="about")
+     * @Route ("/about", name="about")
      */
-    public function index()
+    public function index(): \Symfony\Component\HttpFoundation\Response
     {
         $day = 18;
         $month = 11;

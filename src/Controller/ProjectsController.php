@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProjectsController extends AbstractController
@@ -28,10 +29,13 @@ class ProjectsController extends AbstractController
     public const ITEMS_PER_PAGE = 10;
 
     /**
-     * @Route("/projects", name="projects")
+     * @Route ("/projects", name="projects")
      */
-    public function indexAction(EntityManagerInterface $entityManager, Request $request, Pagination $pagination)
-    {
+    public function indexAction(
+        EntityManagerInterface $entityManager,
+        Request $request,
+        Pagination $pagination
+    ): Response {
         $projectTags = $this->getDoctrine()->getRepository(ProjectTags::class)->findAll();
 
         /** @var ProjectsRepository */
@@ -50,9 +54,9 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route("/project/create", name="project_create", methods={"GET"})
+     * @Route ("/project/create", name="project_create", methods={"GET"})
      */
-    public function createAction()
+    public function createAction(): Response
     {
         $project = new Projects();
         $project->setCreated(new \DateTime());
@@ -73,9 +77,9 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route("/project/gallery", name="app_project_image_browser", methods={"GET"})
+     * @Route ("/project/gallery", name="app_project_image_browser", methods={"GET"})
      */
-    public function imageBrowserAction(Request $request)
+    public function imageBrowserAction(Request $request): Response
     {
         $publicUploadPath = $this->generatePublicUploadPath();
         $rootPath = __DIR__.'/../../public';
@@ -99,14 +103,14 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route(
+     * @Route (
      *      "/project/delete/{projectId}",
      *      name="app_project_delete",
      *      methods={"GET"},
      *      requirements={"projectId"="\d+"}
      * )
      */
-    public function deleteAction(int $projectId, EntityManagerInterface $entityManager)
+    public function deleteAction(int $projectId, EntityManagerInterface $entityManager): JsonResponse
     {
         $project = $entityManager->getRepository(Projects::class)->find($projectId);
 
@@ -134,7 +138,7 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route(
+     * @Route (
      *      "/project/tag/{tagSeoLink}",
      *      name="project_tag_landing",
      *      methods={"GET"},
@@ -146,7 +150,7 @@ class ProjectsController extends AbstractController
         Request $request,
         Pagination $pagination,
         string $tagSeoLink
-    ) {
+    ): Response {
         $projectTags = $this->getDoctrine()->getRepository(ProjectTags::class)->findAll();
 
         /** @var ProjectsRepository */
@@ -166,14 +170,14 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route(
+     * @Route (
      *      "/project/create/{projectId}",
      *      name="project_edit_by_id",
      *      methods={"GET", "POST"},
      *      requirements={"projectId"="\d+"}
      * )
      */
-    public function editByIdAction(int $projectId)
+    public function editByIdAction(int $projectId): Response
     {
         $project = $this->getDoctrine()->getRepository(Projects::class)->find($projectId);
 
@@ -192,14 +196,14 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route(
+     * @Route (
      *      "/project/create/{projectSeoName}",
      *      name="project_edit_by_name",
      *      methods={"GET", "POST"},
      *      requirements={"projectSeoName"="[a-z0-9\_\-]+"}
      * )
      */
-    public function editBySeoNameAction(string $projectSeoName)
+    public function editBySeoNameAction(string $projectSeoName): Response
     {
         $project = $this->getDoctrine()->getRepository(Projects::class)->findOneBy(['seoLink' => $projectSeoName]);
 
@@ -410,11 +414,11 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route("/project/upload", name="app_project_image_upload", methods={"POST"})
+     * @Route ("/project/upload", name="app_project_image_upload", methods={"POST"})
      *
      * @see https://ckeditor.com/docs/ckeditor4/latest/guide/dev_file_upload.html
      */
-    public function uploadImageAction(Request $request)
+    public function uploadImageAction(Request $request): JsonResponse
     {
         $projectId = $request->get('id');
 
@@ -458,11 +462,11 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route("/project/upload/preview", name="app_project_preview_upload", methods={"POST"})
+     * @Route ("/project/upload/preview", name="app_project_preview_upload", methods={"POST"})
      *
      * @see https://ckeditor.com/docs/ckeditor4/latest/guide/dev_file_upload.html
      */
-    public function uploadPreviewAction(Request $request)
+    public function uploadPreviewAction(Request $request): JsonResponse
     {
         /** @var UploadedFile $file */
         $file = $request->files->get('upload');
@@ -517,9 +521,9 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route("/project/{projectId}", name="project_show_by_id", methods={"GET"}, requirements={"projectId"="\d+"})
+     * @Route ("/project/{projectId}", name="project_show_by_id", methods={"GET"}, requirements={"projectId"="\d+"})
      */
-    public function showByIdAction(int $projectId)
+    public function showByIdAction(int $projectId): Response
     {
         $project = $this->getDoctrine()->getRepository(Projects::class)->find($projectId);
 
@@ -534,14 +538,14 @@ class ProjectsController extends AbstractController
     }
 
     /**
-     * @Route(
+     * @Route (
      *      "/project/{projectSeoName}",
      *      name="project_show_by_name",
      *      methods={"GET"},
      *      requirements={"projectSeoName"="[a-z0-9\_\-]+"}
      * )
      */
-    public function showBySeoNameAction(string $projectSeoName)
+    public function showBySeoNameAction(string $projectSeoName): Response
     {
         $project = $this->getDoctrine()->getRepository(Projects::class)->findOneBy(['seoLink' => $projectSeoName]);
 
@@ -555,6 +559,9 @@ class ProjectsController extends AbstractController
         );
     }
 
+    /**
+     * @return string|null
+     */
     private function generatePublicPicturePath($projectId = null)
     {
         if ($projectId) {
@@ -562,12 +569,15 @@ class ProjectsController extends AbstractController
         }
     }
 
-    private function generatePublicUploadPath()
+    private function generatePublicUploadPath(): string
     {
         return '/images/upload/'.$this->getUser()->getId().'/projects';
     }
 
-    private function extractErrorsFromForm(FormInterface $form)
+    /**
+     * @psalm-return array<int|string, mixed>
+     */
+    private function extractErrorsFromForm(FormInterface $form): array
     {
         $errors = [];
         foreach ($form->getErrors() as $error) {

@@ -24,7 +24,7 @@ class DomTree
      * @param array|DOMNode|DOMNodeList $nodeOrNodes
      * @param int                       $maxDepth    (optional)
      */
-    public static function dump($nodeOrNodes, $maxDepth = 0)
+    public static function dump($nodeOrNodes, $maxDepth = 0): void
     {
         $iterator = new \DOMRecursiveIterator($nodeOrNodes);
         $decorated = new \DOMRecursiveDecoratorStringAsCurrent($iterator);

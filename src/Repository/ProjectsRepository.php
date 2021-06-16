@@ -4,8 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Projects;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Projects|null find($id, $lockMode = null, $lockVersion = null)
@@ -41,7 +41,7 @@ class ProjectsRepository extends ServiceEntityRepository
         ;
     }
 
-    public function queryAllVisibleProjects()
+    public function queryAllVisibleProjects(): \Doctrine\ORM\Query
     {
         return $this->createQueryBuilder('p')
             ->where('p.isPublic = 1')
@@ -50,7 +50,7 @@ class ProjectsRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
-    public function queryAllProjectsByTag($seoLink)
+    public function queryAllProjectsByTag($seoLink): \Doctrine\ORM\Query
     {
         return $this->createQueryBuilder('p')
             ->innerJoin('App\Entity\ProjectTags', 'pt', Join::WITH, 'pt.project = p')

@@ -8,10 +8,12 @@ use App\Entity\Blogs;
 use App\Entity\BlogTags;
 use App\Entity\Tags;
 use App\Form\BlogType;
+use App\Repository\BlogRepository;
 use App\Service\Pagination;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BlogController extends AbstractController
@@ -19,13 +21,18 @@ class BlogController extends AbstractController
     public const ITEMS_PER_PAGE = 10;
 
     /**
-     * @Route("/blog", name="blog")
+     * @Route ("/blog", name="blog")
      */
-    public function indexAction(EntityManagerInterface $entityManager, Request $request, Pagination $pagination)
-    {
+    public function indexAction(
+        EntityManagerInterface $entityManager,
+        Request $request,
+        Pagination $pagination
+    ): Response {
         $blogTags = $this->getDoctrine()->getRepository(BlogTags::class)->findAll();
 
-        $query = $entityManager->getRepository(Blogs::class)->queryAllVisibleBlogs();
+        /** @var BlogRepository $blogRepository */
+        $blogRepository = $entityManager->getRepository(Blogs::class);
+        $query = $blogRepository->queryAllVisibleBlogs();
         $blogs = $pagination->paginate($query, $request, self::ITEMS_PER_PAGE);
 
         return $this->render(
@@ -39,7 +46,7 @@ class BlogController extends AbstractController
     }
 
     /**
-     * @Route(
+     * @Route (
      *      "/blog/tag/{tagSeoLink}",
      *      name="blog_tag_landing",
      *      methods={"GET"},
@@ -51,10 +58,12 @@ class BlogController extends AbstractController
         Request $request,
         Pagination $pagination,
         string $tagSeoLink
-    ) {
+    ): Response {
         $blogTags = $this->getDoctrine()->getRepository(BlogTags::class)->findAll();
 
-        $query = $entityManager->getRepository(Blogs::class)->queryAllBlogsByTag($tagSeoLink);
+        /** @var BlogRepository $blogRepository */
+        $blogRepository = $entityManager->getRepository(Blogs::class);
+        $query = $blogRepository->queryAllBlogsByTag($tagSeoLink);
         $blogs = $pagination->paginate($query, $request, self::ITEMS_PER_PAGE);
 
         return $this->render(
@@ -69,10 +78,13 @@ class BlogController extends AbstractController
     }
 
     /**
-     * @Route("/blog/create/{id}", name="blog_create", methods={"GET", "POST"}, requirements={"id"="\d+"})
+     * @Route ("/blog/create/{id}", name="blog_create", methods={"GET", "POST"}, requirements={"id"="\d+"})
      */
-    public function createAction(EntityManagerInterface $entityManager, Request $request, int $id = null)
-    {
+    public function createAction(
+        EntityManagerInterface $entityManager,
+        Request $request,
+        int $id = null
+    ): Response {
         $blog = null;
         $tags = $this->getDoctrine()->getRepository(Tags::class)->findAll();
 
@@ -172,9 +184,9 @@ class BlogController extends AbstractController
     }
 
     /**
-     * @Route("/blog/{id}", name="blog_detail_by_id", methods={"GET"}, requirements={"id"="\d+"})
+     * @Route ("/blog/{id}", name="blog_detail_by_id", methods={"GET"}, requirements={"id"="\d+"})
      */
-    public function showAction(int $id)
+    public function showAction(int $id): Response
     {
         $blog = $this->getDoctrine()->getRepository(Blogs::class)->find($id);
 
@@ -190,9 +202,9 @@ class BlogController extends AbstractController
     }
 
     /**
-     * @Route("/blog/{name}", name="blog_detail_by_name", methods={"GET"}, requirements={"name"="[a-z0-9\_\-]+"})
+     * @Route ("/blog/{name}", name="blog_detail_by_name", methods={"GET"}, requirements={"name"="[a-z0-9\_\-]+"})
      */
-    public function detailByNameAction(string $name)
+    public function detailByNameAction(string $name): Response
     {
         $blog = $this->getDoctrine()->getRepository(Blogs::class)->findOneBy(['seoLink' => $name]);
 
