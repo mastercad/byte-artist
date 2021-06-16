@@ -195,14 +195,18 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Unit Test Results
-        path: build/reports/junit.xml
+        path: |
+          build/reports/junit.xml
+          build/reports/coverage-clover.xml
 
     - name: Publish Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1
       if: always()
       with:
 #        files: build/reports/**/*.xml
-        files: build/reports/junit.xml
+        files: |
+          build/reports/junit.xml
+          build/reports/coverage-clover.xml
         github_token: ${{ github.token }}
 
     - name: output reports content for debug
