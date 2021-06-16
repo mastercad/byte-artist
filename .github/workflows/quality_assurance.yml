@@ -187,15 +187,17 @@ jobs:
     - name: Cleanup Report Results
       shell: bash
       run: |
-         sed -i 's/\(.*file="\).*byte_artist\/\(.*"\)/\1\2/g' build/reports/junit.xml
-         sed -i 's/\(.*name="\).*byte_artist\/\(.*"\)/\1\2/g' build/reports/coverage-clover.xml
+         sed -i 's/\(.*file="\).*byte-artist\/\(.*"\)/\1\2/g' build/reports/junit.xml
+         sed -i 's/\(.*name="\).*byte-artist\/\(.*"\)/\1\2/g' build/reports/coverage-clover.xml
 
     - name: Upload Unit Test Results
       if: always()
       uses: actions/upload-artifact@v2
       with:
         name: Unit Test Results
-        path: build/reports/junit.xml
+        path: |
+          build/reports/junit.xml
+          build/reports/coverage-clover.xml
 
     - name: Publish Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1
