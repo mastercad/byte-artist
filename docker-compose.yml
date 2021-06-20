@@ -51,7 +51,7 @@ services:
       context: ./.docker/php
       dockerfile: Dockerfile
       args:
-        - HOST_IP=192.168.178.39
+        - HOST_IP=172.1.2.1
     container_name: byte_artist_php
     volumes:
       - .:/var/www/byte_artist
