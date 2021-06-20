@@ -534,7 +534,7 @@ class Replace
         $sRegEx = $this->aMapTagToFunction['[FONT=]'][self::REGEX];
 
         if (is_array($mInput)) {
-            $mInput = '<span style="font-family: '.$mInput[2].', Helvetica, Arial, Verdana, Tahoma;">'.
+            $mInput = '<span style="font-family: '.$mInput[2].', Helvetica, Arial, Verdana, Tahoma, Sans-serif;">'.
                 $mInput[4].'</span>';
         }
 
