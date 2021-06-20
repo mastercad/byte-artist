@@ -62,13 +62,6 @@ jobs:
         server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
 
     steps:
-      - name: Configure PHP 7.4
-        uses: shivammathur/setup-php@master
-        with:
-          php-version: 7.4
-          extensions: imagick, swoole, zip, mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo
-          tools: composer:v2
-
       - uses: actions/download-artifact@v2
         with:
           name: app-build
@@ -126,19 +119,6 @@ jobs:
           script: |
             mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content"
             mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var"
-
-      - name: Composer debug
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA
-          script: |
-            composer -v
 
       - name: Composer install
         uses: appleboy/ssh-action@master
