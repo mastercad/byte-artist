@@ -62,6 +62,13 @@ jobs:
         server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
 
     steps:
+      - name: Configure PHP 7.4
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: 7.4
+          extensions: imagick, swoole, zip, mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo
+          tools: composer:v2
+
       - uses: actions/download-artifact@v2
         with:
           name: app-build
