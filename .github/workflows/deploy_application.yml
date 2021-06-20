@@ -19,6 +19,7 @@ jobs:
       with:
         php-version: 7.4
         extensions: imagick, swoole, zip, mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo
+        tools: composer:v2
 
     - uses: actions/checkout@v2
 
