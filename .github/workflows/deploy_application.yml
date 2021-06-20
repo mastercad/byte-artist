@@ -144,7 +144,7 @@ jobs:
           port: ${{ matrix.server.port }}
           envs: GITHUB_SHA
           script: |
-            rm -r "${{ matrix.server.path }}/releases/${GITHUB_SHA}/assets/build/ckeditor/*
+            rm -r "${{ matrix.server.path }}/releases/${GITHUB_SHA}/assets/build/ckeditor/*"
             php "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" ckeditor:install "${{ matrix.server.path }}/releases/${GITHUB_SHA}/assets/build/ckeditor" --clear=drop --release=custom --custom-build-id=ee064e47ec8943be855b785fa9c7146d
 
       - name: Install assets
