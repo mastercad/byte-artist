@@ -39,6 +39,7 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "enlightn/security-checker": "^1.9",
         "friendsofphp/php-cs-fixer": "^3.0",
         "mikey179/vfsstream": "^1.6",
         "phpstan/extension-installer": "^1.1",
