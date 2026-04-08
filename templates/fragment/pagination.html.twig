@@ -7,31 +7,31 @@
 {% endif %}
 
 {% if lastPage > 1 %}
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            {% if currentPage > 1 %}
-                <li class="page-item">
-                    <a class="page-link" data-toggle="tooltip" data-placement="top" title="Previous" href="{{ path(currentRoute, currentParams|merge({p: currentPage - 1})) }}" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                </li>
-            {% endif %}
+<nav class="pagination-nav" aria-label="Seitennavigation">
+    {% if currentPage > 1 %}
+    <div class="page-item">
+        <a class="page-link" href="{{ path(currentRoute, currentParams|merge({p: currentPage - 1})) }}" aria-label="Zurück">&laquo;</a>
+    </div>
+    {% else %}
+    <div class="page-item disabled">
+        <span class="page-link">&laquo;</span>
+    </div>
+    {% endif %}
 
-            {% for i in 1..lastPage %}
-                <li class="page-item {% if i == currentPage %}active disabled{% endif %}">
-                    <a class="page-link" href="{{ path(currentRoute, currentParams|merge({p: i})) }}">{{ i }}</a>
-                </li>
-            {% endfor %}
+    {% for i in 1..lastPage %}
+    <div class="page-item {% if i == currentPage %}active{% endif %}">
+        <a class="page-link" href="{{ path(currentRoute, currentParams|merge({p: i})) }}">{{ i }}</a>
+    </div>
+    {% endfor %}
 
-            {% if currentPage < lastPage %}
-                <li class="page-item">
-                    <a class="page-link" data-toggle="tooltip" data-placement="top" title="Next" href="{{ path(currentRoute, currentParams|merge({p: currentPage + 1})) }}" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-    </nav>
+    {% if currentPage < lastPage %}
+    <div class="page-item">
+        <a class="page-link" href="{{ path(currentRoute, currentParams|merge({p: currentPage + 1})) }}" aria-label="Weiter">&raquo;</a>
+    </div>
+    {% else %}
+    <div class="page-item disabled">
+        <span class="page-link">&raquo;</span>
+    </div>
+    {% endif %}
+</nav>
 {% endif %}

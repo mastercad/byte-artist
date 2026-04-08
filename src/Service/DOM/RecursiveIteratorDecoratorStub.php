@@ -12,12 +12,12 @@ abstract class RecursiveIteratorDecoratorStub extends \IteratorIterator implemen
         parent::__construct($iterator);
     }
 
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return $this->getInnerIterator()->hasChildren();
     }
 
-    public function getChildren()
+    public function getChildren(): ?\RecursiveIterator
     {
         return new self($this->getInnerIterator()->getChildren());
     }

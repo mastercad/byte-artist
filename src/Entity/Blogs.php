@@ -5,120 +5,57 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BlogRepository;
 
-/**
- * Blogs.
- *
- * @ORM\Table(
- *  name="blog",
- *  indexes={
- *      @ORM\Index(name="fk_blog_group_fk", columns={"group_fk"}),
- *      @ORM\Index(name="fk_blog_modifier", columns={"modifier"}),
- *      @ORM\Index(name="fk_blog_creator", columns={"creator"})
- *  }
- * )
- * @ORM\Entity(repositoryClass="App\Repository\BlogRepository")
- */
+#[ORM\Table(name: 'blog')]
+#[ORM\Index(name: 'fk_blog_group_fk', columns: ['group_fk'])]
+#[ORM\Index(name: 'fk_blog_modifier', columns: ['modifier'])]
+#[ORM\Index(name: 'fk_blog_creator', columns: ['creator'])]
+#[ORM\Entity(repositoryClass: BlogRepository::class)]
 class Blogs
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=250, nullable=false)
-     */
+    #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: false)]
     private $name;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="content", type="text", length=0, nullable=false)
-     */
+    #[ORM\Column(name: 'content', type: 'text', length: 0, nullable: false)]
     private $content;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="seo_link", type="string", length=250, nullable=false)
-     */
+    #[ORM\Column(name: 'seo_link', type: 'string', length: 250, nullable: false)]
     private $seoLink;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="short_description", type="text", length=65535, nullable=false)
-     */
+    #[ORM\Column(name: 'short_description', type: 'text', length: 65535, nullable: false)]
     private $shortDescription;
 
-    /**
-     * @var ?string
-     *
-     * @ORM\Column(name="preview_picture", type="string", length=250, nullable=true)
-     */
+    #[ORM\Column(name: 'preview_picture', type: 'string', length: 250, nullable: true)]
     private $previewPicture;
 
-    /**
-     * @var ?int
-     *
-     * @ORM\Column(name="group_order", type="integer", nullable=true)
-     */
+    #[ORM\Column(name: 'group_order', type: 'integer', nullable: true)]
     private $groupOrder;
 
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false)
-     */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
     private $created;
 
-    /**
-     * @var \DateTimeInterface|null
-     *
-     * @ORM\Column(name="modified", type="datetime", nullable=true)
-     */
+    #[ORM\Column(name: 'modified', type: 'datetime', nullable: true)]
     private $modified;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id', nullable: false)]
     private $creator;
 
-    /**
-     * @var ?BlogGroups
-     *
-     * @ORM\ManyToOne(targetEntity="BlogGroups")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="group_fk", referencedColumnName="id", nullable=true)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: BlogGroups::class)]
+    #[ORM\JoinColumn(name: 'group_fk', referencedColumnName: 'id', nullable: true)]
     private $group;
 
-    /**
-     * @var ?User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="modifier", referencedColumnName="id", nullable=true)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'modifier', referencedColumnName: 'id', nullable: true)]
     private $modifier;
 
-    /**
-     * @ORM\OneToMany(targetEntity="BlogTags", mappedBy="blog", cascade={"persist"})
-     */
+    #[ORM\OneToMany(targetEntity: BlogTags::class, mappedBy: 'blog', cascade: ['persist'])]
     private $blogTags;
 
     public function __construct()

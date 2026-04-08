@@ -5,85 +5,41 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * BlogTags.
- *
- * @ORM\Table(
- *  name="blog_tags",
- *  uniqueConstraints={@ORM\UniqueConstraint(name="un_blog_tag", columns={"blog_fk", "tag_fk"})},
- *  indexes={
- *      @ORM\Index(name="fk_blog_tag_modifier_fk", columns={"modifier"}),
- *      @ORM\Index(name="fk_blog_tag_tag_fk", columns={"tag_fk"}),
- *      @ORM\Index(name="fk_blog_tag_creator_fk", columns={"creator"}),
- *      @ORM\Index(name="IDX_8F6C18B6CDC77FC9", columns={"blog_fk"})
- *  }
- * )
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table(name: 'blog_tags')]
+#[ORM\Index(name: 'fk_blog_tag_modifier_fk', columns: ['modifier'])]
+#[ORM\Index(name: 'fk_blog_tag_tag_fk', columns: ['tag_fk'])]
+#[ORM\Index(name: 'fk_blog_tag_creator_fk', columns: ['creator'])]
+#[ORM\Index(name: 'IDX_8F6C18B6CDC77FC9', columns: ['blog_fk'])]
+#[ORM\UniqueConstraint(name: 'un_blog_tag', columns: ['blog_fk', 'tag_fk'])]
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class BlogTags
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private $id;
 
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false)
-     */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
     private $created;
 
-    /**
-     * @var \DateTimeInterface|null
-     *
-     * @ORM\Column(name="modified", type="datetime", nullable=true)
-     */
+    #[ORM\Column(name: 'modified', type: 'datetime', nullable: true)]
     private $modified;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id', nullable: false)]
     private $creator;
 
-    /**
-     * @var ?User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="modifier", referencedColumnName="id", nullable=true)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'modifier', referencedColumnName: 'id', nullable: true)]
     private $modifier;
 
-    /**
-     * @var Tags
-     *
-     * @ORM\ManyToOne(targetEntity="Tags", cascade={"persist"}, inversedBy="blogTags")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="tag_fk", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: Tags::class, cascade: ['persist'], inversedBy: 'blogTags')]
+    #[ORM\JoinColumn(name: 'tag_fk', referencedColumnName: 'id', nullable: false)]
     private $tag;
 
-    /**
-     * @var Blogs
-     *
-     * @ORM\ManyToOne(targetEntity="Blogs", cascade={"persist"}, inversedBy="blogTags")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="blog_fk", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: Blogs::class, cascade: ['persist'], inversedBy: 'blogTags')]
+    #[ORM\JoinColumn(name: 'blog_fk', referencedColumnName: 'id', nullable: false)]
     private $blog;
 
     private $blogs;

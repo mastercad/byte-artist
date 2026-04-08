@@ -15,7 +15,7 @@ fos_ck_editor:
             uiColor: #fff1ffd
             filebrowserUploadRoute: upload
             extraAdapters: jquery
-            extraPlugins: [ table, image, ajax, codesnippet, codesnippetgeshi, html5video ]
+            extraPlugins: [ table, image, ajax, codesnippet, html5video ]
 
 #    toolbars:
 #        configs:

@@ -4,6 +4,7 @@ namespace App\Command;
 
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,6 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'app:fix-preview-paths', description: 'update old preview pictures paths in database')]
 class FixPreviewPathsCommand extends Command
 {
     private array $possibleTables = [
@@ -18,18 +20,13 @@ class FixPreviewPathsCommand extends Command
         'blogs',
     ];
 
-    protected static $defaultName = 'app:fix-preview-paths';
-    protected static $defaultDescription = 'update old preview pictures paths in database';
-
-    private EntityManagerInterface $entityManager;
-
     private string $publicPath;
 
     private string $tableName;
 
-    public function __construct(?string $name = null)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
-        parent::__construct($name);
+        parent::__construct();
 
         $this->publicPath = __DIR__.'/../../public';
     }
@@ -37,7 +34,6 @@ class FixPreviewPathsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addArgument(
                 'table',
                 InputArgument::REQUIRED,

@@ -1,11 +1,25 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} | project | {{ project.name }}{% endblock %}
+{% block title %}byte-artist.de | {{ project.name }}{% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        {{ include('projects/details.html.twig', { 'project': project }) }}
+<div class="page-main">
+    <div class="page-hero">
+        <div class="page-hero-inner">
+            <div class="section-tag">// projekt</div>
+            <h1>{{ project.name }}</h1>
+        </div>
     </div>
+    <div class="page-content">
+        {{ include('projects/details.html.twig', { 'project': project }) }}
+
+        <div style="margin-top:32px;">
+            <a href="{{ path('projects') }}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i>&nbsp; Alle Projekte
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}

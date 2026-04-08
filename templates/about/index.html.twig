@@ -1,78 +1,175 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} | über mich{% endblock %}
+{% block title %}byte-artist.de | Über mich{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <img src="{{ asset('build/images/aktuelles_profilbild.png') }}" style="width: 30%; float: left; margin-right: 15px; margin-bottom: 15px;" />
-            <p>
-                Mein Name ist Andreas, ich bin mittlerweile {{ age }} Jahre alt und in der Nähe unseres wunderschönen Dresdens in Sachsen geboren.
-            </p>
-            <p>
-                Mein Vater war ein sehr technickaffiner Mensch, er lötete viele eigene Dinge, entwarf Leiterplatten und baute zu DDR-Zeiten auch selbst Computer zusammen, einen Z 9001.
-                Nach der Wende hatten wir einen KC 85/1 und danach einen KC 85/3. Mich faszinierte schon mit jungen Jahren der Gedanken, diesen elektronischen Bauteilen durch
-                eigene Programme Aktionen zu entlocken.
-            </p>
-            <p>
-                Mit 10 Jahren las ich ein Buch von Gerd Prokop, "Wer stiehlt schon Unterschenkel", in diesem Buch sprach ein Detektiv jeden Tag nach seinen Recherchen mit seinem Computer zu Hause
-                und besprach mit seinem Computer die Rechercheergebnisse und der Computer suchte zu den einzelnen Plätzen und Personen dann nähere Informationen heraus und diskutierte
-                mit dem Detektiven die Plausibilitäten und Theorien. Ich fand es unheimlich spannend mit einem Elektronengehirn gemeinsam Theorien zu diskutieren.
-            </p>
-            <p>
-                Ich bekam mit 12 einen Atari 800XL geschenkt und begann dann darauf meine ersten Gehversuche mit Omikron, einem Betriebssystem auf dem Atari,
-                meine ersten Programme zu schreiben. So ziemlich das erste größere Programm war ein Textadventure mit simplen Grafiken und aufgesprochenen Textpassagen auf Datasette.
-                Das ganze war natürlich sehr anstrengend zu spielen, weil der Stand des Kasettenbandes sehr wichtig war und man während dieses Spieles nichts anderes mit der Datasette machen konnte,
-                da sonst der Stand der Kommentare bzw. gesprochenen Textpassagen durcheinander kam.
-            </p>
-            <p>
-                1989, mit der Wende, zog auch der Informatik Unterricht in unseren Schulen Einzug, keiner der Lehrer hatte mit dem Thema Erfahrungen, da ich aber
-                durch mein Hobby schon viel programmiert hatte, half ich mit meinem Wissen schon damals im Informatik Unterricht gern und oft aus.
-            </p>
-            <p>
-                Während meiner Lehre zum Dachklempner und Gas-Wasser Installateur kaufte ich mir dann einen Atari 1024 STFM. Damit hielt auch ein Diskettenlaufwerk in meinem Bestand Einzug. Nun verschwanden endlich
-                viele Probleme aus meinem Programmieralltag, vor allem dieses Hin- und Herspulen und vor allem auch die sehr niedrige Kapazität auf den Kasetten und die Anfälligkeit der Daten. Im Paket dabei war damals auch
-                eine Festplatte mit 35MB. Ich hatte damals ALLE meine Disketten auf die Festplatte kopiert und für mich war unvorstellbar, wie man so extrem viel Speicher jemals voll bekommen würde.
-            </p>
-            <p>
-                2007 bekam ich Arbeit bei der Windbergarena in Freital, diese war ein Tochterunternehmen der damaligen GABS Freital. Ich kümmerte mich in der Windbergarena
-                gemeinsam mit einem Kollegen um den Webauftritt, die Modernisierung der Seite und das Einpflegen neuer Inhalte. Nach ca. einem Jahr suchte die GABS nach einem Administrator
-                und sie kamen dabei auf mich zu. Nach 3 Jahren bei der GABS bekam ich vom Arbeitsamt einen Hinweis, dass die VAVG in Kesselsdorf einen Programmierer sucht und der Chef
-                da auch mit einem Quereinsteiger einverstanden wäre. Ich hatte mich direkt da beworben und einen Tag später hatte ich schon das Bewerbungsgesprächt und wenige Tage später meinen ersten Tag da.
-                Damit begann meine Karriere als Programmierer.
-            </p>
-            <p>
-                2013 bewarb ich mich dann bei Unister, einer damals sehr begehrten und bekannten Programmierfirma in Deutschland. Dort bekam ich 30 Minuten nach meinem Vorstellungesgespräch
-                schon den Anruf, dass ich eingestellt werde. In dieser Firma habe ich viele gute Programmierer kennen gelernt, und gemeinsam haben wir uns ein gutes Stück weiter gebracht.
-            </p>
-            <p>
-                Mit Teilen dieses Teams, sowie weiteren qualitativ hochwertigen Kollegen arbeite ich noch heute.
-            </p>
-            <p>
-                Da wir aber leider in einer Zeit leben, in der man seine persönliche Meinung nicht frei äußern kann und es sogar Menschen gibt, die wegen einem kritischen Beitrag
-                über den 11.09.2001 versuchen einem die Arbeit kaputt zu machen und einem selbst dahin nachtelefonieren, musste ich Details zu meinem aktuellen Arbeitgeber entfernen.
-                Ich habe dabei weniger Angst um meine Arbeit, als das ich eher nicht möchte, dass man ständig die Personalabteilung meiner Firma belästigt. Diese Menschen können es sich
-                scheinbar nicht vorstellen, aber ich arbeite nicht in meinem Beruf, weil ich so eine extrem flexible Meinung habe, sondern weil man meine Fähigkeiten, meinen Anspruch und 
-                meine Qualität sehr schätzt.
-            </p>
+<div class="page-main">
+
+    {# ═══ HERO ═══ #}
+    <div class="page-hero">
+        <div class="page-hero-inner">
+            <div class="section-tag">// über mich</div>
+            <h1>Andreas Kempe</h1>
+            <p>Software Architect · Programmierer seit über 35 Jahren · Dresden</p>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <p>
-                Für mich ist Ehrlichkeit eine sehr wichtige Tugend. Mich zeichnen vor allem mein logisches und analytisches Denken aus. Welches allerdings auch meine
-                größte Schwäche ist, ich kann mit Lösungen nur sehr schwer etwas anfangen, die für mich nicht logisch sind. Kann man mir etwas nicht mit Argumenten logisch
-                erklären, kann ich nichts damit anfangen. Mir fällt es in der Regel sehr leicht Zusammenhänge zu verstehen und ich finde auch sehr schnell Lösungen für Herausforderungen.
-                Ein funktionierendes Team ist für mich ebenfalls ein wichtiger Bestandteil, da man sich selbst nur optimal entwickeln kann, wenn man auch durch andere auch inspiriert wird.
-                Ich beschäftige mich zwar selbst auch privat überaus häufig mit den neuesten Techniken, aber oft bekomme ich auch durch Kollegen und Freunde sehr interessante und wichtige Sichtweisen.
-            </p>
-            <p>
-                Mir ist Qualität sehr wichtig, eine klare und saubere, sowie übersichtliche Struktur. Code muss testbar und auch wartbar sein. Im besten Fall auch wiederverwendbar, aber nicht um jeden Preis.
-            </p>
-            <p>
-            </p>
+
+    <div class="page-content">
+
+        {# ═══ AVATAR + INTRO ═══ #}
+        <div class="about-hero">
+            <div class="about-avatar">
+                <img src="{{ asset('build/images/aktuelles_profilbild.png') }}" alt="Andreas — Profilbild">
+            </div>
+            <div>
+                <p class="about-tagline">Principal Software Architect &middot; Dresden</p>
+                <p class="about-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Dresden, Sachsen &mdash; {{ age }} Jahre &mdash; seit 1990 in der Softwareentwicklung
+                </p>
+                <p class="about-bio">
+                    35 Jahre Erfahrung — von 8-Bit-Computern bis zu Enterprise-Architekturen mit Millionen Nutzern.
+                    Ich entwerfe Systeme, die langfristig tragen, und glaube daran, dass guter Code
+                    genauso erklärt werden muss, wie er geschrieben wird.
+                </p>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                    <a href="https://github.com/mastercad" target="_blank" rel="noopener noreferrer" class="btn-primary">
+                        <i class="fab fa-github"></i>&nbsp; GitHub
+                    </a>
+                    <a href="{{ path('projects') }}" class="btn-secondary">Projekte ansehen</a>
+                </div>
+            </div>
         </div>
+
+        {# ═══ WERTE ═══ #}
+        <div class="about-section">
+            <h2 class="about-section-title">
+                <span class="icon">//</span> Werte &amp; Überzeugungen
+            </h2>
+            <div class="values-grid">
+                <div class="value-card animate-on-scroll">
+                    <div class="value-icon"><i class="fas fa-share-alt"></i></div>
+                    <div class="value-title">Open Source</div>
+                    <div class="value-desc">Wissen teilen ist der einzige Weg, gemeinsam wirklich Großes zu erreichen. Alle meine Projekte sind frei verfügbar.</div>
+                </div>
+                <div class="value-card animate-on-scroll stagger-1">
+                    <div class="value-icon"><i class="fas fa-brain"></i></div>
+                    <div class="value-title">Logisches Denken</div>
+                    <div class="value-desc">Lösungen müssen logisch sein und erklärt werden können. Was sich nicht begründen lässt, überzeugt mich nicht.</div>
+                </div>
+                <div class="value-card animate-on-scroll stagger-2">
+                    <div class="value-icon"><i class="fas fa-medal"></i></div>
+                    <div class="value-title">Qualität</div>
+                    <div class="value-desc">Klarer, sauberer, wartbarer Code. Testbarkeit ist kein Optional-Feature, sondern Grundvoraussetzung.</div>
+                </div>
+                <div class="value-card animate-on-scroll stagger-3">
+                    <div class="value-icon"><i class="fas fa-users"></i></div>
+                    <div class="value-title">Team</div>
+                    <div class="value-desc">Man entwickelt sich nur optimal, wenn man auch durch andere inspiriert wird. Ein gutes Team ist unbezahlbar.</div>
+                </div>
+            </div>
+        </div>
+
+        {# ═══ MEINE GESCHICHTE ═══ #}
+        <div class="about-section animate-on-scroll">
+            <h2 class="about-section-title">
+                <span class="icon">//</span> Meine Geschichte
+            </h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">≈ 1985</div>
+                    <div class="timeline-title">Der erste Funken</div>
+                    <div class="timeline-desc">
+                        Mein Vater war ein leidenschaftlicher Tüftler — er lötete eigene Schaltkreise, entwarf Leiterplatten
+                        und baute zu DDR-Zeiten Computer zusammen (Z 9001, KC 85). Dieser Funken für Technik sprang früh auf mich über.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">≈ 1988 — 12 Jahre</div>
+                    <div class="timeline-title">Atari 800XL &amp; erste Programme</div>
+                    <div class="timeline-desc">
+                        Mit dem Atari 800XL begann ich meine ersten ernsthaften Gehversuche in Omikron.
+                        Das erste größere Projekt: ein Textadventure mit einfachen Grafiken und aufgesprochenen
+                        Textpassagen auf Kassette — mit allen Tücken des Kassettenspeichers.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">1989 — Schulzeit</div>
+                    <div class="timeline-title">Informatik-Unterricht &amp; Pionierarbeit</div>
+                    <div class="timeline-desc">
+                        Mit der Wende zog Informatik in unsere Schulen ein — ohne erfahrene Lehrer.
+                        Dank meines Hobbys konnte ich anderen schon damals helfen und das gemeinsame Lernen gestalten.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">Lehre</div>
+                    <div class="timeline-title">Atari 1024 STFM — Disketten &amp; Festplatten</div>
+                    <div class="timeline-desc">
+                        Während meiner Lehre kam der Atari 1024 STFM — mit Diskettenlaufwerk und einer 35&nbsp;MB Festplatte.
+                        Damals unvorstellbar viel Speicher. Die Programmierprobleme der Kassetten-Ära waren endlich gelöst.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2007</div>
+                    <div class="timeline-title">Erster Berührungspunkt mit professioneller Webentwicklung</div>
+                    <div class="timeline-desc">
+                        Bei der Windbergarena in Freital kümmerte ich mich um den Webauftritt und die Modernisierung der Seite.
+                        Danach folgte eine Stelle als Administrator bei der GABS Freital.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">ab 2010</div>
+                    <div class="timeline-title">Karriere als Programmierer</div>
+                    <div class="timeline-desc">
+                        Ein Hinweis des Arbeitsamts brachte mich zur VAVG in Kesselsdorf — mein erster Tag als Programmierer.
+                        Der Beginn einer Reise, die mich seitdem nie losgelassen hat.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2013</div>
+                    <div class="timeline-title">Unister — Qualität auf neuem Niveau</div>
+                    <div class="timeline-desc">
+                        30 Minuten nach dem Vorstellungsgespräch bei Unister kam der Anruf: eingestellt.
+                        Ein Team voller exzellenter Programmierer — man lernt am meisten von den Besten.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">ab 2016</div>
+                    <div class="timeline-title">Senior-Rollen &amp; wachsende Verantwortung</div>
+                    <div class="timeline-desc">
+                        Nach Unister folgten Stationen als Senior Developer und technischer Lead —
+                        Verantwortung für Architekturentscheidungen, Code-Qualität und die
+                        Weiterentwicklung von Teams. Der Fokus verlagerte sich zunehmend von
+                        einzelnen Features hin zu tragfähigen Systemdesigns.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">heute</div>
+                    <div class="timeline-title">Software Architect &amp; Open Source</div>
+                    <div class="timeline-desc">
+                        Ich entwerfe Architekturen, die langfristig Bestand haben — skalierbar,
+                        wartbar, verständlich. Parallel dazu: Open-Source als Überzeugung, nicht
+                        als Hobby. Wissen, das man teilt, multipliziert sich.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# ═══ PHILOSOPHIE ═══ #}
+        <div class="oss-banner animate-on-scroll">
+            <h2>Wissen gehört allen</h2>
+            <p>
+                Ich habe schon immer geglaubt, dass man nur voneinander lernen und nur gemeinsam etwas wirklich Großes erreichen kann.
+                Deshalb sind all meine Projekte frei zugänglich — für jeden, überall, ohne Einschränkungen.
+            </p>
+            <div class="btn-group">
+                <a href="https://github.com/mastercad" target="_blank" rel="noopener noreferrer" class="btn-primary">
+                    <i class="fab fa-github"></i>&nbsp; Mein GitHub
+                </a>
+                <a href="{{ path('projects') }}" class="btn-secondary">Projekte entdecken</a>
+            </div>
+        </div>
+
     </div>
 </div>
 {% endblock %}

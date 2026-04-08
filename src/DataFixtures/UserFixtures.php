@@ -8,7 +8,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class UserFixtures extends Fixture
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $userEntity = new User();
         $userEntity->setEmail('testuser@email.de');

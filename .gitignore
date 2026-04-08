@@ -1,6 +1,7 @@
 /var
 tmp-phpqa
 /.vscode/
+.env
 .env.local
 .env.test
 /build/coverage

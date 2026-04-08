@@ -20,7 +20,7 @@ class NodesArrayIterator implements \Iterator
     /**
      * @return DOMNode
      */
-    public function current()
+    public function current(): mixed
     {
         $keys = array_keys($this->nodes);
 
@@ -34,7 +34,7 @@ class NodesArrayIterator implements \Iterator
      *
      * @return void any returned value is ignored
      */
-    public function next()
+    public function next(): void
     {
         ++$this->virtual;
     }
@@ -46,7 +46,7 @@ class NodesArrayIterator implements \Iterator
      *
      * @return int|string scalar on success, integer 0 on failure
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->virtual;
     }
@@ -59,7 +59,7 @@ class NodesArrayIterator implements \Iterator
      * @return bool The return value will be casted to boolean and then evaluated.
      *              Returns true on success or false on failure.
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->virtual < count($this->nodes);
     }
@@ -71,7 +71,7 @@ class NodesArrayIterator implements \Iterator
      *
      * @return void any returned value is ignored
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->virtual = 0;
     }

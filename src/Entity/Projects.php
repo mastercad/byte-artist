@@ -5,134 +5,63 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProjectsRepository;
 
-/**
- * Projects.
- *
- * @ORM\Table(
- *  name="projects",
- *  indexes={
- *      @ORM\Index(name="fk_project_modifier", columns={"modifier"}),
- *      @ORM\Index(name="fk_project_state", columns={"state_fk"}),
- *      @ORM\Index(name="fk_project_creator", columns={"creator"})
- *  }
- * )
- * @ORM\Entity(repositoryClass="App\Repository\ProjectsRepository")
- */
+#[ORM\Table(name: 'projects')]
+#[ORM\Index(name: 'fk_project_modifier', columns: ['modifier'])]
+#[ORM\Index(name: 'fk_project_state', columns: ['state_fk'])]
+#[ORM\Index(name: 'fk_project_creator', columns: ['creator'])]
+#[ORM\Entity(repositoryClass: ProjectsRepository::class)]
 class Projects
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private $id;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="name", type="string", length=200, nullable=true)
-     */
+    #[ORM\Column(name: 'name', type: 'string', length: 200, nullable: true)]
     private $name;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="short_description", type="text", length=65535, nullable=true)
-     */
+    #[ORM\Column(name: 'short_description', type: 'text', length: 65535, nullable: true)]
     private $shortDescription;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="preview_picture", type="string", length=250, nullable=true)
-     */
+    #[ORM\Column(name: 'preview_picture', type: 'string', length: 250, nullable: true)]
     private $previewPicture;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="description", type="text", length=65535, nullable=true)
-     */
+    #[ORM\Column(name: 'description', type: 'text', length: 65535, nullable: true)]
     private $description;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="link", type="string", length=250, nullable=true)
-     */
+    #[ORM\Column(name: 'link', type: 'string', length: 250, nullable: true)]
     private $link;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="seo_link", type="string", length=250, nullable=false)
-     */
+    #[ORM\Column(name: 'seo_link', type: 'string', length: 250, nullable: false)]
     private $seoLink;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_public", type="boolean", nullable=false)
-     */
+    #[ORM\Column(name: 'is_public', type: 'boolean', nullable: false)]
     private $isPublic;
 
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     private $created;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="original_link", type="string", length=250, nullable=true)
-     */
+    #[ORM\Column(name: 'original_link', type: 'string', length: 250, nullable: true)]
     private $originalLink;
 
-    /**
-     * @var \DateTimeInterface|null
-     *
-     * @ORM\Column(name="modified", type="datetime", nullable=true)
-     */
+    #[ORM\Column(name: 'modified', type: 'datetime', nullable: true)]
     private $modified;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id', nullable: false)]
     private $creator;
 
-    /**
-     * @var ?User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="modifier", referencedColumnName="id", nullable=true)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'modifier', referencedColumnName: 'id', nullable: true)]
     private $modifier;
 
-    /**
-     * @var ?ProjectStates
-     *
-     * @ORM\ManyToOne(targetEntity="ProjectStates")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="state_fk", referencedColumnName="id")
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: ProjectStates::class)]
+    #[ORM\JoinColumn(name: 'state_fk', referencedColumnName: 'id')]
     private $state;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ProjectTags", mappedBy="project")
-     */
+    #[ORM\OneToMany(targetEntity: ProjectTags::class, mappedBy: 'project')]
     private $projectTags;
 
     public function __construct()

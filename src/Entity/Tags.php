@@ -5,93 +5,47 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-/**
- * Tags.
- *
- * @ORM\Table(
- *  name="tags",
- *  indexes={
- *      @ORM\Index(name="fk_tag_modifier", columns={"modifier"}),
- *      @ORM\Index(name="fk_tag_parent_fk", columns={"parent_fk"}),
- *      @ORM\Index(name="fk_tag_creator", columns={"creator"})
- *  }
- * )
- * @ORM\Entity
- * @UniqueEntity("name")
- */
+#[ORM\Table(name: 'tags')]
+#[ORM\Index(name: 'fk_tag_modifier', columns: ['modifier'])]
+#[ORM\Index(name: 'fk_tag_parent_fk', columns: ['parent_fk'])]
+#[ORM\Index(name: 'fk_tag_creator', columns: ['creator'])]
+#[ORM\Entity]
+#[UniqueEntity('name')]
 class Tags
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=250, nullable=false, unique=true)
-     */
+    #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: false, unique: true)]
     private $name;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="seo_link", type="string", length=250, nullable=false)
-     */
+    #[ORM\Column(name: 'seo_link', type: 'string', length: 250, nullable: false)]
     private $seoLink;
 
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false)
-     */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
     private $created;
 
-    /**
-     * @var \DateTimeInterface|null
-     *
-     * @ORM\Column(name="modified", type="datetime", nullable=true)
-     */
+    #[ORM\Column(name: 'modified', type: 'datetime', nullable: true)]
     private $modified;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id', nullable: false)]
     private $creator;
 
-    /**
-     * @var ?User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="modifier", referencedColumnName="id", nullable=true)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'modifier', referencedColumnName: 'id', nullable: true)]
     private $modifier;
 
-    /**
-     * @var ?Tags
-     *
-     * @ORM\ManyToOne(targetEntity="Tags")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="parent_fk", referencedColumnName="id")
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: Tags::class)]
+    #[ORM\JoinColumn(name: 'parent_fk', referencedColumnName: 'id')]
     private $parent;
 
-    /** @ORM\OneToMany(targetEntity="BlogTags", mappedBy="tag") */
+    #[ORM\OneToMany(targetEntity: BlogTags::class, mappedBy: 'tag')]
     private $blogTags;
 
-    /** @ORM\OneToMany(targetEntity="ProjectTags", mappedBy="tag") */
+    #[ORM\OneToMany(targetEntity: ProjectTags::class, mappedBy: 'tag')]
     private $projectTags;
 
     private $blogs;

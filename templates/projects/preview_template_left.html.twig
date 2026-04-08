@@ -1,27 +1,29 @@
-<article class="shadow-sm row m-3 rounded p-3">
-    <div class="col-md-12">
-        <h2>
-            {{ project.name }}
+<article class="project-card animate-on-scroll">
+    {% if project.previewPicture %}
+    <div class="card-image">
+        <a href="/project/{{ project.seoLink }}">
+            <img src="{{ project.previewPicture }}" alt="{{ project.name }}" loading="lazy">
+        </a>
+        <div class="card-image-overlay"></div>
+    </div>
+    {% endif %}
+    <div class="card-body">
+        <h2 class="card-title">
+            <a href="/project/{{ project.seoLink }}">{{ project.name }}</a>
         </h2>
-      </div>
-    <div class="col-md-5 d-flex flex-column">
-        <p>
-            {{ project.shortDescription }}
-        </p>
-        <div>
+        <p class="card-desc">{{ project.shortDescription }}</p>
+        {% if project.ProjectTags|length %}
+        <div class="tags" style="margin-top:4px;">
             {% for projectTag in project.ProjectTags %}
-                <a href="/project/tag/{{ projectTag.tag.seoLink }}" class="badge badge-primary">{{ projectTag.tag.name }}</a>
+            <a href="/project/tag/{{ projectTag.tag.seoLink }}" class="tag">{{ projectTag.tag.name }}</a>
             {% endfor %}
         </div>
+        {% endif %}
     </div>
-    <div class="col-md-7">
-        <a href="/project/{{ project.seoLink }}">
-            <img class="img-fluid rounded mb-3 mb-md-0" src="{{ project.previewPicture }}" alt="{{ project.previewPicture }} not found.">
-        </a>
-    </div>
-    <div class="col-md-12">
-        <a class="btn btn-primary mt-auto" href="/project/{{ project.seoLink }}">
-            View Project
-        </a>
+    <div class="card-footer-bar">
+        <span class="card-date">
+            {% if project.modified %}{{ project.modified|date("d.m.Y", "Europe/Berlin") }}{% else %}{{ project.created|date("d.m.Y", "Europe/Berlin") }}{% endif %}
+        </span>
+        <a href="/project/{{ project.seoLink }}" class="btn-ghost">Details</a>
     </div>
 </article>

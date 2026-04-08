@@ -1,49 +1,37 @@
 security:
-    encoders:
+    password_hashers:
         App\Entity\User:
-            algorithm: sha512
+            algorithm: auto
 
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
         user:
             entity:
                 class: App\Entity\User
                 property: email
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: true
+            lazy: true
+            provider: user
             form_login:
-                provider: user
                 login_path: app_login
                 check_path: app_login
                 username_parameter: email
                 password_parameter: password
-                post_only: true
-            guard:
-                authenticators:
-                    - App\Service\Security\UserDbAuthenticator
-                    - App\Service\Security\GoogleAuthenticator
-                entry_point: App\Service\Security\UserDbAuthenticator
+                enable_csrf: true
+                default_target_path: index
+            custom_authenticators:
+                - App\Service\Security\GoogleAuthenticator
+            entry_point: form_login
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#firewalls-authentication
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/connect, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }
-        # IS_AUTHENTICATED_FULLY

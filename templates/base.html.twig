@@ -1,99 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}|byte-artist{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Andreas Kempe — Software Architect aus Dresden. Über 35 Jahre Erfahrung in der Softwareentwicklung. Open-Source Projekte, Blog, Erfahrungen.">
+        <title>{% block title %}byte-artist.de{% endblock %}</title>
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
     </head>
 
     <body>
-        <header>
-            <nav class="navbar navbar-light bg-light fixed-top navbar-expand-lg" data-toggle="affix">
-                <a class="navbar-brand" href="{{ path('index') }}">byte-artist.de</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+        <nav class="site-nav" id="site-nav">
+            <div class="nav-inner">
+                <a class="nav-logo" href="{{ path('index') }}">byte-artist</a>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto">
-                    <li class="nav-item {% if app.request.attributes.get('_route') == 'index' %}active{% endif %}">
-                        <a class="nav-link" href="{{ path('index') }}">Startseite {% if app.request.attributes.get('_route') matches '{^index}' %}<span class="sr-only">(current)</span>{% endif %}</a>
-                    </li>
-                    <li class="nav-item {% if app.request.attributes.get('_route') matches '{^project}' %}active{% endif %}">
-                        <a class="nav-link" href="{{ path('projects') }}">Projekte {% if app.request.attributes.get('_route') matches '{^project$}' %}<span class="sr-only">(current)</span>{% endif %}</a>
-                    </li>
-                    <li class="nav-item {% if app.request.attributes.get('_route') matches '{^blog}' %}active{% endif %}">
-                        <a class="nav-link" href="{{ path('blog') }}">Blog {% if app.request.attributes.get('_route') matches '{^blog}' %}<span class="sr-only">(current)</span>{% endif %}</a>
-                    </li>
-                    <li class="nav-item {% if app.request.attributes.get('_route') == 'about' %}active{% endif %}">
-                        <a class="nav-link" href="{{ path('about') }}">über mich {% if app.request.attributes.get('_route') matches '{^about}' %}<span class="sr-only">(current)</span>{% endif %}</a>
-                    </li>
-                    </ul>
-                    <form class="form-inline my-2 my-lg-0" method="get" action="{{ path('app_search_result') }}" >
-                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
-                    </form>
-                    <ul class="navbar-nav user">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle {% if app.user.name is defined %} active {% endif %}" href="#" id="navbar_drop_profile" data-toggle="dropdown" >
-                                <icon class="fas fa-user mr-1"></icon>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                        {% if app.user.username is defined %}
-                                <span class="dropdown-item" data-toggle="tooltip" title="{{ app.user.email }}">{{ app.user.username }}</span>
-{#                                        <a class="dropdown-item user-profile" href="{{ path('user_profile') }}" data-toggle="tooltip" title="{{ 'click_edit_profil'|trans({}, 'titles') }}">{{ 'profile'|trans({}, 'labels') }}</a> #}
-                                <a class="dropdown-item user-logout" href="{{ path('app_logout') }}" data-toggle="tooltip" title="{{ 'click_to_logout'|trans({}, 'titles') }}">{{ 'logout'|trans({}, 'labels') }}</a>
+                <ul class="nav-links">
+                    <li><a href="{{ path('projects') }}"{% if app.request.attributes.get('_route') matches '{^project}' %} class="active"{% endif %}>Projekte</a></li>
+                    <li><a href="{{ path('blog') }}"{% if app.request.attributes.get('_route') matches '{^blog}' %} class="active"{% endif %}>Blog</a></li>
+                    <li><a href="{{ path('about') }}"{% if app.request.attributes.get('_route') == 'about' %} class="active"{% endif %}>Über mich</a></li>
+                </ul>
+
+                <form class="nav-search" method="get" action="{{ path('app_search_result') }}">
+                    <button type="submit" aria-label="Suchen"><i class="fas fa-search"></i></button>
+                    <input type="search" name="q" placeholder="Suche…" aria-label="Suche">
+                </form>
+
+                <div class="nav-user">
+                    <button class="nav-user-btn" aria-label="Nutzerprofil"><i class="fas fa-user"></i></button>
+                    <div class="nav-dropdown">
+                        {% if app.user is not null and app.user.username is defined %}
+                            <span>{{ app.user.username }}</span>
+                            <a href="{{ path('app_logout') }}">Abmelden</a>
                         {% else %}
-                                <a class="dropdown-item user-login" href="{{ path('app_login') }}" data-toggle="tooltip" title="{{ 'click_to_login'|trans({}, 'titles') }}">{{ 'login'|trans({}, 'labels') }}</a>
+                            <a href="{{ path('app_login') }}">Anmelden</a>
                         {% endif %}
-                            </div>
-                        </li>
-                    </ul>
+                    </div>
                 </div>
-            </nav>
-        </header>
 
-        <main>
-            {% block body %}{% endblock %}
-        </main>
+                <button class="hamburger" id="nav-toggle" aria-label="Navigation öffnen">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
 
-        <footer class="footer">
-            <div class="container">
-<!--                <span class="text-muted">-->
-                    <a target="_blank" href="{{ path('imprint') }}">Impressum</a>
-                    |
-                    <a target="_blank" href="{{ path('data_protection') }}">Datenschutz</a>
-<!--                </span>-->
+        {% block body %}{% endblock %}
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <span class="footer-brand">byte-artist</span>
+                <nav class="footer-links" aria-label="Footer Navigation">
+                    <a href="{{ path('imprint') }}">Impressum</a>
+                    <a href="{{ path('data_protection') }}">Datenschutz</a>
+                </nav>
+                <span class="footer-copy">© {{ "now"|date("Y") }} Andreas — Open Source mit ♥</span>
             </div>
         </footer>
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
-            <script type="text/javascript" language="javascript">
-
-                function considerScroll() {
-//                    if ($(this).scrollTop() > 1){
-
-                    var startY = $('header').height();
-                    if($(window).scrollTop() > startY){
-                        $('header').addClass("sticky");
-                    }else{
-                        $('header').removeClass("sticky");
-                    }
-                }
-
-                $(document).ready(function() {
-                    $('[data-toggle="tooltip"]').tooltip();
-                    if($('header').length > 0){
-                        $(window).on("scroll load resize", function(){
-                            considerScroll();
-                        });
-                    }
-                });
-            </script>
         {% endblock %}
-
     </body>
 </html>

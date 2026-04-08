@@ -1,3 +1,1 @@
-sensio_framework_extra:
-    router:
-        annotations: false
+# sensio/framework-extra-bundle was removed in the Symfony 7 upgrade.

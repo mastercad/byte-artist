@@ -4,83 +4,39 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * BlogSubscribers.
- *
- * @ORM\Table(
- *  name="blog_subscribers",
- *  indexes={
- *      @ORM\Index(name="fk_blog_subscriber_creator_fk", columns={"creator"}),
- *      @ORM\Index(name="fk_blog_subscriber_modifier_fk", columns={"modifier"}),
- *      @ORM\Index(name="fk_blog_subscriber_user_fk", columns={"user_fk"}),
- *      @ORM\Index(name="fk_blog_subscriber_blog_fk", columns={"blog_fk"})
- *  }
- * )
- * @ORM\Entity
- */
+#[ORM\Table(name: 'blog_subscribers')]
+#[ORM\Index(name: 'fk_blog_subscriber_creator_fk', columns: ['creator'])]
+#[ORM\Index(name: 'fk_blog_subscriber_modifier_fk', columns: ['modifier'])]
+#[ORM\Index(name: 'fk_blog_subscriber_user_fk', columns: ['user_fk'])]
+#[ORM\Index(name: 'fk_blog_subscriber_blog_fk', columns: ['blog_fk'])]
+#[ORM\Entity]
 class BlogSubscribers
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private $id;
 
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     private $created;
 
-    /**
-     * @var \DateTimeInterface|null
-     *
-     * @ORM\Column(name="modified", type="datetime", nullable=true)
-     */
+    #[ORM\Column(name: 'modified', type: 'datetime', nullable: true)]
     private $modified;
 
-    /**
-     * @var Blogs
-     *
-     * @ORM\ManyToOne(targetEntity="Blogs")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="blog_fk", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: Blogs::class)]
+    #[ORM\JoinColumn(name: 'blog_fk', referencedColumnName: 'id', nullable: false)]
     private $blog;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id', nullable: false)]
     private $creator;
 
-    /**
-     * @var ?User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="modifier", referencedColumnName="id", nullable=true)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'modifier', referencedColumnName: 'id', nullable: true)]
     private $modifier;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="user_fk", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_fk', referencedColumnName: 'id', nullable: false)]
     private $user;
 
     public function getId(): ?int

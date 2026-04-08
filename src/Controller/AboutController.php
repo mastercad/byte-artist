@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class AboutController extends AbstractController
 {
-    /**
-     * @Route ("/about", name="about")
-     */
+    #[Route('/about', name: 'about')]
     public function index(): \Symfony\Component\HttpFoundation\Response
     {
         $day = 18;

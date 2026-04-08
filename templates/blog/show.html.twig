@@ -1,11 +1,25 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} | blog | {{ blog.name }}{% endblock %}
+{% block title %}byte-artist.de | {{ blog.name }}{% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        {{ include('blog/details.html.twig', { 'blog': blog }) }}
+<div class="page-main">
+    <div class="page-hero">
+        <div class="page-hero-inner">
+            <div class="section-tag">// blog</div>
+            <h1>{{ blog.name }}</h1>
+        </div>
     </div>
+    <div class="page-content">
+        {{ include('blog/details.html.twig', { 'blog': blog }) }}
+
+        <div style="margin-top:32px;">
+            <a href="{{ path('blog') }}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i>&nbsp; Alle Beiträge
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}

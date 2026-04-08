@@ -4,84 +4,40 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * ProjectTags.
- *
- * @ORM\Table(
- *  name="project_tags",
- *  indexes={
- *      @ORM\Index(name="fk_project_modifier_fk", columns={"modifier"}),
- *      @ORM\Index(name="fk_project_tags_project_fk", columns={"project_fk"}),
- *      @ORM\Index(name="fk_project_tags_tag_fk", columns={"tag_fk"}),
- *      @ORM\Index(name="fk_project_creator_fk", columns={"creator"})
- *  }
- * )
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table(name: 'project_tags')]
+#[ORM\Index(name: 'fk_project_modifier_fk', columns: ['modifier'])]
+#[ORM\Index(name: 'fk_project_tags_project_fk', columns: ['project_fk'])]
+#[ORM\Index(name: 'fk_project_tags_tag_fk', columns: ['tag_fk'])]
+#[ORM\Index(name: 'fk_project_creator_fk', columns: ['creator'])]
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class ProjectTags
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false)
-     */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
     private $created;
 
-    /**
-     * @var \DateTimeInterface|null
-     *
-     * @ORM\Column(name="modified", type="datetime", nullable=true)
-     */
+    #[ORM\Column(name: 'modified', type: 'datetime', nullable: true)]
     private $modified;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id', nullable: false)]
     private $creator;
 
-    /**
-     * @var ?User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="modifier", referencedColumnName="id", nullable=true)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'modifier', referencedColumnName: 'id', nullable: true)]
     private $modifier;
 
-    /**
-     * @var Projects
-     *
-     * @ORM\ManyToOne(targetEntity="Projects", cascade={"persist"}, inversedBy="projectTags")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="project_fk", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: Projects::class, cascade: ['persist'], inversedBy: 'projectTags')]
+    #[ORM\JoinColumn(name: 'project_fk', referencedColumnName: 'id', nullable: false)]
     private $project;
 
-    /**
-     * @var Tags
-     *
-     * @ORM\ManyToOne(targetEntity="Tags", cascade={"persist"}, inversedBy="projectTags")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="tag_fk", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: Tags::class, cascade: ['persist'], inversedBy: 'projectTags')]
+    #[ORM\JoinColumn(name: 'tag_fk', referencedColumnName: 'id', nullable: false)]
     private $tag;
 
     private $projects;

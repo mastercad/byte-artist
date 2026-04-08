@@ -4,104 +4,48 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * BlogComments.
- *
- * @ORM\Table(
- *  name="blog_comments",
- *  indexes={
- *      @ORM\Index(name="fk_blog_comment_creator", columns={"creator"}),
- *      @ORM\Index(name="fk_blog_comment_modifier", columns={"modifier"}),
- *      @ORM\Index(name="fk_blog_comment_parent_fk", columns={"parent_fk"}),
- *      @ORM\Index(name="fk_blog_comment_blog_fk", columns={"blog_fk"})
- *  }
- * )
- * @ORM\Entity
- */
+#[ORM\Table(name: 'blog_comments')]
+#[ORM\Index(name: 'fk_blog_comment_creator', columns: ['creator'])]
+#[ORM\Index(name: 'fk_blog_comment_modifier', columns: ['modifier'])]
+#[ORM\Index(name: 'fk_blog_comment_parent_fk', columns: ['parent_fk'])]
+#[ORM\Index(name: 'fk_blog_comment_blog_fk', columns: ['blog_fk'])]
+#[ORM\Entity]
 class BlogComments
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="user_name", type="string", length=250, nullable=false)
-     */
+    #[ORM\Column(name: 'user_name', type: 'string', length: 250, nullable: false)]
     private $userName;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="user_email", type="string", length=250, nullable=false)
-     */
+    #[ORM\Column(name: 'user_email', type: 'string', length: 250, nullable: false)]
     private $userEmail;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="text", type="text", length=65535, nullable=false)
-     */
+    #[ORM\Column(name: 'text', type: 'text', length: 65535, nullable: false)]
     private $text;
 
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false)
-     */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
     private $created;
 
-    /**
-     * @var \DateTimeInterface|null
-     *
-     * @ORM\Column(name="modified", type="datetime", nullable=true)
-     */
+    #[ORM\Column(name: 'modified', type: 'datetime', nullable: true)]
     private $modified;
 
-    /**
-     * @var Blogs
-     *
-     * @ORM\ManyToOne(targetEntity="Blogs")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="blog_fk", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: Blogs::class)]
+    #[ORM\JoinColumn(name: 'blog_fk', referencedColumnName: 'id', nullable: false)]
     private $blog;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id', nullable: false)]
     private $creator;
 
-    /**
-     * @var ?User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="modifier", referencedColumnName="id", nullable=true)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'modifier', referencedColumnName: 'id', nullable: true)]
     private $modifier;
 
-    /**
-     * @var ?BlogComments
-     *
-     * @ORM\ManyToOne(targetEntity="BlogComments")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="parent_fk", referencedColumnName="id", nullable=true)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: BlogComments::class)]
+    #[ORM\JoinColumn(name: 'parent_fk', referencedColumnName: 'id', nullable: true)]
     private $parent;
 
     public function getId(): ?int

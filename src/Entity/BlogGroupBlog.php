@@ -4,88 +4,40 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * BlogGroupBlog.
- *
- * @ORM\Table(
- *  name="blog_group_blog",
- *  indexes={
- *      @ORM\Index(name="fk_blog_group_blog_group_fk", columns={"group_fk"}),
- *      @ORM\Index(name="fk_blog_group_creator", columns={"creator"}),
- *      @ORM\Index(name="fk_blog_group_modifier", columns={"modifier"}),
- *      @ORM\Index(name="fk_blog_group_blog_fk", columns={"blog_fk"})
- *  }
- * )
- * @ORM\Entity
- */
+#[ORM\Table(name: 'blog_group_blog')]
+#[ORM\Index(name: 'fk_blog_group_blog_group_fk', columns: ['group_fk'])]
+#[ORM\Index(name: 'fk_blog_group_creator', columns: ['creator'])]
+#[ORM\Index(name: 'fk_blog_group_modifier', columns: ['modifier'])]
+#[ORM\Index(name: 'fk_blog_group_blog_fk', columns: ['blog_fk'])]
+#[ORM\Entity]
 class BlogGroupBlog
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private $id;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Blogs", cascade={"persist", "remove"})
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="blog_fk", referencedColumnName="id")
-     * })
-     * @ORM\Column(name="blog_fk", type="integer", nullable=false, options={"unsigned"=true})
-     */
+    #[ORM\Column(name: 'blog_fk', type: 'integer', nullable: false, options: ['unsigned' => true])]
     private $blog;
 
-    /**
-     * @ORM\OneToMany(targetEntity="BlogGroups", cascade={"persist", "remove"})
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="blog_fk", referencedColumnName="id")
-     * })
-     * @ORM\Column(name="group_fk", type="integer", nullable=false, options={"unsigned"=true})
-     */
+    #[ORM\Column(name: 'group_fk', type: 'integer', nullable: false, options: ['unsigned' => true])]
     private $group;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="ordering", type="integer", nullable=false)
-     */
+    #[ORM\Column(name: 'ordering', type: 'integer', nullable: false)]
     private $ordering;
 
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false)
-     */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
     private $created;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id', nullable: false)]
     private $creator;
 
-    /**
-     * @var \DateTimeInterface|null
-     *
-     * @ORM\Column(name="modified", type="datetime", nullable=true)
-     */
+    #[ORM\Column(name: 'modified', type: 'datetime', nullable: true)]
     private $modified;
 
-    /**
-     * @var ?User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="modifier", referencedColumnName="id", nullable=true)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'modifier', referencedColumnName: 'id', nullable: true)]
     private $modifier;
 
     public function getId(): ?int

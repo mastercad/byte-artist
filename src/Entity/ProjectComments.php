@@ -4,104 +4,48 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * ProjectComments.
- *
- * @ORM\Table(
- *  name="project_comments",
- *  indexes={
- *      @ORM\Index(name="fk_project_comments_creator", columns={"creator"}),
- *      @ORM\Index(name="fk_project_comments_modifier", columns={"modifier"}),
- *      @ORM\Index(name="fk_project_comments_project_fk", columns={"project_fk"}),
- *      @ORM\Index(name="fk_project_comment_parent_fk", columns={"parent_fk"})
- *  }
- * )
- * @ORM\Entity
- */
+#[ORM\Table(name: 'project_comments')]
+#[ORM\Index(name: 'fk_project_comments_creator', columns: ['creator'])]
+#[ORM\Index(name: 'fk_project_comments_modifier', columns: ['modifier'])]
+#[ORM\Index(name: 'fk_project_comments_project_fk', columns: ['project_fk'])]
+#[ORM\Index(name: 'fk_project_comment_parent_fk', columns: ['parent_fk'])]
+#[ORM\Entity]
 class ProjectComments
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="user_name", type="string", length=250, nullable=false)
-     */
+    #[ORM\Column(name: 'user_name', type: 'string', length: 250, nullable: false)]
     private $userName;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="user_email", type="string", length=250, nullable=false)
-     */
+    #[ORM\Column(name: 'user_email', type: 'string', length: 250, nullable: false)]
     private $userEmail;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="text", type="text", length=65535, nullable=false)
-     */
+    #[ORM\Column(name: 'text', type: 'text', length: 65535, nullable: false)]
     private $text;
 
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false)
-     */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
     private $created;
 
-    /**
-     * @var \DateTimeInterface|null
-     *
-     * @ORM\Column(name="modified", type="datetime", nullable=true)
-     */
+    #[ORM\Column(name: 'modified', type: 'datetime', nullable: true)]
     private $modified;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id', nullable: false)]
     private $creator;
 
-    /**
-     * @var ?User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="modifier", referencedColumnName="id", nullable=true)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'modifier', referencedColumnName: 'id', nullable: true)]
     private $modifier;
 
-    /**
-     * @var Projects
-     *
-     * @ORM\ManyToOne(targetEntity="Projects")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="project_fk", referencedColumnName="id", nullable=false)
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: Projects::class)]
+    #[ORM\JoinColumn(name: 'project_fk', referencedColumnName: 'id', nullable: false)]
     private $project;
 
-    /**
-     * @var ?ProjectComments
-     *
-     * @ORM\ManyToOne(targetEntity="ProjectComments")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="parent_fk", referencedColumnName="id")
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: ProjectComments::class)]
+    #[ORM\JoinColumn(name: 'parent_fk', referencedColumnName: 'id')]
     private $parent;
 
     public function getId(): ?int

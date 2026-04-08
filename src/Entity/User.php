@@ -4,67 +4,39 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * User.
- *
- * @ORM\Table(
- *  name="user",
- *  uniqueConstraints={
- *      @ORM\UniqueConstraint(name="UNIQ_8D93D649F85E0677", columns={"username"})
- *  }
- * )
- * @ORM\Entity
- * @UniqueEntity("email")
- * @UniqueEntity("username")
- */
-class User implements UserInterface
+#[ORM\Table(name: 'user')]
+#[ORM\UniqueConstraint(name: 'UNIQ_8D93D649F85E0677', columns: ['username'])]
+#[ORM\Entity]
+#[UniqueEntity('email')]
+#[UniqueEntity('username')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private $id;
 
-    private $salt;
+    private ?string $salt = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="username", type="string", length=180, nullable=false, unique=true)
-     */
+    #[ORM\Column(name: 'username', type: 'string', length: 180, nullable: false, unique: true)]
     private $username;
 
-    /**
-     * @var array
-     *
-     * @ORM\Column(name="roles", type="json", nullable=false)
-     */
+    #[ORM\Column(name: 'roles', type: 'json', nullable: false)]
     private $roles = [];
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=255, nullable=false)
-     */
+    #[ORM\Column(name: 'password', type: 'string', length: 255, nullable: false)]
     private $password;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=255, nullable=false, unique=true)
-     * @Assert\Email
-     */
+    #[ORM\Column(name: 'email', type: 'string', length: 255, nullable: false, unique: true)]
+    #[Assert\Email]
     private $email;
 
     public function __construct()
     {
-        $this->salt = md5(uniqid('null', true));
     }
 
     public function getUsername(): ?string
@@ -92,18 +64,15 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getSalt()
+    public function getSalt(): ?string
     {
-        return $this->salt;
+        return null;
     }
 
     /**
      * @return void
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
 //        $this->password = '';
     }
@@ -148,6 +117,6 @@ class User implements UserInterface
 
     public function getUserIdentifier(): string
     {
-        return 'email';
+        return (string) $this->email;
     }
 }

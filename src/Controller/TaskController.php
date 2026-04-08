@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class TaskController extends AbstractController
 {
-    /**
-     * @Route ("/task", name="task")
-     */
+    #[Route('/task', name: 'task')]
     public function index(): \Symfony\Component\HttpFoundation\Response
     {
         return $this->render('task/index.html.twig', [

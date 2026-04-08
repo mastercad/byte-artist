@@ -4,7 +4,7 @@ namespace App\Service\Filter\Ubb;
 
 use App\Service\DOM\TagMerge;
 use App\Service\File;
-use GeSHi;
+use Highlight\Highlighter;
 
 class Replace
 {
@@ -910,44 +910,28 @@ class Replace
         $footer_content = '<div class="code_footer" style="height: 10px; background-color: #CCCCCC; '.
             'color: #333333;"></div>';
 
-        if (true === class_exists('GeSHi')) {
-            $oGeshi = new GeSHi($sSource, $sLanguage);
+        $hl = new Highlighter();
+        $langLower = strtolower($sLanguage);
 
-            $oGeshi->enable_classes(true);
-            $oGeshi->set_overall_class('highlight_code');
-//        $oGeshi->set_header_type(GESHI_HEADER_DIV);
-            $oGeshi->set_header_type(GESHI_HEADER_PRE);
-            /*
-             *
-              GESHI_NORMAL_LINE_NUMBERS - Use normal line numbering
-              GESHI_FANCY_LINE_NUMBERS - Use fancy line numbering
-              GESHI_NO_LINE_NUMBERS - Disable line numbers (default)
-             */
-            $oGeshi->enable_line_numbers(GESHI_FANCY_LINE_NUMBERS);
-
-//        $oGeshi->start_line_numbers_at($number);
-//        $oGeshi->highlight_lines_extra(array(8));
-
-            $oGeshi->set_header_content($header_content);
-            $oGeshi->set_footer_content($footer_content);
-
-            if (0 < strlen(trim($sLanguage))) {
-                if (in_array(strtolower($sLanguage), $oGeshi->get_supported_languages())) {
-                    $oGeshi->set_language($sLanguage);
-                    if (false !== $oGeshi->get_language_name()) {
-                        if ('PHP' == $sLanguage) {
-                            $oGeshi->set_url_for_keyword_group(3, 'http://www.php.net/{FNAME}');
-                        }
-                    }
-
-                    if (true === $this->getWithoutLinks()) {
-                        $oGeshi->enable_keyword_links(false);
-                    }
-                } else {
-                    $oGeshi->set_language('JAVASCRIPT');
-                }
-                $sSource = $oGeshi->parse_code();
+        if (0 < strlen(trim($sLanguage))) {
+            try {
+                $highlighted = $hl->highlight($langLower, $sSource);
+            } catch (\DomainException $e) {
+                $highlighted = $hl->highlight('javascript', $sSource);
             }
+
+            // Build line-numbered output compatible with highlight.js CSS
+            $lines = explode("\n", $highlighted->value);
+            $numberedHtml = '';
+            foreach ($lines as $lineNum => $line) {
+                $numberedHtml .= '<span class="hljs-line" data-line="'.($lineNum + 1).'">'.$line."</span>\n";
+            }
+
+            $sSource = $header_content
+                .'<pre class="highlight_code"><code class="hljs '.htmlspecialchars($highlighted->language, ENT_QUOTES).'">'.
+                $numberedHtml
+                .'</code></pre>'
+                .$footer_content;
         }
 
         // eventuell im text enthaltene [ oder ] escapen

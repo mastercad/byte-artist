@@ -6,13 +6,11 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class WYSIWYGController extends AbstractController
 {
-    /**
-     * @Route ("/wysiwyg", name="wysiwyg")
-     */
+    #[Route('/wysiwyg', name: 'wysiwyg')]
     public function index(): Response
     {
         return $this->render('wysiwyg/index.html.twig');
