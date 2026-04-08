@@ -56,14 +56,14 @@ class ProjectsType extends AbstractType
             )
 
             ->add('shortDescription', TextareaType::class, [
-                    'label' => 'Kurzbeschreibung',
-                    'required' => false,
-                    'attr' => [
-                        'placeholder' => 'Ein kurzer Teaser für die Projektübersicht ...',
-                        'class' => 'form-control',
-                        'rows' => 3,
-                    ],
-                ])
+                'label' => 'Kurzbeschreibung',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'Ein kurzer Teaser für die Projektübersicht ...',
+                    'class' => 'form-control',
+                    'rows' => 3,
+                ],
+            ])
             ->add('id', HiddenType::class)
             ->add('previewPicture', HiddenType::class, ['required' => false])
             ->add(
@@ -102,7 +102,7 @@ class ProjectsType extends AbstractType
             ->add('projectTags', HiddenType::class, ['mapped' => false, 'required' => false])
             ->add('state', null, ['label' => 'Status'])
             ->add('created', DateTimeType::class, [
-                'label'  => 'Datum',
+                'label' => 'Datum',
                 'widget' => 'single_text',
                 'required' => false,
                 'attr' => ['class' => 'form-control'],

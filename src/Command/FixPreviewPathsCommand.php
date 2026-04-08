@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -107,7 +106,7 @@ class FixPreviewPathsCommand extends Command
                 && is_file($expectedPath)
             ) {
                 $entity->setPreviewPicture($publicPath);
-                $entity->setModified(new DateTime());
+                $entity->setModified(new \DateTime());
 
                 return true;
             }
@@ -120,7 +119,7 @@ class FixPreviewPathsCommand extends Command
                 && is_file($expectedPath)
             ) {
                 $entity->setPreviewPicture($publicPath);
-                $entity->setModified(new DateTime());
+                $entity->setModified(new \DateTime());
 
                 return true;
             }
@@ -136,7 +135,7 @@ class FixPreviewPathsCommand extends Command
                 && is_file($expectedPath)
             ) {
                 $entity->setPreviewPicture($publicPath);
-                $entity->setModified(new DateTime());
+                $entity->setModified(new \DateTime());
 
                 return true;
             }

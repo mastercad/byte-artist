@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
+use App\Repository\BlogRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\BlogRepository;
 
 #[ORM\Table(name: 'blog')]
 #[ORM\Index(name: 'fk_blog_group_fk', columns: ['group_fk'])]

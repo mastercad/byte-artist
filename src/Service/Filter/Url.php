@@ -23,20 +23,20 @@ class Url
             return $string;
         } elseif ('#' == trim($string)) {
             return '#';
-        } else {
-            /*
-            return $this->urlGenerator->generate(
-                [
-                    'module' => 'default',
-                    'controller' => 'index',
-                    'action' => 'show',
-                    'name' => urlencode($string),
-                ],
-                null,
-                true
-            ).'/';
-            */
-            return '/show/'.urlencode($string);
         }
+
+        /*
+        return $this->urlGenerator->generate(
+            [
+                'module' => 'default',
+                'controller' => 'index',
+                'action' => 'show',
+                'name' => urlencode($string),
+            ],
+            null,
+            true
+        ).'/';
+        */
+        return '/show/'.urlencode($string);
     }
 }

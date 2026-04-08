@@ -15,16 +15,16 @@ class BlogTagsType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-//            ->add('blogFk')
-//            ->add('blog', CollectionType::class, [
-//                'entry_type' => BlogType::class,
-//                'allow_add' => true
-//            ])
-//            ->add('tagFk')
-//            ->add('tag', CollectionType::class, [
-//                'entry_type' => TagsType::class,
-//                'allow_add' => true
-//            ])
+        //            ->add('blogFk')
+        //            ->add('blog', CollectionType::class, [
+        //                'entry_type' => BlogType::class,
+        //                'allow_add' => true
+        //            ])
+        //            ->add('tagFk')
+        //            ->add('tag', CollectionType::class, [
+        //                'entry_type' => TagsType::class,
+        //                'allow_add' => true
+        //            ])
     }
 
     /**

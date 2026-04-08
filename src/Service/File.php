@@ -43,7 +43,7 @@ class File
      *
      * @var string
      */
-    protected $str_dest_path = null;
+    protected $str_dest_path;
 
     /**
      * variable, die die zu verschiebenden dateien incl. absolutem
@@ -97,8 +97,6 @@ class File
      * übergeben werden kann ein array oder ein string mit dem pfad,
      * die funktion überprüft automatisch, ob der pfad schon vorhanden
      * ist, im negativen falle wird der übergebene pfad angefügt
-     *
-     * @param mixed $m_source_path
      */
     public function addSourcePath($m_source_path): void
     {
@@ -106,22 +104,21 @@ class File
             foreach ($m_source_path as $str_path) {
                 $str_path = $this->cleanPathName($str_path);
 
-                if ($this->checkDirExists($str_path) &&
-                        !in_array($str_path, $this->a_source_paths)) {
+                if ($this->checkDirExists($str_path)
+                        && !in_array($str_path, $this->a_source_paths)) {
                     $this->a_source_paths[] = $str_path;
                 }
             }
         } elseif (is_string($m_source_path)) {
             $str_path = $this->cleanPathName($m_source_path);
-            if ($this->checkDirExists($str_path) &&
-                    !in_array($str_path, $this->a_source_paths)) {
+            if ($this->checkDirExists($str_path)
+                    && !in_array($str_path, $this->a_source_paths)) {
                 $this->a_source_paths[] = $str_path;
-            } else {
-                /*
-                  echo "Fehler! Pfad " . $m_source_path . " wurde nicht in das
-                  Array eingefügt!<br />";
-                 */
             }
+            /*
+              echo "Fehler! Pfad " . $m_source_path . " wurde nicht in das
+              Array eingefügt!<br />";
+             */
         }
     }
 
@@ -163,9 +160,9 @@ class File
 
             return false;
         }
-        if (file_exists($str_path) &&
-                is_dir($str_path) &&
-                is_readable($str_path)) {
+        if (file_exists($str_path)
+                && is_dir($str_path)
+                && is_readable($str_path)) {
             return true;
         }
 
@@ -211,8 +208,6 @@ class File
      *
      * es kann ein array oder ein einzelner string übergeben werden,
      * in jedem falle wird daraus ein array
-     *
-     * @param mixed $m_allowed_extensions
      */
     public function setAllowedExtensions($m_allowed_extensions): void
     {
@@ -245,8 +240,6 @@ class File
      * es kann auch eine einzelne datei übergeben werden, die dann in
      * ein array eingesetzt wird, auch hier gilt zu beachten, das bei einem
      * bloßen dateinamen der pfad explizit gesetzt werden muss
-     *
-     * @param mixed $m_source_files
      */
     public function setSourceFiles($m_source_files): void
     {
@@ -350,16 +343,16 @@ class File
         /*
          * wenn str_source_path gesetzt und nicht null und der pfad existiert
          */
-        if (strlen(trim($this->getDestPath())) &&
-                $this->checkAndCreateDir($this->getDestPath())) {
+        if (strlen(trim($this->getDestPath()))
+                && $this->checkAndCreateDir($this->getDestPath())) {
             $a_files = $this->getUploadetFiles();
             $a_moved_files = [];
             $count_moved_files = 0;
 
             foreach ($a_files['tmp_name'] as $key => $tmp_name) {
-                if (file_exists($tmp_name) &&
-                        is_file($tmp_name) &&
-                        is_readable($tmp_name)) {
+                if (file_exists($tmp_name)
+                        && is_file($tmp_name)
+                        && is_readable($tmp_name)) {
                     $orig_name = $a_files['name'][$key];
                     $type = $a_files['type'][$key];
 
@@ -367,8 +360,8 @@ class File
                     $extension = strtolower($a_fileinformation['extension']);
                     $file_name = strtolower($a_fileinformation['filename']);
 
-                    if (!count($this->getAllowedExtensions()) ||
-                            in_array($extension, $this->getAllowedExtensions())) {
+                    if (!count($this->getAllowedExtensions())
+                            || in_array($extension, $this->getAllowedExtensions())) {
                         if (move_uploaded_file($tmp_name, $this->getDestPath().$orig_name)) {
                             $count_moved_files = count($a_moved_files);
 
@@ -376,7 +369,7 @@ class File
                             $a_moved_files[$count_moved_files][self::HTML_PFAD] = 'http://'.$localHostName.
                                 str_replace(getcwd(), '', $this->getDestPath()).$orig_name;
                             $a_moved_files[$count_moved_files][self::FILE] = $orig_name;
-//                              $a_moved_files[$count_moved_files] = $this->getDestPath() . $orig_name;
+                        //                              $a_moved_files[$count_moved_files] = $this->getDestPath() . $orig_name;
                         } else {
                             echo 'Fehler! Konnte Datei '.$orig_name.'/'.
                             $tmp_name.' nicht verschieben!<br />';
@@ -432,8 +425,8 @@ class File
 
     public function cleanDir($dir_path): bool
     {
-        if (file_exists($dir_path) &&
-                is_dir($dir_path)) {
+        if (file_exists($dir_path)
+                && is_dir($dir_path)) {
             $directory = dir($dir_path);
 
             while ($file = $directory->read()) {

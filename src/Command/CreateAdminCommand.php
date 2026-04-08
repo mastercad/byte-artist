@@ -34,12 +34,13 @@ class CreateAdminCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $email    = $input->getOption('email')    ?? $io->ask('E-Mail', 'admin@byte-artist.de');
+        $email = $input->getOption('email') ?? $io->ask('E-Mail', 'admin@byte-artist.de');
         $username = $input->getOption('username') ?? $io->ask('Benutzername', 'admin');
         $password = $input->getOption('password') ?? $io->askHidden('Passwort');
 
         if (empty($password)) {
             $io->error('Passwort darf nicht leer sein.');
+
             return Command::FAILURE;
         }
 

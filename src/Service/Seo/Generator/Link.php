@@ -25,7 +25,7 @@ class Link
     public function extendWithSeoLink($entity, $seoLink = null)
     {
         if (empty($seoLink)) {
-            $seoLink = (Strings::makeStringLinkSave($entity->{'get'.ucfirst($this->memberName)}()));
+            $seoLink = Strings::makeStringLinkSave($entity->{'get'.ucfirst($this->memberName)}());
         }
         $dbEntity = $this->entityRepository->findOneBy(['seoLink' => $seoLink]);
 

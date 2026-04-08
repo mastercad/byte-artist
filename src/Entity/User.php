@@ -69,12 +69,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return null;
     }
 
-    /**
-     * @return void
-     */
     public function eraseCredentials(): void
     {
-//        $this->password = '';
+        //        $this->password = '';
     }
 
     public function getId(): ?int

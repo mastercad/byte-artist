@@ -9,10 +9,10 @@ use App\Entity\BlogTags;
 use App\Entity\Tags;
 use App\Form\BlogType;
 use App\Repository\BlogRepository;
+use App\Service\File\Base64EncodedFile;
 use App\Service\Pagination;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Service\File\Base64EncodedFile;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -120,6 +120,7 @@ class BlogController extends AbstractController
             } catch (\Throwable $e) {
                 return new JsonResponse(['id' => $blogId, 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
+
             return new JsonResponse(['id' => $blog->getId()]);
         }
 
@@ -153,6 +154,7 @@ class BlogController extends AbstractController
                 }
             }
         }
+
         return $errors;
     }
 
@@ -253,7 +255,7 @@ class BlogController extends AbstractController
         return new JsonResponse([
             'uploaded' => 1,
             'fileName' => $originalFileName,
-            'url'      => $publicUploadPath.'/'.$originalFileName,
+            'url' => $publicUploadPath.'/'.$originalFileName,
         ]);
     }
 }

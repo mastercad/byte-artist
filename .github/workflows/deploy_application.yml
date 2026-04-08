@@ -4,6 +4,7 @@ on:
   pull_request:
     types: [closed]
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   create-deployment-artifacts:
@@ -12,7 +13,7 @@ jobs:
     outputs:
       deployment-matrix: ${{ steps.export-deployment-matrix.outputs.deployment-matrix }}
 
-    if: github.event.pull_request.merged
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged
     steps:
     - name: Configure PHP 8.3
       uses: shivammathur/setup-php@v2

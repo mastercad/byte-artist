@@ -19,23 +19,23 @@ class Strings
     public static function replaceSpecialCharacters(string $content): ?string
     {
         $search = [
-        '/ä/',
-        '/ü/',
-        '/ö/',
-        '/ß/',
-        '/Ü/',
-        '/Ä/',
-        '/Ö/',
+            '/ä/',
+            '/ü/',
+            '/ö/',
+            '/ß/',
+            '/Ü/',
+            '/Ä/',
+            '/Ö/',
         ];
 
         $replaces = [
-        'ae',
-        'ue',
-        'oe',
-        'ss',
-        'ue',
-        'ae',
-        'oe',
+            'ae',
+            'ue',
+            'oe',
+            'ss',
+            'ue',
+            'ae',
+            'oe',
         ];
 
         return preg_replace($search, $replaces, $content);

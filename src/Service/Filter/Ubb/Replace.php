@@ -21,54 +21,54 @@ class Replace
     /**
      * @var array enhält alle erlaubten tags, die replaced werden sollen
      */
-//    protected $allowdTags = array(
-//        '[QUOTE=]' => ['[QUOTE=]', '[/QUOTE]'],
-//        '[QUOTE]' => ['[QUOTE]', '[/QUOTE]'],
-//        '[GALLERY]' => ['[GALLERY]', '[/GALLERY]'],
-//        '[IMG]' => ['[IMG]', '[/IMG]'],
-//        '[IMG=]' => ['[IMG:]', '[/IMG]'],
-//        '[EMAIL]' => ['[EMAIL]', '[/EMAIL'],
-//        '[EMAIL=]' => ['[EMAIL=]', '[/EMAIL]'],
-//        '[URL]' => ['[URL]', '[/URL]'],
-//        '[URL=]' => ['[URL=]', '[/URL]'],
-//        '[URLIMG=]' => ['[URLIMG=]', '[/URLIMG]'],
-//        '[PHP]' => ['[PHP]', '[/PHP]'],
-//        '[CODE=]' => ['[CODE=]', '[/CODE]'],
-//        '[MITGLIED]' => '[MITGLIED]', '[/MITGLIED]',
-//        '[MEMBER]' => '[MEMBER]', '[/MEMBER]',
-//        '[LINIE=]' => ['[LINIE]', ''],
-//        '[ULISTE]' => ['[ULISTE]', '[/ULISTE]'],
-//        '[DANKE]' => ['[DANKE]', '[/DANKE]'],
-//        '[THANKS]' => ['[THANKS]', '[/THANKS]'],
-//        '[BLOCK]' => ['[BLOCK]', '[/BLOCK]'],
-//        '[CENTER]' => ['[CENTER]', '[/CENTER]'],
-//        '[LEFT]' => ['[LEFT]', '[/LEFT]'],
-//        '[RIGHT]' => ['[RIGHT]', '[/RIGHT]'],
-//        '[FLOAT]' => ['[FLOAT]', '[/FLOAT]'],
-//        '[MARQUEE]' => ['[MARQUEE]', '[/MARQUEE]'],
-//        '[NL]' => ['[NL]', ''],
-//        '[VIDEO]' => ['[VIDEO]', '[/VIDEO]'],
-//        '[COLOR=]' => ['[COLOR]', '[/COLOR]'],
-//        '[BGCOLOR=]' => ['[BGCOLOR]', '[/BGCOLOR]'],
-//        '[SIZE=]' => ['[SIZE]', '[/SIZE]'],
-//        '[GLOW]' => ['[GLOW]', '[/GLOW]'],
-//        '[WAVE]' => ['[WAVE]', '[/WAVE]'],
-//        '[SHADOW=]' => ['[SHADOW=]', '[/SHADOW]'],
-//        '[I]' => ['[I]', '[/I]'],
-//        '[B]' => ['[B]', '[/B]'],
-//        '[U]' => ['[U]', '[/U]'],
-//        '[S]' => ['[S]', '[/S]'],
-//        '[FONT=]' => ['[FONT]', '[/FONT]'],
-//        '[NEWS]' => ['[NEWS]', ''],
-//        '[H1]' => ['[H1]', '[/H1]'],
-//        '[H2]' => ['[H2]', '[/H2]'],
-//        '[H3]' => ['[H3]', '[/H3]'],
-//        '[H4]' => ['[H4]', '[/H4]'],
-//        '[H5]' => ['[H5]', '[/H5]'],
-//        '[H6]' => ['[H6]', '[/H6]'],
-//        '[TABLE]' => ['[TABLE]', '[/TABLE]'],
-//        '[LEGEND]' => ['[LEGEND]'],
-//    );
+    //    protected $allowdTags = array(
+    //        '[QUOTE=]' => ['[QUOTE=]', '[/QUOTE]'],
+    //        '[QUOTE]' => ['[QUOTE]', '[/QUOTE]'],
+    //        '[GALLERY]' => ['[GALLERY]', '[/GALLERY]'],
+    //        '[IMG]' => ['[IMG]', '[/IMG]'],
+    //        '[IMG=]' => ['[IMG:]', '[/IMG]'],
+    //        '[EMAIL]' => ['[EMAIL]', '[/EMAIL'],
+    //        '[EMAIL=]' => ['[EMAIL=]', '[/EMAIL]'],
+    //        '[URL]' => ['[URL]', '[/URL]'],
+    //        '[URL=]' => ['[URL=]', '[/URL]'],
+    //        '[URLIMG=]' => ['[URLIMG=]', '[/URLIMG]'],
+    //        '[PHP]' => ['[PHP]', '[/PHP]'],
+    //        '[CODE=]' => ['[CODE=]', '[/CODE]'],
+    //        '[MITGLIED]' => '[MITGLIED]', '[/MITGLIED]',
+    //        '[MEMBER]' => '[MEMBER]', '[/MEMBER]',
+    //        '[LINIE=]' => ['[LINIE]', ''],
+    //        '[ULISTE]' => ['[ULISTE]', '[/ULISTE]'],
+    //        '[DANKE]' => ['[DANKE]', '[/DANKE]'],
+    //        '[THANKS]' => ['[THANKS]', '[/THANKS]'],
+    //        '[BLOCK]' => ['[BLOCK]', '[/BLOCK]'],
+    //        '[CENTER]' => ['[CENTER]', '[/CENTER]'],
+    //        '[LEFT]' => ['[LEFT]', '[/LEFT]'],
+    //        '[RIGHT]' => ['[RIGHT]', '[/RIGHT]'],
+    //        '[FLOAT]' => ['[FLOAT]', '[/FLOAT]'],
+    //        '[MARQUEE]' => ['[MARQUEE]', '[/MARQUEE]'],
+    //        '[NL]' => ['[NL]', ''],
+    //        '[VIDEO]' => ['[VIDEO]', '[/VIDEO]'],
+    //        '[COLOR=]' => ['[COLOR]', '[/COLOR]'],
+    //        '[BGCOLOR=]' => ['[BGCOLOR]', '[/BGCOLOR]'],
+    //        '[SIZE=]' => ['[SIZE]', '[/SIZE]'],
+    //        '[GLOW]' => ['[GLOW]', '[/GLOW]'],
+    //        '[WAVE]' => ['[WAVE]', '[/WAVE]'],
+    //        '[SHADOW=]' => ['[SHADOW=]', '[/SHADOW]'],
+    //        '[I]' => ['[I]', '[/I]'],
+    //        '[B]' => ['[B]', '[/B]'],
+    //        '[U]' => ['[U]', '[/U]'],
+    //        '[S]' => ['[S]', '[/S]'],
+    //        '[FONT=]' => ['[FONT]', '[/FONT]'],
+    //        '[NEWS]' => ['[NEWS]', ''],
+    //        '[H1]' => ['[H1]', '[/H1]'],
+    //        '[H2]' => ['[H2]', '[/H2]'],
+    //        '[H3]' => ['[H3]', '[/H3]'],
+    //        '[H4]' => ['[H4]', '[/H4]'],
+    //        '[H5]' => ['[H5]', '[/H5]'],
+    //        '[H6]' => ['[H6]', '[/H6]'],
+    //        '[TABLE]' => ['[TABLE]', '[/TABLE]'],
+    //        '[LEGEND]' => ['[LEGEND]'],
+    //    );
 
     protected $allowdTags = [
         '[QUOTE=]',
@@ -228,7 +228,7 @@ class Replace
             self::REPLACE_FUNCTION => 'replaceNewLine',
         ],
         '[VIDEO]' => [
-//            self::REGEX => '/(\[VIDEO\])(.*?)(\[\/VIDEO\])/i',
+            //            self::REGEX => '/(\[VIDEO\])(.*?)(\[\/VIDEO\])/i',
             self::REGEX => '/(\[(VIDEO:|VIDEO=)([^\]]*)\]|\[VIDEO\])([^(\[\\)]*)\[\/(VIDEO)\]/i',
             self::REPLACE_FUNCTION => 'addVideo',
         ],
@@ -332,10 +332,10 @@ class Replace
      */
     public function __construct($br_cleart = true)
     {
-//        ini_set('display_errors', 1);
-//        ini_set('display_startup_errors', 1);
+        //        ini_set('display_errors', 1);
+        //        ini_set('display_startup_errors', 1);
 
-//        error_reporting(E_ALL | E_STRICT);
+        //        error_reporting(E_ALL | E_STRICT);
 
         $this->br_cleart = $br_cleart;
     }
@@ -347,9 +347,9 @@ class Replace
      */
     public function filter($sText)
     {
-//        $sText = htmlentities($sText, null, 'UTF-8');
+        //        $sText = htmlentities($sText, null, 'UTF-8');
 
-//        foreach ($this->allowdTags as $sAllowedTag => $params) {
+        //        foreach ($this->allowdTags as $sAllowedTag => $params) {
         $tagsFound = false;
         foreach ($this->allowdTags as $sAllowedTag) {
             if (array_key_exists($sAllowedTag, $this->aMapTagToFunction)) {
@@ -376,11 +376,11 @@ class Replace
             preg_replace_callback('([\n\r|\n])', [&$this, 'replaceNewLine'], $sText) :
             $sText = nl2br($sText);
 
-//            $sText = preg_replace_callback( '([\n\r|\n])', array(&$this, "replaceLineBreak"), $sText);
-//
+        //            $sText = preg_replace_callback( '([\n\r|\n])', array(&$this, "replaceLineBreak"), $sText);
+        //
         $sText = preg_replace_callback("/([\t])/", [&$this, 'replaceTab'], $sText);
 
-//        $sText = $this->smileyReplace($sText);
+        //        $sText = $this->smileyReplace($sText);
 
         $oCadMerge = new TagMerge();
 
@@ -590,19 +590,19 @@ class Replace
         if (6 == count($aMatches)) {
             return '<div class="quote" ><div class="quote_kopf"> Zitat von : '.$aMatches[2].
                     '</div><div class="quote_inhalt">'.$aMatches[4].'</div></div>';
-        } else {
-            return '<div class="quote" ><div class="quote_kopf"> Zitat :</div><div class="quote_inhalt">'.
-                    $aMatches[2].'</div></div>';
         }
+
+        return '<div class="quote" ><div class="quote_kopf"> Zitat :</div><div class="quote_inhalt">'.
+                $aMatches[2].'</div></div>';
     }
 
     public function generateMail($aMatches): string
     {
         if (6 == count($aMatches)) {
             return '<a href="mailto:'.$aMatches[4].'">'.$aMatches[2].'</a>';
-        } else {
-            return '<a href="mailto:'.$aMatches[2].'">'.$aMatches[2].'</a>';
         }
+
+        return '<a href="mailto:'.$aMatches[2].'">'.$aMatches[2].'</a>';
     }
 
     public function generateTable($aMatches): string
@@ -626,9 +626,9 @@ class Replace
     {
         if (6 == count($aMatches)) {
             return $this->imageEinfuegenNeu($aMatches[4], $aMatches[2]);
-        } else {
-            return $this->imageEinfuegen($aMatches[2]);
         }
+
+        return $this->imageEinfuegen($aMatches[2]);
     }
 
     public function generateLine($aMatches): string
@@ -641,9 +641,9 @@ class Replace
     {
         if (6 == count($aMatches)) {
             return $this->ersetzeUrl($aMatches[4], $aMatches[2]);
-        } else {
-            return $this->ersetzeUrl($aMatches[2]);
         }
+
+        return $this->ersetzeUrl($aMatches[2]);
     }
 
     public function generateUrlImage($aMatches): string
@@ -818,8 +818,8 @@ class Replace
             // wenn eine dateiendung
             if (preg_match('/(\.[a-z0-9]{2,5})\/?$/i', $url)) {
                 $link = '<a href="'.$url.'" target="_blank">'.$name.'</a>';
-            } elseif ($hostname_url &&
-                    $hostname_url != $hostname_server) {
+            } elseif ($hostname_url
+                    && $hostname_url != $hostname_server) {
                 $link = '<a href="'.$url.'" target="_blank">'.$name.'</a>';
             } else {
                 $link = '<a href="'.$url.'">'.$name.'</a>';
@@ -845,8 +845,8 @@ class Replace
             // wenn eine dateiendung
             if (preg_match('/(\.[a-z0-9]{2,5})\/?$/i', $url)) {
                 $link = '<a href="'.$url.'" target="_blank">'.$this->imageEinfuegen($image).'</a>';
-            } elseif ($hostname_url &&
-                    $hostname_url != $hostname_server) {
+            } elseif ($hostname_url
+                    && $hostname_url != $hostname_server) {
                 $link = '<a href="'.$url.'" target="_blank">'.$this->imageEinfuegen($image).'</a>';
             } else {
                 $link = '<a href="'.$url.'" target="_blank">'.$this->imageEinfuegen($image).'</a>';
@@ -872,13 +872,13 @@ class Replace
 
         if (isset($_SESSION['mitglieder_id'])) {
             return $text;
-        } else {
-            return '<span style="color: red;">Bitte einloggen, oder <a style="color: red;" '.
-                'href="?seite=registrieren&amp;forumid='.$iForumId.'&amp;subforumid='.$iSubForumId.'&amp;threadid='.
-                $iThreadId.'&amp;aktuelle_seite='.$iAktuelleSeite.'&amp;anzahl_posts='.$iAnzahlPosts.
-                '" title="Nicht die benötigten Rechte um diesen Text zu sehen" >registrieren</a>,'.
-                ' damit der Text angezeigt wird !</span>';
         }
+
+        return '<span style="color: red;">Bitte einloggen, oder <a style="color: red;" '.
+            'href="?seite=registrieren&amp;forumid='.$iForumId.'&amp;subforumid='.$iSubForumId.'&amp;threadid='.
+            $iThreadId.'&amp;aktuelle_seite='.$iAktuelleSeite.'&amp;anzahl_posts='.$iAnzahlPosts.
+            '" title="Nicht die benötigten Rechte um diesen Text zu sehen" >registrieren</a>,'.
+            ' damit der Text angezeigt wird !</span>';
     }
 
     public function codeString($sLanguage, $sSource): ?string
@@ -905,7 +905,7 @@ class Replace
             'background-color: #FFFFFF; border: 1px solid #CCCCCC;">'.$sLanguage.' code</h3>';
         }
 
-//     $header_content .= '<img src="#" alt="copy to clipboard" style="position: absolute; top: 2px; right: 5px;" />';
+        //     $header_content .= '<img src="#" alt="copy to clipboard" style="position: absolute; top: 2px; right: 5px;" />';
         $header_content .= '</div>';
         $footer_content = '<div class="code_footer" style="height: 10px; background-color: #CCCCCC; '.
             'color: #333333;"></div>';
@@ -974,11 +974,11 @@ class Replace
         $liste = '<ul style="margin-left: 10px; float: left; display: inline;">';
 
         foreach ($a_listen_punkte as $listen_punkt) {
-            if (strlen(trim($listen_punkt)) > 0 &&
-                    !preg_match('/\<ul/i', $listen_punkt)) {
+            if (strlen(trim($listen_punkt)) > 0
+                    && !preg_match('/\<ul/i', $listen_punkt)) {
                 $liste .= '<li style="list-style: disc inside none; margin-left: 10px;">'.$listen_punkt.'</li>';
-            } elseif (strlen(trim($listen_punkt)) > 0 && (!preg_match('/\<ul/i', $listen_punkt) ||
-                    !preg_match('/\<\/ul\>/i', $listen_punkt))
+            } elseif (strlen(trim($listen_punkt)) > 0 && (!preg_match('/\<ul/i', $listen_punkt)
+                    || !preg_match('/\<\/ul\>/i', $listen_punkt))
             ) {
                 $liste .= $listen_punkt;
             }
@@ -997,7 +997,7 @@ class Replace
         // suchen, ob von extern geöffnet werden soll
         if (preg_match('/http:\/\/|http:\\\\|https:\/\/|https:\\\\|www\./i', $text)) {
             $bild_array = @getimagesize($text);
-        //ansonsten aus lokalem ordner öffnen
+        // ansonsten aus lokalem ordner öffnen
         } else {
             if (file_exists(getcwd().$this->getBilderPfad().$text)) {
                 $pfad = $this->getBilderPfad();
@@ -1047,14 +1047,14 @@ class Replace
 
         if (preg_match('/http\:\/\/|http\:\\\\|https\:\/\/|https\:\\\\|www\./Ui', $bild)) {
             $a_bildinformationen = @getimagesize($bild);
-        } elseif (file_exists(getcwd().$this->getTempBilderPfad().$bild) &&
-                is_file(getcwd().$this->getTempBilderPfad().$bild) &&
-                is_readable(getcwd().$this->getTempBilderPfad().$bild)
+        } elseif (file_exists(getcwd().$this->getTempBilderPfad().$bild)
+                && is_file(getcwd().$this->getTempBilderPfad().$bild)
+                && is_readable(getcwd().$this->getTempBilderPfad().$bild)
         ) {
             $bild = 'https://'.$localHostName.$this->getTempBilderPfad().$bild;
-        } elseif (file_exists(getcwd().$this->getBilderPfad().$bild) &&
-                is_file(getcwd().$this->getBilderPfad().$bild) &&
-                is_readable(getcwd().$this->getBilderPfad().$bild)
+        } elseif (file_exists(getcwd().$this->getBilderPfad().$bild)
+                && is_file(getcwd().$this->getBilderPfad().$bild)
+                && is_readable(getcwd().$this->getBilderPfad().$bild)
         ) {
             $bild = 'https://'.$localHostName.$this->getBilderPfad().$bild;
         }
@@ -1100,8 +1100,8 @@ class Replace
             }
         }
         $name = $imagePathName;
-//        $returnContent .= '<img class="blog_pic lazyload" data-src="'.$imageContent.'" src="load.jpg" alt="Bild '
-//           . $name . ' nicht gefunden !" title="' . $name . '" />';
+        //        $returnContent .= '<img class="blog_pic lazyload" data-src="'.$imageContent.'" src="load.jpg" alt="Bild '
+        //           . $name . ' nicht gefunden !" title="' . $name . '" />';
         $returnContent .= '<img class="blog_pic lazyload" data-mfp-src="'.$imageContent.'" data-src="'.$imageContent.
             '" src="low_pic.png" alt="Bild '.$name.' nicht gefunden !" title="'.$name.'" />';
         /*
@@ -1139,9 +1139,9 @@ class Replace
                 file_put_contents($imagePathNameFormatted, file_get_contents($imagePathName));
                 $imagePathNameFormatted = '/butler/create-thumb/file/'.base64_encode($imagePathNameFormatted);
             }
-        } elseif (file_exists(getcwd().$this->getTempBilderPfad().$imagePathName) &&
-                is_file(getcwd().$this->getTempBilderPfad().$imagePathName) &&
-                is_readable(getcwd().$this->getTempBilderPfad().$imagePathName)
+        } elseif (file_exists(getcwd().$this->getTempBilderPfad().$imagePathName)
+                && is_file(getcwd().$this->getTempBilderPfad().$imagePathName)
+                && is_readable(getcwd().$this->getTempBilderPfad().$imagePathName)
         ) {
             $imagePathNameFormatted = 'https://'.$localHostName.'/butler/create-thumb/file/'.
                 base64_encode(getcwd().$this->getTempBilderPfad().$imagePathNameFormatted);
@@ -1149,8 +1149,8 @@ class Replace
             && is_file(getcwd().$this->getBilderPfad().$imagePathName)
             && is_readable(getcwd().$this->getBilderPfad().$imagePathName)
         ) {
-//            $imagePathNameFormatted = 'https://'.$localHostName.'/butler/create-thumb/file/'.
-//              base64_encode(getcwd().$this->getBilderPfad().$imagePathNameFormatted);
+            //            $imagePathNameFormatted = 'https://'.$localHostName.'/butler/create-thumb/file/'.
+            //              base64_encode(getcwd().$this->getBilderPfad().$imagePathNameFormatted);
             $imagePathNameFormatted = 'http://'.$localHostName.$this->getBilderPfad().$imagePathNameFormatted;
         } else {
             $imagePathNameFormatted = 'https://'.$localHostName.$this->getBilderPfad().$imagePathName;

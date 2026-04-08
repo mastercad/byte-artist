@@ -76,7 +76,7 @@ class BlogType extends AbstractType
             )
             ->add('blogTags', HiddenType::class, ['mapped' => false, 'required' => false])
             ->add('created', DateTimeType::class, [
-                'label'  => 'Datum',
+                'label' => 'Datum',
                 'widget' => 'single_text',
                 'required' => false,
                 'attr' => ['class' => 'form-control'],

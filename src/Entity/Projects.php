@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
+use App\Repository\ProjectsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\ProjectsRepository;
 
 #[ORM\Table(name: 'projects')]
 #[ORM\Index(name: 'fk_project_modifier', columns: ['modifier'])]
@@ -246,7 +246,7 @@ class Projects
     {
         if (!$this->projectTags->contains($projectTag)) {
             $this->projectTags[] = $projectTag;
-//            $tag->setProjects($this);
+            //            $tag->setProjects($this);
         }
 
         return $this;

@@ -6,21 +6,21 @@ use Doctrine\ORM\EntityRepository;
 
 class Seo
 {
-    private $ref_db_table = null;
-    private $str_table_field_name = null;
-    private $str_link_name = null;
-    private $str_clean_link_name = null;
-    private $str_seo_name = null;
-    private $str_table_field_id_name = null;
-    private $i_max_count = null;
-    private $i_table_field_id = null;
+    private $ref_db_table;
+    private $str_table_field_name;
+    private $str_link_name;
+    private $str_clean_link_name;
+    private $str_seo_name;
+    private $str_table_field_id_name;
+    private $i_max_count;
+    private $i_table_field_id;
 
     public function __construct($a_params = null)
     {
         $this->i_max_count = 0;
 
-        if (isset($a_params) &&
-                is_array($a_params)) {
+        if (isset($a_params)
+                && is_array($a_params)) {
             if (isset($a_params['ref_db_table'])) {
                 $this->ref_db_table = $a_params['ref_db_table'];
             }
@@ -119,7 +119,7 @@ class Seo
      *
      * @return false|static
      */
-    public function createUniqueDbEntry($linkName = null, EntityRepository $entityRepository = null, $columnName = '')
+    public function createUniqueDbEntry($linkName = null, ?EntityRepository $entityRepository = null, $columnName = '')
     {
         if (!$linkName) {
             $linkName = $this->getCleanLinkName();

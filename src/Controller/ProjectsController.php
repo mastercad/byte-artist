@@ -9,12 +9,10 @@ use App\Entity\ProjectTags;
 use App\Entity\Tags;
 use App\Form\ProjectsType;
 use App\Repository\ProjectsRepository;
+use App\Service\File\Base64EncodedFile;
 use App\Service\Pagination;
 use App\Service\Seo\Generator\LinkFactory;
-use DateTime;
-use DirectoryIterator;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Service\File\Base64EncodedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\File;
@@ -83,7 +81,7 @@ class ProjectsController extends AbstractController
         $publicUploadPath = $this->generatePublicUploadPath();
         $targetPath = $this->getPublicDir().$publicUploadPath;
 
-        $fileIterator = new DirectoryIterator($targetPath);
+        $fileIterator = new \DirectoryIterator($targetPath);
         $files = [];
 
         foreach ($fileIterator as $file) {
@@ -113,7 +111,7 @@ class ProjectsController extends AbstractController
         $imagesPath = $this->getPublicDir().$this->generatePublicPicturePath($projectId);
 
         if (is_dir($imagesPath)) {
-            $directoryIterator = new DirectoryIterator($imagesPath);
+            $directoryIterator = new \DirectoryIterator($imagesPath);
 
             foreach ($directoryIterator as $file) {
                 if ($file->isFile()) {
@@ -198,12 +196,12 @@ class ProjectsController extends AbstractController
         $projectId = $request->get('projects')['id'];
 
         $project = new Projects();
-        $project->setCreated(new DateTime());
+        $project->setCreated(new \DateTime());
         $project->setCreator($this->getUser());
 
         if (0 < $projectId) {
             $project = $this->em->getRepository(Projects::class)->find($projectId);
-            $project->setModified(new DateTime());
+            $project->setModified(new \DateTime());
             $project->setModifier($this->getUser());
         }
 
@@ -220,7 +218,7 @@ class ProjectsController extends AbstractController
         // For new entries with no submitted date, default to now.
         // For existing entries the form value is preserved as-is by Symfony.
         if (0 >= $projectId && empty($projectRequest['created'])) {
-            $project->setCreated(new DateTime());
+            $project->setCreated(new \DateTime());
         }
 
         $project->setName($projectRequest['name']);
@@ -300,7 +298,7 @@ class ProjectsController extends AbstractController
     protected function clearUploadFolder(): static
     {
         $folderPath = $this->getPublicDir().'/images/upload/'.$this->getUser()->getId().'/projects';
-        $dirIterator = new DirectoryIterator($folderPath);
+        $dirIterator = new \DirectoryIterator($folderPath);
 
         foreach ($dirIterator as $file) {
             if ($file->isFile()) {
@@ -342,7 +340,7 @@ class ProjectsController extends AbstractController
                 if (!$tagEntity) {
                     $tagEntity = new Tags();
                     $tagEntity->setCreator($this->getUser());
-                    $tagEntity->setCreated(new DateTime());
+                    $tagEntity->setCreated(new \DateTime());
                     $tagEntity->setName($tagName);
                     $tagEntity->setSeoLink(strtolower($tagName));
                     $this->em->persist($tagEntity);
@@ -351,7 +349,7 @@ class ProjectsController extends AbstractController
             }
 
             $projectTagEntity = new ProjectTags();
-            $projectTagEntity->setCreated(new DateTime());
+            $projectTagEntity->setCreated(new \DateTime());
             $projectTagEntity->setCreator($this->getUser());
             $projectTagEntity->setTag($tagEntity);
             $projectTagEntity->setProject($project);
@@ -373,7 +371,7 @@ class ProjectsController extends AbstractController
     {
         $projectId = $request->get('id');
 
-        if (str_contains((string)($request->headers->get('Content-Type') ?? ''), 'application/json')) {
+        if (str_contains((string) ($request->headers->get('Content-Type') ?? ''), 'application/json')) {
             $data = json_decode($request->getContent(), true);
             $request->request->replace(is_array($data) ? $data : []);
         }

@@ -16,7 +16,7 @@ class UserFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $existing = $manager->getRepository(User::class)->findOneBy(['email' => 'admin@byte-artist.de']);
-        if ($existing !== null) {
+        if (null !== $existing) {
             return;
         }
 

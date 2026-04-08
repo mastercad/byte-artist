@@ -2,8 +2,6 @@
 
 namespace App\Service\DOM;
 
-use DOMNode;
-
 class NodesArrayIterator implements \Iterator
 {
     /**
@@ -18,7 +16,7 @@ class NodesArrayIterator implements \Iterator
     }
 
     /**
-     * @return DOMNode
+     * @return \DOMNode
      */
     public function current(): mixed
     {

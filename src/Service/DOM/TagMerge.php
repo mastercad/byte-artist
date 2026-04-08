@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: mastercad
@@ -10,10 +11,10 @@ namespace App\Service\DOM;
 
 class TagMerge
 {
-    private $sString = null;
-    private $sContent = null;
-    private $sFirstAttributes = null;
-    private $sSecondAttributes = null;
+    private $sString;
+    private $sContent;
+    private $sFirstAttributes;
+    private $sSecondAttributes;
 
     /** @var array Container mit den Attributen, die gemerged werden können */
     private $aAttributeMergePossible = [
