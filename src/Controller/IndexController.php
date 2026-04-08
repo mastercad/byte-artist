@@ -24,8 +24,9 @@ class IndexController extends AbstractController
         /** @var BlogRepository $blogRepository */
         $blogRepository = $this->em->getRepository(Blogs::class);
         $blogs = $blogRepository->findLatest(0, 3);
+        $projectFilter = $this->isGranted('ROLE_ADMIN') ? [] : ['isPublic' => true];
         $projects = $this->em->getRepository(Projects::class)->findBy(
-            [],
+            $projectFilter,
             ['modified' => 'DESC', 'created' => 'DESC'],
             3
         );

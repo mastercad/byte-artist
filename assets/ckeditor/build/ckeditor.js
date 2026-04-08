@@ -28734,7 +28734,7 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
   CKEDITOR.on("instanceReady", function () {
     CKEDITOR.document.appendStyleSheet(CKEDITOR.plugins.getPath("ckawesome") + "dialogs/ckawesome.css")
   });
-  CKEDITOR.scriptLoader.load(CKEDITOR.plugins.getPath("ckawesome") + "resources/select2/select2.full.min.js");
+  /* select2 loader removed — ckawesome plugin is disabled */
   CKEDITOR.dtd.$removeEmpty.span = 0;
   CKEDITOR.plugins.add("ckawesome", {
     requires: "colordialog",
@@ -28755,12 +28755,7 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
       })
     }
   });
-  if (!window.jQuery) {
-    var jq = document.createElement("script");
-    jq.type = "text/javascript";
-    jq.src = "http://code.jquery.com/jquery-2.0.3.min.js";
-    document.getElementsByTagName("head")[0].appendChild(jq)
-  }
+  /* jQuery CDN load removed — project uses webpack jQuery 3.7.1 */
   CKEDITOR.plugins.add("googledocs", {
     icons: "googledocs",
     lang: "en,ru",

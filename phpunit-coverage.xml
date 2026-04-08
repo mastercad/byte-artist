@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Local coverage config – bridges old phpunit.xml.dist to PHPUnit 10 source format -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         backupGlobals="false"
+         colors="true"
+         bootstrap="tests/bootstrap.php"
+>
+    <php>
+        <ini name="error_reporting" value="-1" />
+        <env name="APP_ENV" value="test" force="true"/>
+        <env name="KERNEL_CLASS" value="App\Kernel" />
+        <env name="DATABASE_URL" value="mysql://root:root@byte_artist_mysql:3306/byte_artist_test"/>
+        <env name="MAILER_URL" value="null://localhost"/>
+        <env name="APP_SECRET" value="24829f711224a1554cc268d05472cdc7"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="Byte Artist Homepage Test Suite">
+            <directory>tests/</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
+</phpunit>

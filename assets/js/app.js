@@ -5,7 +5,7 @@
 require('../css/app.css');
 
 const $ = window.$ = window.jQuery = jQuery = require('jquery');
-require('jquery-ui-bundle');
+require('jquery-ui/dist/jquery-ui');
 require('lazyload');
 require('@fortawesome/fontawesome-free/css/all.min.css');
 require('@fortawesome/fontawesome-free/js/all.js');

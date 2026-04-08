@@ -14,14 +14,14 @@ jobs:
 
     if: github.event.pull_request.merged
     steps:
-    - name: Configure PHP 7.4
-      uses: shivammathur/setup-php@master
+    - name: Configure PHP 8.3
+      uses: shivammathur/setup-php@v2
       with:
-        php-version: 7.4
+        php-version: '8.3'
         extensions: imagick, swoole, zip, mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo
         tools: composer:v2
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
 #    - name: provide secrets
 #      env:
@@ -39,7 +39,7 @@ jobs:
       run: tar -cpzf /tmp/"${GITHUB_SHA}".tar.gz --one-file-system --exclude=.git* --exclude=node_modules --exclude=tests --exclude=var --exclude=./build --exclude=.docker --exclude=docker-compose.yml --exclude=phpcs.xml* --exclude=phpmd.xml --exclude=phpstan* --exclude=phpunit.xml* --exclude=.php-cs* --exclude=sonar-project.properties .
 
     - name: Store artifact for distribution
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: app-build
         path: /tmp/${{ github.sha }}.tar.gz
@@ -48,10 +48,7 @@ jobs:
       id: export-deployment-matrix
       run: |
         JSON="$(cat ./deployment-config.json)"
-        JSON="${JSON//'%'/'%25'}"
-        JSON="${JSON//$'\n'/'%0A'}"
-        JSON="${JSON//$'\r'/'%0D'}"
-        echo "::set-output name=deployment-matrix::$JSON"
+        echo "deployment-matrix=$JSON" >> "$GITHUB_OUTPUT"
 
   prepare-release-on-servers:
     name: "${{ matrix.server.name }}: Prepare release"
@@ -62,7 +59,7 @@ jobs:
         server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
 
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: app-build
 

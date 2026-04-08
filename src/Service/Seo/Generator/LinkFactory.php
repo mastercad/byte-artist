@@ -2,7 +2,7 @@
 
 namespace App\Service\Seo\Generator;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 class LinkFactory
 {

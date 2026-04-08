@@ -25,6 +25,7 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/js/app.js')
+    .addEntry('editor', './assets/js/editor.js')
     .addEntry('cad-gallery', './assets/js/cad.gallery.js')
     .addEntry('tag-cloud', './assets/js/jquery.tagcanvas.min.js')
     .addEntry('magnific-popup', './assets/js/jquery.magnific-popup.min.js')
@@ -51,7 +52,7 @@ Encore
      * list of features, see:
      * https://symfony.com/doc/current/frontend.html#adding-more-features
      */
-    .cleanupOutputBeforeBuild()
+    // .cleanupOutputBeforeBuild()  // disabled: public/build has root-owned files from docker
     .enableBuildNotifications()
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)

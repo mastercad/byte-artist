@@ -4,7 +4,6 @@
  */
 
 CKEDITOR.editorConfig = function( config ) {
-	// Define changes to default configuration here. For example:
-	// config.language = 'fr';
-	// config.uiColor = '#AADC6E';
+	// Disable plugins that have no external plugin.js or load conflicting jQuery
+    config.removePlugins = 'Bootstrap-Mediaembed,bootstrapTable,bootstrapTabs,ckawesome,OpenStreet,pastecode,ajax,pastetools,pastefromgdocs,pastefromlibreoffice,pastefromword,exportpdf';
 };

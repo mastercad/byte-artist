@@ -3,7 +3,7 @@
 namespace App\Service\Seo\Generator;
 
 use App\Service\Util\Strings;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 
 /**
  * This class is responsible for generating unique seo links.

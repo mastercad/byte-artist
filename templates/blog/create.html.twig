@@ -1,40 +1,236 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Create Blog Entry{% endblock %}
+{% block title %}{{ form.vars.value.id ? 'Blogbeitrag bearbeiten' : 'Neuer Blogbeitrag' }}{% endblock %}
 
 {% block body %}
-{% form_theme form 'bootstrap_4_horizontal_layout.html.twig' %}
+{{ form_start(form, {attr: {id: 'blog-form', class: 'editor-form', novalidate: 'novalidate'}}) }}
+{{ form_errors(form) }}
 
-<div class="container mt-5">
-    {{ form(form) }}
-    <div id="tags_container">
-        <h3>
-            Tags:
-        </h3>
-        <div id="tags_container_clear" style="clear: both;"></div>
+{# ── Unsaved-changes guard dialog ── #}
+<div id="unsaved-dialog-backdrop" style="display:none" role="dialog" aria-modal="true" aria-labelledby="unsaved-dialog-title">
+    <div id="unsaved-dialog">
+        <h5 id="unsaved-dialog-title"><i class="fas fa-exclamation-triangle"></i> Ungespeicherte Änderungen</h5>
+        <p>Es gibt ungespeicherte Änderungen. Wenn du jetzt verlässt, gehen sie verloren.</p>
+        <div class="unsaved-dialog-actions">
+            <button type="button" id="unsaved-dialog-stay">Hierbleiben</button>
+            <a href="#" id="unsaved-dialog-leave">Trotzdem verlassen</a>
+        </div>
+    </div>
+</div>
+
+<div class="editor-layout">
+
+    {# ── Top bar ── #}
+    <div class="editor-topbar">
+        <div class="editor-topbar-left">
+            <a href="{{ path('blog') }}" class="editor-back-link">
+                <i class="fas fa-arrow-left"></i> Zurück zur Übersicht
+            </a>
+            <h1 class="editor-page-title">
+                {% if form.vars.value.id %}
+                    <i class="fas fa-edit"></i> Blogbeitrag bearbeiten
+                {% else %}
+                    <i class="fas fa-pen-nib"></i> Neuer Blogbeitrag
+                {% endif %}
+            </h1>
+        </div>
+        <div class="editor-topbar-right">
+            <span class="editor-autosave-hint" id="autosave-hint"></span>
+            <button type="submit" class="btn btn-accent btn-save">
+                <i class="fas fa-cloud-upload-alt"></i> Speichern
+            </button>
+        </div>
     </div>
 
-    <button class="btn btn-primary btn-save">Speichern</button>
-</div>
+    {# ── Main canvas ── #}
+    <div class="editor-canvas">
+
+        {# ─ Left: Main content ─ #}
+        <div class="editor-main">
+
+            {# Title #}
+            <div class="editor-section editor-section--title">
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name) }}
+                {{ form_errors(form.name) }}
+            </div>
+
+            {# Short description #}
+            <div class="editor-section">
+                <div class="editor-section-header">
+                    <span class="editor-section-icon"><i class="fas fa-align-left"></i></span>
+                    <span class="editor-section-label">Teaser / Kurzbeschreibung</span>
+                    <span class="editor-section-hint">Wird in der Übersicht angezeigt</span>
+                </div>
+                {{ form_widget(form.shortDescription) }}
+                {{ form_errors(form.shortDescription) }}
+            </div>
+
+            {# WYSIWYG Content #}
+            <div class="editor-section editor-section--content">
+                <div class="editor-section-header">
+                    <span class="editor-section-icon"><i class="fas fa-file-alt"></i></span>
+                    <span class="editor-section-label">Inhalt</span>
+                    <span class="editor-section-hint">Formatiere deinen Beitrag mit dem Editor</span>
+                </div>
+                {{ form_widget(form.content) }}
+                {{ form_errors(form.content) }}
+            </div>
+
+            {# Tags #}
+            <div class="editor-section">
+                <div class="editor-section-header">
+                    <span class="editor-section-icon"><i class="fas fa-tags"></i></span>
+                    <span class="editor-section-label">Tags</span>
+                    <span class="editor-section-hint">Klick zum Hinzufügen</span>
+                </div>
+                <div id="tags_container" class="tags-container">
+                    <div id="tags_container_clear" class="tags-inner"></div>
+                </div>
+                <p class="editor-field-hint">Tippe einen Tag-Namen oder wähle einen vorhandenen Tag aus.</p>
+            </div>
+
+        </div>{# /.editor-main #}
+
+        {# ─ Right: Sidebar ─ #}
+        <aside class="editor-sidebar">
+
+            {# Preview image card #}
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">
+                    <i class="fas fa-image"></i> Vorschaubild
+                </div>
+                <div class="sidebar-card-body">
+                    <div class="preview-upload-area" id="preview-upload-area">
+                        <div class="preview-upload-placeholder" id="preview-placeholder">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Bild hierher ziehen<br>oder klicken zum Auswählen</span>
+                        </div>
+                        <img id="preview-img" class="preview-img"
+                             src="{{ form.vars.value.previewPicture ?: '' }}"
+                             style="{{ form.vars.value.previewPicture ? '' : 'display:none' }}" alt="Vorschau">
+                    </div>
+                    {{ form_widget(form.previewPicture) }}
+                    <input type="file" id="preview-file-input" accept="image/*" style="display:none">
+                    <button type="button" class="btn btn-outline btn-sm btn-block mt-2" onclick="document.getElementById('preview-file-input').click()">
+                        <i class="fas fa-folder-open"></i> Datei wählen
+                    </button>
+                </div>
+            </div>
+
+            {# SEO card #}
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">
+                    <i class="fas fa-search"></i> SEO & URL
+                </div>
+                <div class="sidebar-card-body">
+                    <div class="form-group">
+                        {{ form_label(form.seoLink, 'URL-Slug') }}
+                        <div class="seo-url-preview">
+                            <span class="seo-url-base">/blog/</span>{{ form_widget(form.seoLink) }}
+                        </div>
+                        {{ form_errors(form.seoLink) }}
+                        <p class="editor-field-hint">Kleinbuchstaben, Bindestriche, keine Leerzeichen</p>
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.created, 'Datum') }}
+                        {{ form_widget(form.created) }}
+                        {{ form_errors(form.created) }}
+                    </div>
+                </div>
+            </div>
+
+            {# Keyboard shortcuts hint #}
+            <div class="sidebar-card sidebar-card--subtle">
+                <div class="sidebar-card-header">
+                    <i class="fas fa-keyboard"></i> Shortcuts
+                </div>
+                <div class="sidebar-card-body shortcuts-list">
+                    <div class="shortcut"><kbd>Ctrl+S</kbd> <span>Speichern</span></div>
+                    <div class="shortcut"><kbd>Ctrl+B</kbd> <span>Fett</span></div>
+                    <div class="shortcut"><kbd>Ctrl+I</kbd> <span>Kursiv</span></div>
+                    <div class="shortcut"><kbd>Ctrl+Z</kbd> <span>Rückgängig</span></div>
+                </div>
+            </div>
+
+        </aside>{# /.editor-sidebar #}
+
+    </div>{# /.editor-canvas #}
+
+</div>{# /.editor-layout #}
+
+{{ form_end(form) }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('editor') }}
+    <style>
+    @keyframes btn-dirty-pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.8); }
+        50%       { box-shadow: 0 0 0 7px rgba(255, 193, 7, 0); }
+    }
+    .btn-save.btn-save--dirty {
+        outline: 2px solid #ffc107;
+        outline-offset: 2px;
+        animation: btn-dirty-pulse 1.4s ease-in-out infinite;
+    }
+    #unsaved-dialog-backdrop {
+        position: fixed; inset: 0; z-index: 10000;
+        background: rgba(0,0,0,.65);
+        display: flex; align-items: center; justify-content: center;
+    }
+    #unsaved-dialog {
+        background: var(--bg-2, #1e1e1e);
+        border: 1px solid var(--border, #333);
+        border-radius: 10px;
+        padding: 28px 32px 24px;
+        min-width: 340px; max-width: 480px;
+        box-shadow: 0 8px 32px rgba(0,0,0,.5);
+        color: var(--text, #e0e0e0);
+    }
+    #unsaved-dialog h5 {
+        margin: 0 0 12px; font-size: 1.05rem; font-weight: 600;
+    }
+    #unsaved-dialog h5 .fa-exclamation-triangle { color: #ffc107; margin-right: 8px; }
+    #unsaved-dialog p { margin: 0 0 22px; font-size: .93rem; color: var(--text-muted, #aaa); }
+    .unsaved-dialog-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .unsaved-dialog-actions button {
+        padding: 7px 18px; border-radius: 6px; border: 1px solid var(--border, #444);
+        background: var(--bg-3, #2a2a2a); color: var(--text, #e0e0e0);
+        cursor: pointer; font-size: .9rem;
+    }
+    .unsaved-dialog-actions button:hover { background: var(--bg-4, #333); }
+    .unsaved-dialog-actions a {
+        padding: 7px 18px; border-radius: 6px; border: 1px solid rgba(239,68,68,.5);
+        background: rgba(239,68,68,.15); color: #fca5a5;
+        text-decoration: none; font-size: .9rem;
+    }
+    .unsaved-dialog-actions a:hover { background: rgba(239,68,68,.28); }
+    </style>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" language="javascript">
+    {{ encore_entry_script_tags('editor') }}
+    <script>
+    (function() {
+        'use strict';
+
+        // ── Tag management ──────────────────────────────────────────────
         let tags = [];
         let currentTags = {};
         let autocompleteTags = [];
+        let isDirty = false;
 
-        /** add current blog tags */
         {% for blogTag in form.vars.value.blogTags %}
             {% if blogTag.tag and blogTag.tag.name %}
-                currentTags["{{ blogTag.tag.id}}"] = {"name": "{{ blogTag.tag.name}}", "id": "{{ blogTag.id }}"};
+                currentTags["{{ blogTag.tag.id }}"] = {"name": "{{ blogTag.tag.name }}", "id": "{{ blogTag.id }}"};
             {% endif %}
         {% endfor %}
 
-        /** persist all available tags */
         {% for availableTag in availableTags %}
-            if (currentTags[{{ availableTag.id }}] != undefined) {
+            if (currentTags[{{ availableTag.id }}] !== undefined) {
                 addTag("{{ availableTag.name }}", "{{ availableTag.id }}", currentTags[{{ availableTag.id }}]['id']);
             }
             tags["{{ availableTag.id }}"] = "{{ availableTag.name }}";
@@ -42,109 +238,208 @@
         {% endfor %}
 
         function addTag(name, tagId, blogTagId, target) {
-            let tagSpan = $('<span class="tag badge badge-large badge-primary ml-1 mb-1 float-left" data-blog-tag-id="'+blogTagId+'" data-id="'+tagId+'">'+name+'<i class="btn-remove ml-2 fas fa-trash-alt"></i></span>');
-
-            if (undefined == target) {
-                target = $('#tags_container_clear');
-            }
-            $(tagSpan).insertBefore(target);
-            $(tagSpan).on('click', '.btn-remove', function() {
-                $(this).parent().remove();
-                return false;
+            let tagSpan = $('<span class="editor-tag"><i class="fas fa-tag tag-icon"></i>' + name +
+                '<button type="button" class="tag-remove" title="Entfernen"><i class="fas fa-times"></i></button>' +
+                '</span>')
+                .attr('data-blog-tag-id', blogTagId !== undefined ? blogTagId : '')
+                .attr('data-id', tagId !== undefined ? tagId : '')
+                .attr('data-name', name);
+            let insertTarget = target || $('#tags_container_clear');
+            tagSpan.insertBefore(insertTarget);
+            tagSpan.find('.tag-remove').on('click', function() {
+                tagSpan.remove();
             });
         }
 
-        function initAutocomplete() {
-            $("#tags").on("keydown", function(event) {
-                switch (event.keyCode) {
-                    case $.ui.keyCode.ESCAPE:
-                        $(event.target).parent().remove();
-                        break;
-                    case $.ui.keyCode.ENTER:
-                        // no proposals found
-                        if (!$(this).autocomplete("instance").menu.active) {
-                            addTag($(this).val(), undefined, undefined, $(this).parent());
-                            $(this).val("");
-                        }
-                        break;
-                    case $.ui.keyCode.TAB:
-                        if ($(this).autocomplete("instance").menu.active) {
-                            event.preventDefault();
-                        }
-                        break;
-                }
-            })
-
-            .autocomplete({
+        function initTagAutocomplete() {
+            let $input = $('#tag-autocomplete-input');
+            $input.autocomplete({
                 minLength: 0,
                 source: autocompleteTags,
-                focus: function() {
-                    // prevent value inserted on focus
-                    return false;
-                },
                 select: function(event, ui) {
-                    let self = this;
                     tags.forEach(function(tag, id) {
-                        if (tag == ui.item.value) {
-                            let existingTag = $("#tags_container").find("[data-id='"+id+"']");
-                            if (0 == existingTag.length) {
-                                addTag(tag, id, undefined, $(self).parent());
-                                $(self).val("");
-                                addAutoCompleteForTags();
+                        if (tag === ui.item.value) {
+                            let existing = $("#tags_container").find("[data-id='" + id + "']");
+                            if (existing.length === 0) {
+                                addTag(tag, id, undefined);
                             }
                         }
                     });
-
+                    $input.val('');
                     return false;
                 }
             });
-        }
-
-        function addAutoCompleteForTags() {
-            $('#tags_container').unbind('click').on('click', function() {
-                let existingTagsInput = $('#tags_container #tags');
-                if (0 == existingTagsInput.length) {
-                    let tagAutocomplete = $('<div class="ui-widget float-left"><input id="tags"></div>');
-                    tagAutocomplete.on('focusout', function() {
-                        tagAutocomplete.remove();
-                    });
-                    $(tagAutocomplete).insertBefore('#tags_container_clear');
-                    $(tagAutocomplete).find('#tags').focus();
-                    initAutocomplete();
+            $input.on('keydown', function(e) {
+                if (e.keyCode === 13) {
+                    e.preventDefault();
+                    let val = $(this).val().trim();
+                    if (val) {
+                        addTag(val, undefined, undefined);
+                        $(this).val('');
+                    }
                 }
-            });
-        }
-
-        function save() {
-            let data = $('form').serializeArray();
-            data = extendDataWithTagBlogs(data);
-
-            $.post('/blog/create/{{ form.vars.value.id }}', data, function(response) {
             });
         }
 
         function extendDataWithTagBlogs(data) {
             let counter = 0;
-
-            /** orig content :
-             * [] = {name : 'blog[blogTags][]': value: tagId}
-             */
-            $('#tags_container .tag').each(function() {
-                data.push({name: 'blog[blogTags]['+counter+'][id]', value: $(this).data('blog-tag-id')});
-                data.push({name: 'blog[blogTags]['+counter+'][tagId]', value: $(this).data('id')});
-                data.push({name: 'blog[blogTags]['+counter+'][tagName]', value: $(this).text()});
+            $('#tags_container .editor-tag').each(function() {
+                data.push({name: 'blog[blogTags][' + counter + '][id]',      value: $(this).data('blog-tag-id')});
+                data.push({name: 'blog[blogTags][' + counter + '][tagId]',   value: $(this).data('id')});
+                data.push({name: 'blog[blogTags][' + counter + '][tagName]', value: $(this).data('name')});
                 ++counter;
             });
-
             return data;
         }
 
+        // ── Preview image upload ────────────────────────────────────────
+        function initPreviewUpload() {
+            let $area      = $('#preview-upload-area');
+            let $imgEl     = $('#preview-img');
+            let $hidden    = $('#blog_previewPicture');
+            let $fileInput = $('#preview-file-input');
+
+            function uploadFile(file) {
+                let reader = new FileReader();
+                reader.onload = function(ev) {
+                    // Sofort anzeigen (Data-URI)
+                    $imgEl.attr('src', ev.target.result).show();
+                    $('#preview-placeholder').hide();
+                    $hidden.val(ev.target.result);
+                    $area.addClass('uploading');
+
+                    $.post('/blog/upload', {
+                        fileData: ev.target.result,
+                        name: file.name
+                    }, function(response) {
+                        $area.removeClass('uploading');
+                        if (response && response.url) {
+                            $imgEl.attr('src', response.url + '?' + Date.now());
+                            $hidden.val(response.url);
+                        }
+                    }).fail(function() {
+                        $area.removeClass('uploading');
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+
+            $fileInput.on('change', function() {
+                if (this.files[0]) uploadFile(this.files[0]);
+            });
+
+            $area.on('dragover', function(e) {
+                e.preventDefault();
+                $(this).addClass('drag-over');
+            }).on('dragleave drop', function(e) {
+                e.preventDefault();
+                $(this).removeClass('drag-over');
+                if (e.type === 'drop' && e.originalEvent.dataTransfer.files.length) {
+                    uploadFile(e.originalEvent.dataTransfer.files[0]);
+                }
+            });
+        }
+
+        // ── Save / submit ───────────────────────────────────────────────
+        function save() {
+            // Filter out the empty blogTags hidden field – PHP would treat it as a
+            // scalar '' and then silently drop the array-notation tag entries.
+            let data = $('#blog-form').serializeArray().filter(function(item) {
+                return item.name !== 'blog[blogTags]';
+            });
+            data = extendDataWithTagBlogs(data);
+            let $btn = $('.btn-save');
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Speichern...');
+            $('#autosave-hint').text('');
+
+            $.post('/blog/create/{{ form.vars.value.id ?: 0 }}', data, function(response) {
+                $btn.prop('disabled', false).removeClass('btn-save--dirty').html('<i class="fas fa-check"></i> Gespeichert');
+                isDirty = false;
+                $('#autosave-hint').text('Zuletzt gespeichert: ' + new Date().toLocaleTimeString('de-DE'));
+                if (response && response.id) {
+                    $('#blog_id').val(response.id);
+                }
+                setTimeout(function() {
+                    $btn.html('<i class="fas fa-cloud-upload-alt"></i> Speichern');
+                }, 3000);
+            }).fail(function(jqXHR) {
+                $btn.prop('disabled', false).html('<i class="fas fa-cloud-upload-alt"></i> Speichern');
+                let msg = 'Fehler beim Speichern.';
+                if (jqXHR.responseJSON) {
+                    if (jqXHR.responseJSON.id) {
+                        $('#blog_id').val(jqXHR.responseJSON.id);
+                    }
+                    let errs = $.extend({}, jqXHR.responseJSON);
+                    delete errs.id;
+                    let text = Object.values(errs).flat().join('\n');
+                    if (text) { msg = text; }
+                }
+                showToast(msg, 'error');
+            });
+        }
+
+        // ── Boot ────────────────────────────────────────────────────────
         $(function() {
-            $('#blog_blogTags').parent().parent().remove();
-            $('.btn-save').unbind('click').on('click', function() {
+            // ── Dirty tracking ──────────────────────────────────────────
+            function markDirty() {
+                isDirty = true;
+                $('.btn-save').addClass('btn-save--dirty');
+            }
+            $('#blog-form').on('input change', markDirty);
+
+            // Intercept in-page link navigation → show custom dialog
+            $(document).on('click', 'a[href]', function(e) {
+                let href = $(this).attr('href');
+                if (!isDirty || !href || href === '#' || href.startsWith('#') || $(this).closest('#unsaved-dialog-backdrop').length) return;
+                e.preventDefault();
+                $('#unsaved-dialog-leave').attr('href', href);
+                $('#unsaved-dialog-backdrop').css('display', 'flex');
+            });
+            $('#unsaved-dialog-stay').on('click', function() {
+                $('#unsaved-dialog-backdrop').hide();
+            });
+            $('#unsaved-dialog-backdrop').on('click', function(e) {
+                if (e.target === this) $(this).hide();
+            });
+
+            // Intercept F5 / Ctrl+R reload shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (!isDirty) return;
+                let isReload = e.key === 'F5' || (e.ctrlKey && e.key.toLowerCase() === 'r');
+                if (!isReload) return;
+                e.preventDefault();
+                $('#unsaved-dialog-leave').attr('href', window.location.href);
+                $('#unsaved-dialog-backdrop').css('display', 'flex');
+            });
+
+            // Toolbar reload / tab close — browser forces its own native dialog here
+            window.addEventListener('beforeunload', function(e) {
+                if (isDirty) { e.preventDefault(); e.returnValue = ''; }
+            });
+
+            // Remove the auto-generated blogTags widget (we manage it manually)
+            $('#blog_blogTags').closest('.form-group').remove();
+
+            // Append tag input inside the tags container
+            let $tagInput = $('<input id="tag-autocomplete-input" class="tag-input" placeholder="Tag hinzufügen ..." type="text">');
+            $('#tags_container_clear').before($tagInput);
+            initTagAutocomplete();
+
+            initPreviewUpload();
+
+            $('.btn-save').on('click', function(e) {
+                e.preventDefault();
                 save();
             });
-            addAutoCompleteForTags();
+
+            // Ctrl+S shortcut
+            $(document).on('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    save();
+                }
+            });
         });
+    })();
     </script>
 {% endblock %}

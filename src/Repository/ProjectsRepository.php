@@ -50,12 +50,33 @@ class ProjectsRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
+    public function queryAllProjects(): \Doctrine\ORM\Query
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.created', 'DESC')
+            ->addOrderBy('p.modified', 'DESC')
+            ->getQuery();
+    }
+
     public function queryAllProjectsByTag($seoLink): \Doctrine\ORM\Query
     {
         return $this->createQueryBuilder('p')
             ->innerJoin('App\Entity\ProjectTags', 'pt', Join::WITH, 'pt.project = p')
             ->innerJoin('App\Entity\Tags', 't', Join::WITH, 't = pt.tag')
             ->where('t.seoLink = :seoLink')
+            ->orderBy('p.modified', 'DESC')
+            ->addOrderBy('p.created', 'DESC')
+            ->setParameter('seoLink', $seoLink)
+            ->getQuery();
+    }
+
+    public function queryVisibleProjectsByTag($seoLink): \Doctrine\ORM\Query
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('App\Entity\ProjectTags', 'pt', Join::WITH, 'pt.project = p')
+            ->innerJoin('App\Entity\Tags', 't', Join::WITH, 't = pt.tag')
+            ->where('t.seoLink = :seoLink')
+            ->andWhere('p.isPublic = 1')
             ->orderBy('p.modified', 'DESC')
             ->addOrderBy('p.created', 'DESC')
             ->setParameter('seoLink', $seoLink)

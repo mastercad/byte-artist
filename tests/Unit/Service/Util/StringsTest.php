@@ -128,5 +128,83 @@ class StringsTest extends TestCase
       'content' => 'Attention: This is complete sentence who have to converted to link save format',
       'expectation' => 'attention-this-is-complete-sentence-who-have-to-converted-to-link-save-format'
     ];
+
+    yield 'strip leading and trailing dashes' => [
+      'content' => '-hello-',
+      'expectation' => 'hello'
+    ];
+
+    yield 'collapse consecutive dashes' => [
+      'content' => 'hello---world',
+      'expectation' => 'hello-world'
+    ];
+
+    yield 'all special characters results in single dash stripped to empty' => [
+      'content' => '!!!',
+      'expectation' => ''
+    ];
+  }
+
+  // ------------------------------------------------------------------ replaceSpecialCharacters
+
+  /**
+   * @dataProvider replaceSpecialCharactersProvider
+   */
+  public function testReplaceSpecialCharacters(string $content, string $expectation): void
+  {
+    self::assertSame($expectation, Strings::replaceSpecialCharacters($content));
+  }
+
+  public function replaceSpecialCharactersProvider(): iterable
+  {
+    yield 'lowercase ä replaced by ae' => [
+      'content' => 'Bär',
+      'expectation' => 'Baer'
+    ];
+
+    yield 'lowercase ü replaced by ue' => [
+      'content' => 'Füße',
+      'expectation' => 'Fuesse'
+    ];
+
+    yield 'lowercase ö replaced by oe' => [
+      'content' => 'Höhle',
+      'expectation' => 'Hoehle'
+    ];
+
+    yield 'ß replaced by ss' => [
+      'content' => 'Straße',
+      'expectation' => 'Strasse'
+    ];
+
+    yield 'uppercase Ü replaced by ue' => [
+      'content' => 'Über',
+      'expectation' => 'ueber'
+    ];
+
+    yield 'uppercase Ä replaced by ae' => [
+      'content' => 'Ärger',
+      'expectation' => 'aerger'
+    ];
+
+    yield 'uppercase Ö replaced by oe' => [
+      'content' => 'Öl',
+      'expectation' => 'oel'
+    ];
+
+    yield 'mixed special characters all replaced' => [
+      'content' => 'äöüßÄÖÜ',
+      'expectation' => 'aeoeuessaeoeue'
+    ];
+
+    yield 'string without special characters unchanged' => [
+      'content' => 'hello world',
+      'expectation' => 'hello world'
+    ];
+
+    yield 'empty string returns empty string' => [
+      'content' => '',
+      'expectation' => ''
+    ];
   }
 }

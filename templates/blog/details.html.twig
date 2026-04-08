@@ -17,8 +17,8 @@
         {% endif %}
     </div>
 
-    <div class="project-detail-body">
-        {{ blog.content|ubb(blog.id) }}
+    <div class="project-detail-body prose">
+        {{ blog.content|raw }}
     </div>
 
     <div class="project-detail-meta">

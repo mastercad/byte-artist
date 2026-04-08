@@ -14,6 +14,11 @@ class Base64EncodedFile extends File
 {
     public function __construct(string $base64Data)
     {
+        // Strip data URI prefix (e.g. "data:image/png;base64,") if present
+        if (str_contains($base64Data, ';base64,')) {
+            $base64Data = substr($base64Data, strpos($base64Data, ';base64,') + 8);
+        }
+
         $decoded = base64_decode($base64Data, true);
 
         if (false === $decoded) {

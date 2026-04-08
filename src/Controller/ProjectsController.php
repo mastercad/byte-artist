@@ -41,7 +41,9 @@ class ProjectsController extends AbstractController
 
         /** @var ProjectsRepository $projectsRepository */
         $projectsRepository = $this->em->getRepository(Projects::class);
-        $query = $projectsRepository->queryAllVisibleProjects();
+        $query = $this->isGranted('ROLE_ADMIN')
+            ? $projectsRepository->queryAllProjects()
+            : $projectsRepository->queryAllVisibleProjects();
         $projects = $pagination->paginate($query, $request, self::ITEMS_PER_PAGE);
 
         return $this->render(
@@ -79,8 +81,7 @@ class ProjectsController extends AbstractController
     public function imageBrowserAction(Request $request): Response
     {
         $publicUploadPath = $this->generatePublicUploadPath();
-        $rootPath = __DIR__.'/../../public';
-        $targetPath = $rootPath.$publicUploadPath;
+        $targetPath = $this->getPublicDir().$publicUploadPath;
 
         $fileIterator = new DirectoryIterator($targetPath);
         $files = [];
@@ -109,7 +110,7 @@ class ProjectsController extends AbstractController
         $this->em->remove($project);
         $this->em->flush();
 
-        $imagesPath = __DIR__.'/../../public'.$this->generatePublicPicturePath($projectId);
+        $imagesPath = $this->getPublicDir().$this->generatePublicPicturePath($projectId);
 
         if (is_dir($imagesPath)) {
             $directoryIterator = new DirectoryIterator($imagesPath);
@@ -137,7 +138,9 @@ class ProjectsController extends AbstractController
 
         /** @var ProjectsRepository $projectsRepository */
         $projectsRepository = $this->em->getRepository(Projects::class);
-        $query = $projectsRepository->queryAllProjectsByTag($tagSeoLink);
+        $query = $this->isGranted('ROLE_ADMIN')
+            ? $projectsRepository->queryAllProjectsByTag($tagSeoLink)
+            : $projectsRepository->queryVisibleProjectsByTag($tagSeoLink);
         $projects = $pagination->paginate($query, $request, self::ITEMS_PER_PAGE);
 
         return $this->render(
@@ -206,12 +209,18 @@ class ProjectsController extends AbstractController
 
         $this->denyAccessUnlessGranted('edit', $project);
 
-        $projectRequest = $request->request->get('projects');
+        $projectRequest = $request->request->all('projects');
         $currentProjectTagsRequest = [];
 
         if (is_array($projectRequest) && array_key_exists('projectTags', $projectRequest)) {
-            $currentProjectTagsRequest = $projectRequest['projectTags'];
+            $currentProjectTagsRequest = is_array($projectRequest['projectTags']) ? $projectRequest['projectTags'] : [];
             unset($projectRequest['projectTags']);
+        }
+
+        // For new entries with no submitted date, default to now.
+        // For existing entries the form value is preserved as-is by Symfony.
+        if (0 >= $projectId && empty($projectRequest['created'])) {
+            $project->setCreated(new DateTime());
         }
 
         $project->setName($projectRequest['name']);
@@ -226,34 +235,38 @@ class ProjectsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && !$form->isValid()) {
-            return new JsonResponse($this->extractErrorsFromForm($form));
+            return new JsonResponse($this->extractErrorsFromForm($form), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $seoLinkGenerator->extendWithSeoLink($project);
         $this->em->persist($project);
         $this->em->flush();
 
-        $this->handleUploadFiles($project);
-        $this->clearUploadFolder();
-
-        $this->em->flush();
-
-        $project = $this->considerTags($project, $currentProjectTagsRequest);
+        // Project is now persisted – capture the ID immediately so subsequent
+        // saves never create duplicates even if a post-save step fails.
         $projectRequest['id'] = $project->getId();
+
+        try {
+            $this->handleUploadFiles($project);
+            $this->clearUploadFolder();
+            $this->em->flush();
+            $project = $this->considerTags($project, $currentProjectTagsRequest);
+        } catch (\Throwable $e) {
+            return new JsonResponse(['id' => $project->getId(), 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
         return new JsonResponse($projectRequest);
     }
 
-    private function handleUploadFiles(Projects $project): static
+    protected function handleUploadFiles(Projects $project): static
     {
-        $regex = '/\<img .*? src="(?:http[s]*:\/\/[0-9\.a-z:]+)*(\/images\/upload\/'.$this->getUser()->getId().
-            '\/projects\/([^"]+\.[a-z]+))" .*?\/>/i';
+        $regex = '/<img[^>]*\ssrc="(?:https?:\/\/[^"\/]+)?(\/images\/upload\/'.$this->getUser()->getId().'\/projects\/[^"]+)"[^>]*\/?>/i';
 
         if (!empty($project->getDescription())
             && preg_match_all($regex, $project->getDescription(), $matches)
         ) {
             foreach ($matches[1] as $filePathname) {
-                $absoluteFilePath = __DIR__.'/../../public'.$filePathname;
+                $absoluteFilePath = $this->getPublicDir().$filePathname;
 
                 if (!file_exists($absoluteFilePath)) {
                     continue;
@@ -262,7 +275,7 @@ class ProjectsController extends AbstractController
                 $file = new File($absoluteFilePath);
                 if ($file->isReadable()) {
                     $targetPublicPath = '/images/content/dynamisch/projects/'.$project->getId().'/';
-                    $file->move(__DIR__.'/../../public'.$targetPublicPath);
+                    $file->move($this->getPublicDir().$targetPublicPath);
                     $newImagePath = str_replace(
                         $filePathname,
                         $targetPublicPath.basename($filePathname),
@@ -273,20 +286,20 @@ class ProjectsController extends AbstractController
             }
         }
 
-        $previewFilePath = __DIR__.'/../../public/'.$project->getPreviewPicture();
+        $previewFilePath = $this->getPublicDir().'/'.$project->getPreviewPicture();
         if (file_exists($previewFilePath)) {
             $file = new File($previewFilePath);
             $targetPublicPath = '/images/content/dynamisch/projects/'.$project->getId();
-            $file->move(__DIR__.'/../../public/'.$targetPublicPath, basename($previewFilePath));
+            $file->move($this->getPublicDir().'/'.$targetPublicPath, basename($previewFilePath));
             $project->setPreviewPicture($targetPublicPath.'/'.basename($previewFilePath));
         }
 
         return $this;
     }
 
-    private function clearUploadFolder(): static
+    protected function clearUploadFolder(): static
     {
-        $folderPath = __DIR__.'/../../public/images/upload/'.$this->getUser()->getId().'/projects';
+        $folderPath = $this->getPublicDir().'/images/upload/'.$this->getUser()->getId().'/projects';
         $dirIterator = new DirectoryIterator($folderPath);
 
         foreach ($dirIterator as $file) {
@@ -321,13 +334,20 @@ class ProjectsController extends AbstractController
             ) {
                 $tagEntity = $this->em->getRepository(Tags::class)->find($projectTag['tagId']);
             } else {
-                $tagEntity = new Tags();
-                $tagEntity->setCreator($this->getUser());
-                $tagEntity->setCreated(new DateTime());
-                $tagEntity->setName($projectTag['tagName']);
-                $tagEntity->setSeoLink(strtolower($projectTag['tagName']));
-                $this->em->persist($tagEntity);
-                $this->em->flush();
+                $tagName = trim($projectTag['tagName'] ?? '');
+                if ('' === $tagName) {
+                    continue;
+                }
+                $tagEntity = $this->em->getRepository(Tags::class)->findOneBy(['name' => $tagName]);
+                if (!$tagEntity) {
+                    $tagEntity = new Tags();
+                    $tagEntity->setCreator($this->getUser());
+                    $tagEntity->setCreated(new DateTime());
+                    $tagEntity->setName($tagName);
+                    $tagEntity->setSeoLink(strtolower($tagName));
+                    $this->em->persist($tagEntity);
+                    $this->em->flush();
+                }
             }
 
             $projectTagEntity = new ProjectTags();
@@ -353,7 +373,7 @@ class ProjectsController extends AbstractController
     {
         $projectId = $request->get('id');
 
-        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+        if (str_contains((string)($request->headers->get('Content-Type') ?? ''), 'application/json')) {
             $data = json_decode($request->getContent(), true);
             $request->request->replace(is_array($data) ? $data : []);
         }
@@ -369,10 +389,10 @@ class ProjectsController extends AbstractController
         }
 
         $publicUploadPath = $this->generatePublicUploadPath();
-        $targetPath = __DIR__.'/../../public'.$publicUploadPath;
+        $targetPath = $this->getPublicDir().$publicUploadPath;
 
         if (!is_dir($targetPath)) {
-            mkdir($targetPath, 0644, true);
+            mkdir($targetPath, 0755, true);
         }
 
         $file->move($targetPath, $originalFileName);
@@ -399,10 +419,10 @@ class ProjectsController extends AbstractController
         }
 
         $publicUploadPath = $this->generatePublicUploadPath();
-        $targetPath = __DIR__.'/../../public'.$publicUploadPath;
+        $targetPath = $this->getPublicDir().$publicUploadPath;
 
         if (!is_dir($targetPath)) {
-            mkdir($targetPath, 0644, true);
+            mkdir($targetPath, 0755, true);
         }
 
         $fileName = 'preview.'.$file->guessExtension();
@@ -449,6 +469,11 @@ class ProjectsController extends AbstractController
         $this->denyAccessUnlessGranted('show', $project);
 
         return $this->render('projects/show.html.twig', ['project' => $project]);
+    }
+
+    protected function getPublicDir(): string
+    {
+        return __DIR__.'/../../public';
     }
 
     private function generatePublicPicturePath(?int $projectId = null): ?string

@@ -8,9 +8,22 @@
             </a>
             {% endif %}
             {% if is_granted('delete', project) %}
-            <a class="btn-secondary" style="padding:8px 16px;font-size:13px;color:#fca5a5;border-color:rgba(239,68,68,0.3);" href="/project/delete/{{ project.id }}">
+            <button class="btn-secondary btn-delete-project"
+                    data-delete-url="/project/delete/{{ project.id }}"
+                    data-redirect="/portfolio"
+                    style="padding:8px 16px;font-size:13px;color:#fca5a5;border-color:rgba(239,68,68,0.3);cursor:pointer;">
                 <i class="fas fa-trash"></i> Löschen
-            </a>
+            </button>
+            <script>
+            document.querySelector('.btn-delete-project').addEventListener('click', function() {
+                if (!confirm('Projekt wirklich löschen?')) { return; }
+                var btn = this;
+                btn.disabled = true;
+                $.get(btn.dataset.deleteUrl)
+                    .done(function() { window.location.href = btn.dataset.redirect; })
+                    .fail(function() { btn.disabled = false; showToast('Fehler beim Löschen.', 'error'); });
+            });
+            </script>
             {% endif %}
         </div>
         {% endif %}
@@ -24,8 +37,8 @@
         {% endif %}
     </div>
 
-    <div class="project-detail-body">
-        {{ project.description|replace({'%projectId%': project.id })|ubb(project.id) }}
+    <div class="project-detail-body prose">
+        {{ project.description|raw }}
     </div>
 
     <div class="project-detail-meta">

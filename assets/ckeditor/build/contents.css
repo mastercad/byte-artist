@@ -5,25 +5,127 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 
 body
 {
-	/* Font */
-	/* Emoji fonts are added to visualise them nicely in Internet Explorer. */
-	font-family: sans-serif, Arial, Verdana, "Trebuchet MS", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-	font-size: 12px;
-
-	/* Text color */
-	color: #333;
-
-	/* Remove the background color to make it transparent. */
-	background-color: #fff;
-
-	margin: 20px;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-size: 15px;
+        color: #ededee;
+        background-color: #111115;
+        margin: 20px;
+        line-height: 1.7;
 }
 
 .cke_editable
 {
-	font-size: 13px;
-	line-height: 1.6;
+        font-size: 15px;
+        line-height: 1.7;
+        word-wrap: break-word;
+}
 
+blockquote
+{
+        font-style: italic;
+        font-family: Georgia, Times, "Times New Roman", serif;
+        padding: 2px 0;
+        border-style: solid;
+        border-color: rgba(255,255,255,0.15);
+        border-width: 0;
+        color: #a0a0aa;
+}
+
+.cke_contents_ltr blockquote
+{
+        padding-left: 20px;
+        padding-right: 8px;
+        border-left-width: 3px;
+}
+
+.cke_contents_rtl blockquote
+{
+        padding-left: 8px;
+        padding-right: 20px;
+        border-right-width: 3px;
+}
+
+a { color: #c89060; }
+a:hover { color: #d9a070; }
+
+ol,ul,dl
+{
+        *margin-right: 0px;
+        padding: 0 40px;
+}
+
+h1,h2,h3,h4,h5,h6
+{
+        font-weight: 600;
+        line-height: 1.3;
+        color: #ededee;
+}
+
+hr
+{
+        border: 0px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+img.right
+{
+        border: 1px solid rgba(255,255,255,0.1);
+        float: right;
+        margin-left: 15px;
+        padding: 5px;
+}
+
+img.left
+{
+        border: 1px solid rgba(255,255,255,0.1);
+        float: left;
+        margin-right: 15px;
+        padding: 5px;
+}
+
+pre
+{
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        -moz-tab-size: 4;
+        tab-size: 4;
+        background: #17171b;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 6px;
+        padding: 12px 16px;
+        color: #c89060;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-size: 13px;
+}
+
+.marker { background-color: rgba(200,144,96,0.3); }
+
+span[lang] { font-style: italic; }
+
+figure
+{
+        text-align: center;
+        outline: solid 1px rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.03);
+        padding: 10px;
+        margin: 10px 20px;
+        display: inline-block;
+}
+
+figure > figcaption
+{
+        text-align: center;
+        display: block;
+        color: #80808a;
+        font-size: 12px;
+        margin-top: 6px;
+}
+
+a > img {
+        padding: 1px;
+        margin: 1px;
+        border: none;
+        outline: 1px solid #c89060;
 	/* Fix for missing scrollbars with RTL texts. (#10488) */
 	word-wrap: break-word;
 }

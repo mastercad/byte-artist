@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Projects;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -22,14 +23,14 @@ class ProjectVoter extends Voter
     protected function supports(string $attribute, mixed $subject): bool
     {
         return in_array($attribute, ['edit', 'show', 'delete'])
-            && $subject instanceof \App\Entity\Projects;
+            && $subject instanceof Projects;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 
-        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($this->security->isGranted('ROLE_SUPER_ADMIN') || $this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
 

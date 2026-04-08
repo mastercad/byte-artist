@@ -12,6 +12,9 @@ use App\Repository\BlogRepository;
 use App\Service\Pagination;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\File\Base64EncodedFile;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -81,23 +84,44 @@ class BlogController extends AbstractController
             $blog->setModifier($this->getUser());
         } else {
             $blog = new Blogs();
-            $blog->setCreated(new \DateTime());
             $blog->setCreator($this->getUser());
         }
 
         $this->denyAccessUnlessGranted('edit', $blog);
 
-        $blogRequest = $request->request->get('blog');
+        $blogRequest = $request->request->all('blog');
         $currentBlogTagsRequest = [];
 
         if (is_array($blogRequest) && array_key_exists('blogTags', $blogRequest)) {
-            $currentBlogTagsRequest = $blogRequest['blogTags'];
+            $currentBlogTagsRequest = is_array($blogRequest['blogTags']) ? $blogRequest['blogTags'] : [];
             unset($blogRequest['blogTags']);
         }
+
+        // For new entries with no submitted date, default to now.
+        if (0 >= $id && empty($blogRequest['created'])) {
+            $blog->setCreated(new \DateTime());
+        }
+
         $request->request->set('blog', $blogRequest);
 
         $form = $this->createForm(BlogType::class, $blog);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $request->isXmlHttpRequest()) {
+            if (!$form->isValid()) {
+                return new JsonResponse($this->extractErrorsFromForm($form), Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            $this->em->persist($blog);
+            $this->em->flush();
+            // Blog is now persisted – capture ID before any post-save step can fail.
+            $blogId = $blog->getId();
+            try {
+                $blog = $this->considerTags($blog, $currentBlogTagsRequest);
+            } catch (\Throwable $e) {
+                return new JsonResponse(['id' => $blogId, 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+            return new JsonResponse(['id' => $blog->getId()]);
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->persist($blog);
@@ -109,6 +133,27 @@ class BlogController extends AbstractController
             'form' => $form->createView(),
             'availableTags' => $tags,
         ]);
+    }
+
+    protected function getPublicDir(): string
+    {
+        return __DIR__.'/../../public';
+    }
+
+    private function extractErrorsFromForm(FormInterface $form): array
+    {
+        $errors = [];
+        foreach ($form->getErrors() as $error) {
+            $errors[] = $error->getMessage();
+        }
+        foreach ($form->all() as $childForm) {
+            if ($childForm instanceof FormInterface) {
+                if ($childErrors = $this->extractErrorsFromForm($childForm)) {
+                    $errors[$childForm->getName()] = $childErrors;
+                }
+            }
+        }
+        return $errors;
     }
 
     private function considerTags(Blogs $blog, array $blogTags): Blogs
@@ -128,13 +173,20 @@ class BlogController extends AbstractController
             if (isset($blogTag['tagId']) && !empty($blogTag['tagId']) && 'undefined' !== $blogTag['tagId']) {
                 $tagEntity = $this->em->getRepository(Tags::class)->find($blogTag['tagId']);
             } else {
-                $tagEntity = new Tags();
-                $tagEntity->setCreator($this->getUser());
-                $tagEntity->setCreated(new \DateTime());
-                $tagEntity->setName($blogTag['tagName']);
-                $tagEntity->setSeoLink(strtolower($blogTag['tagName']));
-                $this->em->persist($tagEntity);
-                $this->em->flush();
+                $tagName = trim($blogTag['tagName'] ?? '');
+                if ('' === $tagName) {
+                    continue;
+                }
+                $tagEntity = $this->em->getRepository(Tags::class)->findOneBy(['name' => $tagName]);
+                if (!$tagEntity) {
+                    $tagEntity = new Tags();
+                    $tagEntity->setCreator($this->getUser());
+                    $tagEntity->setCreated(new \DateTime());
+                    $tagEntity->setName($tagName);
+                    $tagEntity->setSeoLink(strtolower($tagName));
+                    $this->em->persist($tagEntity);
+                    $this->em->flush();
+                }
             }
 
             $blogTagEntity = new BlogTags();
@@ -171,5 +223,37 @@ class BlogController extends AbstractController
         $this->denyAccessUnlessGranted('show', $blog);
 
         return $this->render('blog/show.html.twig', ['blog' => $blog]);
+    }
+
+    #[Route('/blog/upload', name: 'app_blog_image_upload', methods: ['POST'])]
+    public function uploadImageAction(Request $request): JsonResponse
+    {
+        if (str_starts_with((string) $request->headers->get('Content-Type'), 'application/json')) {
+            $data = json_decode($request->getContent(), true);
+            $request->request->replace(is_array($data) ? $data : []);
+        }
+
+        $file = $request->files->get('upload');
+        if (null === $file && null !== $request->get('fileData')) {
+            $file = new Base64EncodedFile($request->get('fileData'));
+            $originalFileName = $request->get('name') ?: 'image.jpg';
+        } else {
+            $originalFileName = $file->getClientOriginalName();
+        }
+
+        $publicUploadPath = '/images/upload/'.$this->getUser()->getId().'/blogs';
+        $targetPath = $this->getPublicDir().$publicUploadPath;
+
+        if (!is_dir($targetPath)) {
+            mkdir($targetPath, 0755, true);
+        }
+
+        $file->move($targetPath, $originalFileName);
+
+        return new JsonResponse([
+            'uploaded' => 1,
+            'fileName' => $originalFileName,
+            'url'      => $publicUploadPath.'/'.$originalFileName,
+        ]);
     }
 }

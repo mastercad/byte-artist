@@ -13,6 +13,11 @@
     </div>
 
     <div class="page-content">
+        {% if is_granted('ROLE_ADMIN') %}
+        <div style="margin-bottom:24px;">
+            <a href="{{ path('project_create') }}" class="btn-primary"><i class="fas fa-plus"></i>&nbsp; Neues Projekt</a>
+        </div>
+        {% endif %}
         {{ include('fragment/pagination.html.twig') }}
 
         <div class="two-col-layout" style="margin-top:32px;">

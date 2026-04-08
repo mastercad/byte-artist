@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Blogs;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -22,7 +23,7 @@ class BlogVoter extends Voter
     protected function supports(string $attribute, mixed $subject): bool
     {
         return in_array($attribute, ['edit', 'show'])
-            && $subject instanceof \App\Entity\Blogs;
+            && $subject instanceof Blogs;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -36,7 +37,7 @@ class BlogVoter extends Voter
         }
         */
 
-        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($this->security->isGranted('ROLE_SUPER_ADMIN') || $this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
 
