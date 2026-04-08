@@ -1,15 +1,16 @@
 name: "Tag Release"
 
 on:
-  push:
-    branches: [ main ]
-    tags:
-      - "v*"
+  workflow_run:
+    workflows: ["Quality Assurance"]
+    types: [completed]
+    branches: [main]
 
 jobs:
   tag-release:
     name: "Tag Release"
     runs-on: "ubuntu-latest"
+    if: github.event.workflow_run.conclusion == 'success'
 
     steps:
       # ...
