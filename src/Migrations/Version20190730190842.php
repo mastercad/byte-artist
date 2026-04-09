@@ -28,7 +28,7 @@ final class Version20190730190842 extends AbstractMigration
             'Migration can only be executed safely on \'mysql\'.'
         );
 
-        $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, username VARCHAR(180) NOT NULL, '.
+        $this->addSql('CREATE TABLE IF NOT EXISTS user (id INT AUTO_INCREMENT NOT NULL, username VARCHAR(180) NOT NULL, '.
             'roles JSON NOT NULL, password VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, UNIQUE INDEX '.
             'UNIQ_8D93D649F85E0677 (username), UNIQUE KEY `UNIQ_8D93D649E7927C74` (`email`), PRIMARY KEY(id)) '.
             'DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
@@ -42,6 +42,6 @@ final class Version20190730190842 extends AbstractMigration
             'Migration can only be executed safely on \'mysql\'.'
         );
 
-        $this->addSql('DROP TABLE user');
+        $this->addSql('DROP TABLE IF EXISTS user');
     }
 }

@@ -19,8 +19,11 @@ final class Version20190807114252 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql("INSERT INTO `user` (`id`, `username`, `roles`, `password`, `email`) VALUES ('1', 'SYSTEM', ".
-            "'{\"role\":\"ROLE_SUPER_ADMIN\"}', '', '');");
+        $this->addSql(
+            'INSERT INTO `user` (`id`, `username`, `roles`, `password`, `email`)'
+            ." SELECT '1', 'SYSTEM', '{\"role\":\"ROLE_SUPER_ADMIN\"}', '', ''"
+            .' FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM `user` WHERE `id` = 1)'
+        );
     }
 
     public function down(Schema $schema): void

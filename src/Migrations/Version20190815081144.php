@@ -19,7 +19,7 @@ final class Version20190815081144 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE TABLE `projects` (
+        $this->addSql('CREATE TABLE IF NOT EXISTS `projects` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
             `short_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
@@ -48,6 +48,6 @@ final class Version20190815081144 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE projects');
+        $this->addSql('DROP TABLE IF EXISTS projects');
     }
 }

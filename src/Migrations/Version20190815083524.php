@@ -19,7 +19,7 @@ final class Version20190815083524 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE TABLE `blog_tags` (
+        $this->addSql('CREATE TABLE IF NOT EXISTS `blog_tags` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `blog_fk` int(11) unsigned NOT NULL,
             `tag_fk` int(11) unsigned NOT NULL,
@@ -43,6 +43,6 @@ final class Version20190815083524 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE blog_tags');
+        $this->addSql('DROP TABLE IF EXISTS blog_tags');
     }
 }

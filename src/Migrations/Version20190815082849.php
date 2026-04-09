@@ -19,7 +19,7 @@ final class Version20190815082849 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE TABLE `blog_group_blog` (
+        $this->addSql('CREATE TABLE IF NOT EXISTS `blog_group_blog` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `blog_fk` int(11) unsigned NOT NULL,
             `group_fk` int(11) unsigned NOT NULL,
@@ -69,6 +69,6 @@ final class Version20190815082849 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE blog_group_blog');
+        $this->addSql('DROP TABLE IF EXISTS blog_group_blog');
     }
 }
