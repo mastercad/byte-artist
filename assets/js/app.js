@@ -72,3 +72,25 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollReveal();
 });
 
+/* ─── Toast Notifications ─── */
+window.showToast = function(msg, type) {
+    type = type || 'error';
+    var c = document.getElementById('toast-container');
+    if (!c) {
+        c = document.createElement('div');
+        c.id = 'toast-container';
+        document.body.appendChild(c);
+    }
+    var t = document.createElement('div');
+    t.className = 'toast toast--' + type;
+    t.textContent = msg;
+    c.appendChild(t);
+    requestAnimationFrame(function() {
+        requestAnimationFrame(function() { t.classList.add('toast--show'); });
+    });
+    setTimeout(function() {
+        t.classList.remove('toast--show');
+        setTimeout(function() { t.remove(); }, 300);
+    }, 5000);
+};
+

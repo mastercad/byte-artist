@@ -3,7 +3,7 @@
 {% block title %}byte-artist.de | Projekte{% endblock %}
 
 {% block body %}
-<div class="page-main">
+<main class="page-main">
     <div class="page-hero">
         <div class="page-hero-inner">
             <div class="section-tag">// projekte</div>
@@ -14,13 +14,13 @@
 
     <div class="page-content">
         {% if is_granted('ROLE_ADMIN') %}
-        <div style="margin-bottom:24px;">
+        <div class="mb-4">
             <a href="{{ path('project_create') }}" class="btn-primary"><i class="fas fa-plus"></i>&nbsp; Neues Projekt</a>
         </div>
         {% endif %}
         {{ include('fragment/pagination.html.twig') }}
 
-        <div class="two-col-layout" style="margin-top:32px;">
+        <div class="two-col-layout mt-5">
             <div>
                 <div class="cards-grid">
                     {% for project in projects %}
@@ -45,5 +45,5 @@
 
         {{ include('fragment/pagination.html.twig') }}
     </div>
-</div>
+</main>
 {% endblock %}

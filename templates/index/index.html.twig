@@ -73,7 +73,7 @@
 
 {# ═══ BLOG ═══ #}
 {% if blogs|length %}
-<section class="section" style="padding-top:0;">
+<section class="section section--no-top-pad">
     <div class="section-header animate-on-scroll">
         <div class="section-tag">// blog</div>
         <h2 class="section-title">Aktuelle Beiträge</h2>
@@ -104,7 +104,7 @@
                 <div class="blog-card-meta">
                     <span><i class="fas fa-calendar-alt"></i>&nbsp;{{ blog.created|date("d.m.Y", "Europe/Berlin") }}</span>
                 </div>
-                <a href="/blog/{{ blog.seoLink }}" class="btn-ghost" style="margin-top:8px;">Weiterlesen</a>
+                <a href="/blog/{{ blog.seoLink }}" class="btn-ghost mt-2">Weiterlesen</a>
             </div>
         </article>
         {% endfor %}

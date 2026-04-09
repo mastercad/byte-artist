@@ -3,7 +3,7 @@
 {% block title %}byte-artist.de | Blog{% endblock %}
 
 {% block body %}
-<div class="page-main">
+<main class="page-main">
     <div class="page-hero">
         <div class="page-hero-inner">
             <div class="section-tag">// blog</div>
@@ -14,13 +14,13 @@
 
     <div class="page-content">
         {% if is_granted('ROLE_ADMIN') %}
-        <div style="margin-bottom:24px;">
+        <div class="mb-4">
             <a href="{{ path('blog_create', {id: 0}) }}" class="btn-primary"><i class="fas fa-plus"></i>&nbsp; Neuer Blogbeitrag</a>
         </div>
         {% endif %}
         {{ include('fragment/pagination.html.twig') }}
 
-        <div class="two-col-layout" style="margin-top:32px;">
+        <div class="two-col-layout mt-5">
             <div class="blog-grid">
                 {% for blog in blogs %}
                     {{ include('blog/preview.html.twig', { 'blog': blog }) }}
@@ -43,5 +43,5 @@
 
         {{ include('fragment/pagination.html.twig') }}
     </div>
-</div>
+</main>
 {% endblock %}
