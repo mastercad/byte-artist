@@ -83,10 +83,19 @@ class ConvertContentFormatCommand extends Command
                 continue;
             }
 
+            $hasHtml = (bool) preg_match('/<(?:br|p|div|pre|code|h[1-6]|ul|li|table)\b/i', $content);
             $hasUbbTags = (bool) preg_match(self::UBB_DETECTION_PATTERN, $content);
 
-            if (!$hasUbbTags && !$force) {
-                $io->writeln(sprintf('  [skip] id=%d – no UBB tags detected', $id), OutputInterface::VERBOSITY_VERBOSE);
+            // Skip entries already fully converted: HTML present, no remaining UBB tags.
+            if ($hasHtml && !$hasUbbTags && !$force) {
+                $io->writeln(sprintf('  [skip] id=%d – already contains HTML, no UBB remaining', $id), OutputInterface::VERBOSITY_VERBOSE);
+                ++$skipped;
+                continue;
+            }
+
+            // Skip plain entries with nothing to do: no UBB tags and no newlines to convert.
+            if (!$hasUbbTags && !preg_match('/\r\n|\r|\n/', $content) && !$force) {
+                $io->writeln(sprintf('  [skip] id=%d – no UBB tags or newlines detected', $id), OutputInterface::VERBOSITY_VERBOSE);
                 ++$skipped;
                 continue;
             }
@@ -96,6 +105,12 @@ class ConvertContentFormatCommand extends Command
             $replacer->setBilderPfad($imagePath);
 
             $html = $replacer->filter($content);
+
+            // Replace::filter() only converts newlines when it also finds and replaces UBB tags.
+            // For pure plain-text entries, apply a fallback newline → <br> conversion.
+            if ($html === $content) {
+                $html = preg_replace('/\r\n|\r|\n/', '<br class="clearfix" />', $content);
+            }
 
             if ($html === $content) {
                 $io->writeln(sprintf('  [noop] id=%d – content unchanged after conversion', $id), OutputInterface::VERBOSITY_VERBOSE);

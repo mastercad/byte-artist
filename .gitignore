@@ -7,6 +7,7 @@ tmp-phpqa
 /build/coverage
 /build/reports
 /public/images/content/dynamisch
+public/images/upload
 /.docker/data/
 /bin
 .php_cs.cache
@@ -48,3 +49,6 @@ tmp-phpqa
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+# dumps
+*.sql

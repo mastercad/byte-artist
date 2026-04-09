@@ -760,6 +760,29 @@ code, pre, .mono { font-family: var(--font-mono); }
 }
 .form-control:focus { border-color: var(--accent); background: var(--accent-dim); box-shadow: 0 0 0 3px var(--accent-dim); }
 
+/* ─── Native <select> – dark-theme override ─── */
+select.form-control {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2380808a' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+    color-scheme: dark;
+    cursor: pointer;
+}
+select.form-control option {
+    background: #17171b;
+    color: #ededee;
+}
+
+/* ─── Native date / time inputs – dark-theme override ─── */
+input[type="datetime-local"],
+input[type="date"],
+input[type="time"] {
+    color-scheme: dark;
+}
+
 /* ─── Alerts ─── */
 .alert { padding: 13px 18px; border-radius: var(--r-sm); font-size: 14px; margin-bottom: 14px; }
 .alert-danger  { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); color: #fca5a5; }

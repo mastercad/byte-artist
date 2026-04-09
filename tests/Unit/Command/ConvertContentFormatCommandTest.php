@@ -479,9 +479,10 @@ class ConvertContentFormatCommandTest extends BaseTestCase
 
     public function testVerboseOutputShowsNoUbbTagsMessage(): void
     {
+        // Plain text with no UBB tags and no newlines → "no UBB tags or newlines detected"
         $blog = $this->createMock(Blogs::class);
         $blog->method('getId')->willReturn(23);
-        $blog->method('getContent')->willReturn('<p>plain html</p>');
+        $blog->method('getContent')->willReturn('plain text without any tags or newlines');
 
         $this->repository->method('findAll')->willReturn([$blog]);
 
@@ -490,7 +491,7 @@ class ConvertContentFormatCommandTest extends BaseTestCase
             ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]
         );
 
-        self::assertStringContainsString('no UBB tags detected', $this->commandTester->getDisplay());
+        self::assertStringContainsString('no UBB tags or newlines detected', $this->commandTester->getDisplay());
     }
 
     public function testVerboseOutputShowsNoopMessage(): void
@@ -566,5 +567,301 @@ class ConvertContentFormatCommandTest extends BaseTestCase
         self::callMethod($this->command, 'setContent', [new \stdClass(), 'unknown_table', 'html']);
 
         self::assertTrue(true); // Reached without exception = default arm executed
+    }
+
+    // ------------------------------------------------------------------
+    // NEW: mixed HTML + UBB content is NOT skipped – converted (main fix)
+    // ------------------------------------------------------------------
+
+    public function testMixedHtmlAndUbbIsConvertedForBlogs(): void
+    {
+        // Entry already has some <div> HTML from a prior partial conversion,
+        // but still contains a [B] UBB tag → must NOT be skipped.
+        $blog = $this->createMock(Blogs::class);
+        $blog->method('getId')->willReturn(100);
+        $blog->method('getContent')->willReturn('<div>existing html</div>[B]still ubb[/B]');
+        $blog->expects(self::once())->method('setContent')->willReturnSelf();
+        $blog->expects(self::once())->method('setModified');
+
+        $this->repository->method('findAll')->willReturn([$blog]);
+        $this->entityManager->expects(self::once())->method('persist')->with($blog);
+        $this->entityManager->expects(self::once())->method('flush');
+
+        $result = $this->commandTester->execute(['table' => 'blogs']);
+
+        self::assertSame(Command::SUCCESS, $result);
+        self::assertStringContainsString('1 converted, 0 skipped', $this->commandTester->getDisplay());
+    }
+
+    public function testMixedHtmlAndUbbIsConvertedForProjects(): void
+    {
+        $project = $this->createMock(Projects::class);
+        $project->method('getId')->willReturn(101);
+        $project->method('getDescription')->willReturn('<div style="float:left">existing</div>[url=http://example.com]link[/url]');
+        $project->expects(self::once())->method('setDescription')->willReturnSelf();
+        $project->expects(self::once())->method('setModified');
+
+        $this->repository->method('findAll')->willReturn([$project]);
+        $this->entityManager->expects(self::once())->method('persist')->with($project);
+        $this->entityManager->expects(self::once())->method('flush');
+
+        $result = $this->commandTester->execute(['table' => 'projects']);
+
+        self::assertSame(Command::SUCCESS, $result);
+        self::assertStringContainsString('1 converted, 0 skipped', $this->commandTester->getDisplay());
+    }
+
+    public function testMixedHtmlAndUbbUbbTagsAreRemovedForBlogs(): void
+    {
+        $capturedHtml = null;
+
+        $blog = $this->createMock(Blogs::class);
+        $blog->method('getId')->willReturn(102);
+        $blog->method('getContent')->willReturn('<div>intro</div>[B]bold part[/B]');
+        $blog->expects(self::once())
+            ->method('setContent')
+            ->with(self::callback(static function (string $html) use (&$capturedHtml): bool {
+                $capturedHtml = $html;
+
+                return true;
+            }))
+            ->willReturnSelf();
+
+        $this->repository->method('findAll')->willReturn([$blog]);
+        $this->commandTester->execute(['table' => 'blogs']);
+
+        self::assertNotNull($capturedHtml);
+        self::assertStringContainsString('bold part', $capturedHtml);
+        self::assertStringNotContainsString('[B]', $capturedHtml);
+    }
+
+    public function testMixedHtmlAndUbbUbbTagsAreRemovedForProjects(): void
+    {
+        $capturedHtml = null;
+
+        $project = $this->createMock(Projects::class);
+        $project->method('getId')->willReturn(103);
+        $project->method('getDescription')->willReturn('<div>intro</div>[url=http://example.com]my link[/url]');
+        $project->expects(self::once())
+            ->method('setDescription')
+            ->with(self::callback(static function (?string $html) use (&$capturedHtml): bool {
+                $capturedHtml = $html;
+
+                return true;
+            }))
+            ->willReturnSelf();
+
+        $this->repository->method('findAll')->willReturn([$project]);
+        $this->commandTester->execute(['table' => 'projects']);
+
+        self::assertNotNull($capturedHtml);
+        self::assertStringContainsString('my link', $capturedHtml);
+        self::assertStringNotContainsString('[url=', $capturedHtml);
+    }
+
+    // ------------------------------------------------------------------
+    // NEW: plain text with newlines → nl2br fallback conversion
+    // ------------------------------------------------------------------
+
+    public function testPlainTextWithNewlinesIsConvertedViaNl2brForBlogs(): void
+    {
+        $capturedHtml = null;
+
+        $blog = $this->createMock(Blogs::class);
+        $blog->method('getId')->willReturn(110);
+        $blog->method('getContent')->willReturn("line one\nline two");
+        $blog->expects(self::once())
+            ->method('setContent')
+            ->with(self::callback(static function (string $html) use (&$capturedHtml): bool {
+                $capturedHtml = $html;
+
+                return true;
+            }))
+            ->willReturnSelf();
+        $blog->expects(self::once())->method('setModified');
+
+        $this->repository->method('findAll')->willReturn([$blog]);
+        $this->entityManager->expects(self::once())->method('persist');
+
+        $result = $this->commandTester->execute(['table' => 'blogs']);
+
+        self::assertSame(Command::SUCCESS, $result);
+        self::assertStringContainsString('1 converted, 0 skipped', $this->commandTester->getDisplay());
+        self::assertNotNull($capturedHtml);
+        self::assertStringContainsString('<br', $capturedHtml);
+    }
+
+    public function testPlainTextWithNewlinesIsConvertedViaNl2brForProjects(): void
+    {
+        $capturedHtml = null;
+
+        $project = $this->createMock(Projects::class);
+        $project->method('getId')->willReturn(111);
+        $project->method('getDescription')->willReturn("first line\r\nsecond line");
+        $project->expects(self::once())
+            ->method('setDescription')
+            ->with(self::callback(static function (?string $html) use (&$capturedHtml): bool {
+                $capturedHtml = $html;
+
+                return true;
+            }))
+            ->willReturnSelf();
+        $project->expects(self::once())->method('setModified');
+
+        $this->repository->method('findAll')->willReturn([$project]);
+        $this->entityManager->expects(self::once())->method('persist');
+
+        $result = $this->commandTester->execute(['table' => 'projects']);
+
+        self::assertSame(Command::SUCCESS, $result);
+        self::assertStringContainsString('1 converted, 0 skipped', $this->commandTester->getDisplay());
+        self::assertNotNull($capturedHtml);
+        self::assertStringContainsString('<br', $capturedHtml);
+    }
+
+    // ------------------------------------------------------------------
+    // NEW: plain text without newlines → skipped ("no UBB tags or newlines")
+    // ------------------------------------------------------------------
+
+    public function testPlainTextWithoutNewlinesIsSkippedForBlogs(): void
+    {
+        $blog = $this->createMock(Blogs::class);
+        $blog->method('getId')->willReturn(120);
+        $blog->method('getContent')->willReturn('just a single line of plain text');
+        $blog->expects(self::never())->method('setContent');
+
+        $this->repository->method('findAll')->willReturn([$blog]);
+        $this->entityManager->expects(self::never())->method('persist');
+
+        $result = $this->commandTester->execute(['table' => 'blogs']);
+
+        self::assertSame(Command::SUCCESS, $result);
+        self::assertStringContainsString('0 converted, 1 skipped', $this->commandTester->getDisplay());
+    }
+
+    public function testPlainTextWithoutNewlinesIsSkippedForProjects(): void
+    {
+        $project = $this->createMock(Projects::class);
+        $project->method('getId')->willReturn(121);
+        $project->method('getDescription')->willReturn('just a single line of plain text');
+        $project->expects(self::never())->method('setDescription');
+
+        $this->repository->method('findAll')->willReturn([$project]);
+        $this->entityManager->expects(self::never())->method('persist');
+
+        $result = $this->commandTester->execute(['table' => 'projects']);
+
+        self::assertSame(Command::SUCCESS, $result);
+        self::assertStringContainsString('0 converted, 1 skipped', $this->commandTester->getDisplay());
+    }
+
+    // ------------------------------------------------------------------
+    // NEW: verbose messages for the two new skip guards
+    // ------------------------------------------------------------------
+
+    public function testVerboseOutputShowsAlreadyHtmlNoUbbRemainingMessage(): void
+    {
+        $blog = $this->createMock(Blogs::class);
+        $blog->method('getId')->willReturn(130);
+        $blog->method('getContent')->willReturn('<p>fully converted html, no UBB left</p>');
+
+        $this->repository->method('findAll')->willReturn([$blog]);
+
+        $this->commandTester->execute(
+            ['table' => 'blogs'],
+            ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]
+        );
+
+        self::assertStringContainsString('already contains HTML, no UBB remaining', $this->commandTester->getDisplay());
+    }
+
+    public function testVerboseOutputShowsNoUbbTagsOrNewlinesMessage(): void
+    {
+        $project = $this->createMock(Projects::class);
+        $project->method('getId')->willReturn(131);
+        $project->method('getDescription')->willReturn('single line no tags');
+
+        $this->repository->method('findAll')->willReturn([$project]);
+
+        $this->commandTester->execute(
+            ['table' => 'projects'],
+            ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]
+        );
+
+        self::assertStringContainsString('no UBB tags or newlines detected', $this->commandTester->getDisplay());
+    }
+
+    // ------------------------------------------------------------------
+    // NEW: --force bypasses the "already HTML, no UBB" guard
+    // ------------------------------------------------------------------
+
+    public function testForceBypassesAlreadyHtmlGuardForBlogs(): void
+    {
+        // With --force, the HTML-already guard is skipped.
+        // Content has HTML but no UBB and no newlines → filter produces no change → noop.
+        $blog = $this->createMock(Blogs::class);
+        $blog->method('getId')->willReturn(140);
+        $blog->method('getContent')->willReturn('<p>Already HTML</p>');
+        $blog->expects(self::never())->method('setContent');
+
+        $this->repository->method('findAll')->willReturn([$blog]);
+        $this->entityManager->expects(self::never())->method('persist');
+
+        $result = $this->commandTester->execute(['table' => 'blogs', '--force' => true]);
+
+        self::assertSame(Command::SUCCESS, $result);
+        // Noop because the filter returns the content unchanged (no UBB to replace, no newlines).
+        self::assertStringContainsString('0 converted, 1 skipped', $this->commandTester->getDisplay());
+    }
+
+    public function testForceBypassesAlreadyHtmlGuardForProjects(): void
+    {
+        $project = $this->createMock(Projects::class);
+        $project->method('getId')->willReturn(141);
+        $project->method('getDescription')->willReturn('<p>Already HTML</p>');
+        $project->expects(self::never())->method('setDescription');
+
+        $this->repository->method('findAll')->willReturn([$project]);
+        $this->entityManager->expects(self::never())->method('persist');
+
+        $result = $this->commandTester->execute(['table' => 'projects', '--force' => true]);
+
+        self::assertSame(Command::SUCCESS, $result);
+        self::assertStringContainsString('0 converted, 1 skipped', $this->commandTester->getDisplay());
+    }
+
+    public function testForceMixedHtmlAndUbbIsConvertedForBlogs(): void
+    {
+        // With --force, mixed HTML + UBB is converted (same as without force).
+        $blog = $this->createMock(Blogs::class);
+        $blog->method('getId')->willReturn(142);
+        $blog->method('getContent')->willReturn('<div>existing</div>[B]still ubb[/B]');
+        $blog->expects(self::once())->method('setContent')->willReturnSelf();
+        $blog->expects(self::once())->method('setModified');
+
+        $this->repository->method('findAll')->willReturn([$blog]);
+        $this->entityManager->expects(self::once())->method('persist');
+
+        $result = $this->commandTester->execute(['table' => 'blogs', '--force' => true]);
+
+        self::assertSame(Command::SUCCESS, $result);
+        self::assertStringContainsString('1 converted, 0 skipped', $this->commandTester->getDisplay());
+    }
+
+    public function testForceMixedHtmlAndUbbIsConvertedForProjects(): void
+    {
+        $project = $this->createMock(Projects::class);
+        $project->method('getId')->willReturn(143);
+        $project->method('getDescription')->willReturn('<div>existing</div>[url=http://example.com]link[/url]');
+        $project->expects(self::once())->method('setDescription')->willReturnSelf();
+        $project->expects(self::once())->method('setModified');
+
+        $this->repository->method('findAll')->willReturn([$project]);
+        $this->entityManager->expects(self::once())->method('persist');
+
+        $result = $this->commandTester->execute(['table' => 'projects', '--force' => true]);
+
+        self::assertSame(Command::SUCCESS, $result);
+        self::assertStringContainsString('1 converted, 0 skipped', $this->commandTester->getDisplay());
     }
 }
