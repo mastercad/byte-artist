@@ -12,7 +12,7 @@
     {% endif %}
     <div class="card-body">
         <h2 class="card-title">
-            <a href="/project/{{ project.seoLink }}">{{ project.name }}</a>
+            <a href="/project/{{ project.seoLink ?: project.id }}">{{ project.name }}</a>
         </h2>
         <p class="card-desc">{{ project.shortDescription }}</p>
         {% if project.ProjectTags|length %}
@@ -27,6 +27,6 @@
         <span class="card-date">
             {% if project.modified %}{{ project.modified|date("d.m.Y", "Europe/Berlin") }}{% else %}{{ project.created|date("d.m.Y", "Europe/Berlin") }}{% endif %}
         </span>
-        <a href="/project/{{ project.seoLink }}" class="btn-ghost">Details</a>
+        <a href="/project/{{ project.seoLink ?: project.id }}" class="btn-ghost">Details</a>
     </div>
 </article>

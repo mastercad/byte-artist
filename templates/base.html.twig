@@ -69,6 +69,101 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
                 integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp"
                 crossorigin="anonymous"></script>
-        <script>document.addEventListener('DOMContentLoaded', function(){ hljs.highlightAll(); });</script>
+        <script>
+        (function () {
+            function makeLangFromClass(classList) {
+                var lang = '';
+                classList.forEach(function (c) {
+                    if (c !== 'hljs' && !c.startsWith('language-')) lang = c.toUpperCase();
+                    var m = c.match(/^language-(.+)$/);
+                    if (m) lang = m[1].toUpperCase();
+                });
+                return lang;
+            }
+
+            function wrapPre(pre, lang) {
+                if (pre.closest('.code-block')) return;
+                // Unwrap <blockquote> that Tiptap may place around a code block
+                var parent = pre.parentNode;
+                if (parent && parent.tagName === 'BLOCKQUOTE') {
+                    parent.parentNode.insertBefore(pre, parent);
+                    parent.remove();
+                }
+                // Remove adjacent legacy chrome
+                var s;
+                s = pre.previousElementSibling;
+                if (s && (s.classList.contains('code_header') || s.classList.contains('code_footer'))) s.remove();
+                s = pre.nextElementSibling;
+                if (s && (s.classList.contains('code_header') || s.classList.contains('code_footer'))) s.remove();
+
+                var wrapper = document.createElement('div');
+                wrapper.className = 'code-block';
+                var header = document.createElement('div');
+                header.className = 'code-block-header';
+                header.innerHTML =
+                    '<span class="code-block-lang"><i class="fas fa-code"></i> ' + (lang || 'CODE') + '</span>' +
+                    '<button class="code-block-copy" type="button" title="In Zwischenablage kopieren">' +
+                    '<i class="fas fa-copy"></i><span>Kopieren</span></button>';
+                pre.parentNode.insertBefore(wrapper, pre);
+                wrapper.appendChild(header);
+                pre.classList.add('highlight_code');
+                wrapper.appendChild(pre);
+            }
+
+            function fallbackCopy(text, cb) {
+                var ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;opacity:0';
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy'); cb(); } catch (e) {}
+                document.body.removeChild(ta);
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                // ── Step 1: Wrap OLD server-rendered blocks (code.hljs) ──
+                // Mark data-highlighted so hljs.highlightAll() skips them.
+                document.querySelectorAll('.project-detail-body pre > code.hljs').forEach(function (code) {
+                    code.setAttribute('data-highlighted', 'yes');
+                    wrapPre(code.parentElement, makeLangFromClass(code.classList));
+                });
+
+                // ── Step 2: Highlight raw Tiptap blocks ──────────────────
+                // Trim leading/trailing newlines Tiptap adds to code blocks
+                document.querySelectorAll('.project-detail-body pre > code[class*="language-"]').forEach(function (code) {
+                    code.textContent = code.textContent.replace(/^\n/, '').replace(/\n$/, '');
+                });
+                hljs.highlightAll();
+
+                // ── Step 3: Wrap freshly highlighted Tiptap blocks ───────
+                document.querySelectorAll('.project-detail-body pre > code[class*="language-"]').forEach(function (code) {
+                    wrapPre(code.parentElement, makeLangFromClass(code.classList));
+                });
+
+                // ── Copy-to-clipboard (event delegation) ─────────────────
+                document.addEventListener('click', function (e) {
+                    var btn = e.target.closest('.code-block-copy');
+                    if (!btn) return;
+                    var code = btn.closest('.code-block').querySelector('code');
+                    if (!code) return;
+                    var text = code.innerText;
+                    var span = btn.querySelector('span');
+                    function showCopied() {
+                        btn.classList.add('copied');
+                        span.textContent = 'Kopiert!';
+                        setTimeout(function () {
+                            btn.classList.remove('copied');
+                            span.textContent = 'Kopieren';
+                        }, 2200);
+                    }
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(text).then(showCopied).catch(function () { fallbackCopy(text, showCopied); });
+                    } else {
+                        fallbackCopy(text, showCopied);
+                    }
+                });
+            });
+        }());
+        </script>
     </body>
 </html>

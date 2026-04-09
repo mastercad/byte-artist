@@ -179,6 +179,13 @@
         outline-offset: 2px;
         animation: btn-dirty-pulse 1.4s ease-in-out infinite;
     }
+    .btn-save.btn-save--uploading {
+        border-color: rgba(96,165,250,.7) !important;
+        color: rgba(96,165,250,.9) !important;
+        outline: 2px solid rgba(96,165,250,.5);
+        outline-offset: 2px;
+        animation: none;
+    }
     #unsaved-dialog-backdrop {
         position: fixed; inset: 0; z-index: 10000;
         background: rgba(0,0,0,.65);
@@ -244,6 +251,30 @@
         let currentTags = {};
         let autocompleteTags = [];
         let isDirty = false;
+        let pendingUploads = 0;
+
+        function uploadStart() {
+            pendingUploads++;
+            isDirty = true;
+            let $btn = $('.btn-save');
+            $btn.prop('disabled', true)
+                .removeClass('btn-save--dirty')
+                .addClass('btn-save--uploading')
+                .html('<i class="fas fa-spinner fa-spin"></i> Bild wird hochgeladen…');
+        }
+
+        function uploadEnd() {
+            pendingUploads = Math.max(0, pendingUploads - 1);
+            if (pendingUploads === 0) {
+                let $btn = $('.btn-save');
+                $btn.prop('disabled', false).removeClass('btn-save--uploading');
+                if (isDirty) {
+                    $btn.addClass('btn-save--dirty').html('<i class="fas fa-cloud-upload-alt"></i> Speichern');
+                } else {
+                    $btn.html('<i class="fas fa-cloud-upload-alt"></i> Speichern');
+                }
+            }
+        }
 
         {% for blogTag in form.vars.value.blogTags %}
             {% if blogTag.tag and blogTag.tag.name %}
@@ -328,19 +359,25 @@
                     $imgEl.attr('src', ev.target.result).show();
                     $('#preview-placeholder').hide();
                     $hidden.val(ev.target.result);
-                    $area.addClass('uploading');
+                    let $overlay = $('<div class="preview-upload-overlay"><i class="fas fa-spinner fa-spin"></i><span>Wird hochgeladen…</span></div>');
+                    $area.addClass('uploading').append($overlay);
+                    uploadStart();
 
                     $.post('/blog/upload', {
                         fileData: ev.target.result,
                         name: file.name
                     }, function(response) {
+                        $overlay.remove();
                         $area.removeClass('uploading');
+                        uploadEnd();
                         if (response && response.url) {
                             $imgEl.attr('src', response.url + '?' + Date.now());
                             $hidden.val(response.url);
                         }
                     }).fail(function() {
+                        $overlay.remove();
                         $area.removeClass('uploading');
+                        uploadEnd();
                     });
                 };
                 reader.readAsDataURL(file);
@@ -393,6 +430,10 @@
         }
 
         function save() {
+            if (pendingUploads > 0) {
+                showToast('Bitte warte, bis alle Bilder fertig hochgeladen sind.', 'warning');
+                return;
+            }
             // Filter out the empty blogTags hidden field – PHP would treat it as a
             // scalar '' and then silently drop the array-notation tag entries.
             let data = $('#blog-form').serializeArray().filter(function(item) {
@@ -483,6 +524,10 @@
             initTagAutocomplete();
 
             initPreviewUpload();
+
+            // Track Tiptap inline-image uploads
+            $('#blog-form').on('editorUploadStart', uploadStart);
+            $('#blog-form').on('editorUploadEnd',   uploadEnd);
 
             $('.btn-save').on('click', function(e) {
                 e.preventDefault();

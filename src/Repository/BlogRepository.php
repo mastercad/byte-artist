@@ -23,8 +23,8 @@ class BlogRepository extends ServiceEntityRepository
     public function findLatest(int $firstResult = 0, int $maxResults = 25)
     {
         return $this->createQueryBuilder('b')
-            ->orderBy('b.modified', 'DESC')
-            ->addOrderBy('b.created', 'DESC')
+            ->orderBy('b.created', 'DESC')
+            ->addOrderBy('b.modified', 'DESC')
             ->setFirstResult($firstResult ?: null)
             ->setMaxResults($maxResults)
             ->getQuery()
@@ -46,16 +46,16 @@ class BlogRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('b')
             ->where('b.isPublic = 1')
-            ->orderBy('b.modified', 'DESC')
-            ->addOrderBy('b.created', 'DESC')
+            ->orderBy('b.created', 'DESC')
+            ->addOrderBy('b.modified', 'DESC')
             ->getQuery();
     }
 
     public function queryAllBlogs(): \Doctrine\ORM\Query
     {
         return $this->createQueryBuilder('b')
-            ->orderBy('b.modified', 'DESC')
-            ->addOrderBy('b.created', 'DESC')
+            ->orderBy('b.created', 'DESC')
+            ->addOrderBy('b.modified', 'DESC')
             ->getQuery();
     }
 
@@ -66,8 +66,8 @@ class BlogRepository extends ServiceEntityRepository
             ->innerJoin('App\\Entity\\Tags', 't', Join::WITH, 't = bt.tag')
             ->where('t.seoLink = :seoLink')
             ->andWhere('b.isPublic = 1')
-            ->orderBy('b.modified', 'DESC')
-            ->addOrderBy('b.created', 'DESC')
+            ->orderBy('b.created', 'DESC')
+            ->addOrderBy('b.modified', 'DESC')
             ->setParameter('seoLink', $seoLink)
             ->getQuery();
     }
@@ -78,8 +78,8 @@ class BlogRepository extends ServiceEntityRepository
             ->innerJoin('App\Entity\BlogTags', 'bt', Join::WITH, 'bt.blog = b')
             ->innerJoin('App\Entity\Tags', 't', Join::WITH, 't = bt.tag')
             ->where('t.seoLink = :seoLink')
-            ->orderBy('b.modified', 'DESC')
-            ->addOrderBy('b.created', 'DESC')
+            ->orderBy('b.created', 'DESC')
+            ->addOrderBy('b.modified', 'DESC')
             ->setParameter('seoLink', $seoLink)
             ->getQuery();
     }

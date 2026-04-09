@@ -558,13 +558,78 @@ code, pre, .mono { font-family: var(--font-mono); }
 .project-detail-body blockquote p { margin-bottom: 0; }
 
 /* ── Code blocks ── */
-.project-detail-body pre {
-    margin: 24px 0;
+.code-block {
+    margin: 28px 0;
     border-radius: var(--r);
-    overflow-x: auto;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-hi);
+    overflow: hidden;
+    font-family: var(--font-mono);
 }
-.project-detail-body pre code.hljs { border-radius: var(--r); font-size: 13px; line-height: 1.6; }
+.code-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 14px;
+    background: #16161c;
+    border-bottom: 1px solid var(--border-hi);
+}
+.code-block-lang {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+}
+.code-block-lang i { opacity: 0.75; font-size: 12px; }
+.code-block-copy {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border: 1px solid var(--border-hi);
+    border-radius: 5px;
+    background: transparent;
+    color: var(--text-2);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+.code-block-copy:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+    border-color: rgba(255,255,255,0.2);
+}
+.code-block-copy.copied {
+    color: #86efac;
+    border-color: rgba(134,239,172,0.35);
+}
+.code-block pre.highlight_code {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    overflow-x: auto;
+}
+.code-block pre.highlight_code {
+    white-space: pre;
+}
+.code-block pre.highlight_code code.hljs {
+    border-radius: 0;
+    display: block;
+    padding: 18px 20px;
+    font-size: 13px;
+    line-height: 1.65;
+    background: #0e0e12;
+    white-space: pre;
+}
+/* old UBB-converted residuals — hidden by JS, CSS as safety net */
+.code_header, .code_footer { display: none !important; }
 /* inline code */
 .project-detail-body code:not([class]) {
     background: var(--bg-3);
@@ -822,7 +887,7 @@ input[type="time"] {
 /* ─── Hljs / highlight overrides ─── */
 pre { border-radius: var(--r); overflow: auto; }
 code { font-size: 0.9em; }
-p > code {
+p > code, .blog-detail-body code:not([class*="hljs"]) {
     background: rgba(255,255,255,0.07);
     border: 1px solid var(--border);
     border-radius: 4px;
@@ -1315,6 +1380,24 @@ hr, .divider { border: none; border-top: 1px solid var(--border); margin: 48px 0
 }
 .preview-upload-area:hover { border-color: var(--accent); background: var(--accent-dim); }
 .preview-upload-area.drag-over { border-color: var(--accent); background: rgba(200,144,96,0.1); border-style: solid; }
+.preview-upload-area.uploading { pointer-events: none; }
+.preview-upload-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    background: rgba(0,0,0,0.62);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: inherit;
+    color: #fff;
+    font-size: 12px;
+    font-family: var(--font-mono, monospace);
+    pointer-events: none;
+}
+.preview-upload-overlay i { font-size: 20px; color: var(--accent, #c89060); }
 .preview-upload-placeholder {
     display: flex; flex-direction: column; align-items: center; gap: 6px;
     padding: 20px;

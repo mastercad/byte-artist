@@ -896,20 +896,6 @@ class Replace
         $sSource = preg_replace('/^\n/', '', $sSource);
         $sSource = preg_replace('/\n$/', '', $sSource);
 
-        $header_content = '<div class="code_header" style="position: relative; padding: 2px 5px; font-weight: bold; '.
-            'background-color: #CCCCCC; color: #333333;">';
-        $header_content .= '<span class="highlight_minimize fas fa-plus" style="cursor: pointer;"></span>';
-
-        if (strlen(trim($sLanguage)) > 0) {
-            $header_content .= '<h3 style="position: absolute; top: 0px; left: 20px; padding: 2px 5px; '.
-            'background-color: #FFFFFF; border: 1px solid #CCCCCC;">'.$sLanguage.' code</h3>';
-        }
-
-        //     $header_content .= '<img src="#" alt="copy to clipboard" style="position: absolute; top: 2px; right: 5px;" />';
-        $header_content .= '</div>';
-        $footer_content = '<div class="code_footer" style="height: 10px; background-color: #CCCCCC; '.
-            'color: #333333;"></div>';
-
         $hl = new Highlighter();
         $langLower = strtolower($sLanguage);
 
@@ -920,18 +906,25 @@ class Replace
                 $highlighted = $hl->highlight('javascript', $sSource);
             }
 
-            // Build line-numbered output compatible with highlight.js CSS
+            // Build line-spanned output compatible with highlight.js CSS
             $lines = explode("\n", $highlighted->value);
             $numberedHtml = '';
-            foreach ($lines as $lineNum => $line) {
-                $numberedHtml .= '<span class="hljs-line" data-line="'.($lineNum + 1).'">'.$line."</span>\n";
+            foreach ($lines as $line) {
+                $numberedHtml .= '<span class="hljs-line">'.$line."</span>\n";
             }
 
-            $sSource = $header_content
-                .'<pre class="highlight_code"><code class="hljs '.htmlspecialchars($highlighted->language, ENT_QUOTES).'">'.
-                $numberedHtml
-                .'</code></pre>'
-                .$footer_content;
+            $langDisplay = htmlspecialchars($sLanguage, ENT_QUOTES);
+            $langClass   = htmlspecialchars($highlighted->language, ENT_QUOTES);
+
+            $sSource = '<div class="code-block">'
+                .'<div class="code-block-header">'
+                .'<span class="code-block-lang"><i class="fas fa-code"></i> '.$langDisplay.'</span>'
+                .'<button class="code-block-copy" type="button" title="In Zwischenablage kopieren">'
+                .'<i class="fas fa-copy"></i><span>Kopieren</span>'
+                .'</button>'
+                .'</div>'
+                .'<pre class="highlight_code"><code class="hljs '.$langClass.'">'.$numberedHtml.'</code></pre>'
+                .'</div>';
         }
 
         // eventuell im text enthaltene [ oder ] escapen

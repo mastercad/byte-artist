@@ -284,8 +284,8 @@ class ProjectsController extends AbstractController
             }
         }
 
-        $previewFilePath = $this->getPublicDir().'/'.$project->getPreviewPicture();
-        if (file_exists($previewFilePath)) {
+        $previewFilePath = $project->getPreviewPicture() ? $this->getPublicDir().'/'.$project->getPreviewPicture() : null;
+        if ($previewFilePath && file_exists($previewFilePath)) {
             $file = new File($previewFilePath);
             $targetPublicPath = '/images/content/dynamisch/projects/'.$project->getId();
             $file->move($this->getPublicDir().'/'.$targetPublicPath, basename($previewFilePath));

@@ -51,6 +51,30 @@ const TOOLBAR = [
         { cmd: 'image',  icon: 'fa-image',        title: 'Bild einfügen',  action: (e, btn, ctx) => openImagePicker(ctx), active: () => false },
         { cmd: 'hr',     icon: 'fa-minus',        title: 'Trennlinie',     action: e => e.chain().focus().setHorizontalRule().run(), active: () => false },
     ]},
+    { group: 'codeLanguage', select: true },
+];
+
+const CODE_LANGUAGES = [
+    { value: '',           label: '— Sprache —' },
+    { value: 'bash',       label: 'Bash / Shell' },
+    { value: 'c',          label: 'C' },
+    { value: 'cpp',        label: 'C++' },
+    { value: 'css',        label: 'CSS' },
+    { value: 'diff',       label: 'Diff' },
+    { value: 'dockerfile', label: 'Dockerfile' },
+    { value: 'go',         label: 'Go' },
+    { value: 'html',       label: 'HTML' },
+    { value: 'java',       label: 'Java' },
+    { value: 'javascript', label: 'JavaScript' },
+    { value: 'json',       label: 'JSON' },
+    { value: 'markdown',   label: 'Markdown' },
+    { value: 'php',        label: 'PHP' },
+    { value: 'python',     label: 'Python' },
+    { value: 'rust',       label: 'Rust' },
+    { value: 'sql',        label: 'SQL' },
+    { value: 'typescript', label: 'TypeScript' },
+    { value: 'xml',        label: 'XML' },
+    { value: 'yaml',       label: 'YAML' },
 ];
 
 // ── Link dialog ────────────────────────────────────────────────────────────
@@ -63,6 +87,23 @@ function toggleLink(editor, btn) {
     if (url) {
         editor.chain().focus().setLink({ href: url, target: '_blank' }).run();
     }
+}
+
+// ── Upload lifecycle notifiers ───────────────────────────────────────────────
+export function notifyUploadStart(ctx) {
+    ctx.pendingUploads = (ctx.pendingUploads || 0) + 1;
+    if (ctx.uploadBadge) ctx.uploadBadge.classList.add('visible');
+    if (ctx.wrapper)     ctx.wrapper.classList.add('tiptap-uploading');
+    if (ctx.textarea)    ctx.textarea.dispatchEvent(new CustomEvent('editorUploadStart', { bubbles: true }));
+}
+
+export function notifyUploadEnd(ctx) {
+    ctx.pendingUploads = Math.max(0, (ctx.pendingUploads || 0) - 1);
+    if (ctx.pendingUploads === 0) {
+        if (ctx.uploadBadge) ctx.uploadBadge.classList.remove('visible');
+        if (ctx.wrapper)     ctx.wrapper.classList.remove('tiptap-uploading');
+    }
+    if (ctx.textarea)    ctx.textarea.dispatchEvent(new CustomEvent('editorUploadEnd', { bubbles: true }));
 }
 
 // ── Image: file picker → upload → insert ──────────────────────────────────
@@ -85,6 +126,7 @@ function uploadAndInsertImage(ctx, file) {
     }
     const reader = new FileReader();
     reader.onload = ev => {
+        notifyUploadStart(ctx);
         const body = JSON.stringify({ fileData: ev.target.result, name: file.name });
         fetch(ctx.uploadUrl, {
             method: 'POST',
@@ -93,11 +135,13 @@ function uploadAndInsertImage(ctx, file) {
         })
             .then(r => r.json())
             .then(data => {
+                notifyUploadEnd(ctx);
                 if (data.url) {
                     ctx.editor.chain().focus().setImage({ src: data.url }).run();
                 }
             })
             .catch(() => {
+                notifyUploadEnd(ctx);
                 ctx.editor.chain().focus().setImage({ src: ev.target.result }).run();
             });
     };
@@ -119,6 +163,7 @@ function uploadAndReplaceImage(ctx, file, nodePos) {
     }
     const reader = new FileReader();
     reader.onload = ev => {
+        notifyUploadStart(ctx);
         const body = JSON.stringify({ fileData: ev.target.result, name: file.name });
         fetch(ctx.uploadUrl, {
             method: 'POST',
@@ -126,120 +171,183 @@ function uploadAndReplaceImage(ctx, file, nodePos) {
             body,
         })
             .then(r => r.json())
-            .then(data => applyUrl(data.url || ev.target.result))
-            .catch(() => applyUrl(ev.target.result));
+            .then(data => {
+                notifyUploadEnd(ctx);
+                applyUrl(data.url || ev.target.result);
+            })
+            .catch(() => {
+                notifyUploadEnd(ctx);
+                applyUrl(ev.target.result);
+            });
     };
     reader.readAsDataURL(file);
 }
 
-// ── Image edit popover ─────────────────────────────────────────────────────
-function makePopoverBtn(icon, extraClass, title) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'tt-img-popover-btn ' + extraClass;
-    btn.title = title;
-    btn.innerHTML = `<i class="fas ${icon}"></i>`;
-    return btn;
-}
+// ── Image edit modal ────────────────────────────────────────────────────────
 
-function buildImagePopover(ctx) {
-    const el = document.createElement('div');
-    el.className = 'tt-img-popover';
-    el.setAttribute('role', 'dialog');
-    el.setAttribute('aria-label', 'Bild bearbeiten');
+function buildImageModal(ctx) {
+    // Backdrop
+    const backdrop = document.createElement('div');
+    backdrop.className = 'tt-img-modal-backdrop';
 
-    const label = document.createElement('span');
-    label.className = 'tt-img-popover-label';
-    label.innerHTML = '<i class="fas fa-image"></i>';
+    // Dialog
+    const dialog = document.createElement('div');
+    dialog.className = 'tt-img-modal';
+    dialog.setAttribute('role', 'dialog');
+    dialog.setAttribute('aria-modal', 'true');
+    dialog.setAttribute('aria-label', 'Bild bearbeiten');
 
+    // Header
+    const header = document.createElement('div');
+    header.className = 'tt-img-modal-header';
+    header.innerHTML = '<span class="tt-img-modal-title"><i class="fas fa-image"></i> Bild bearbeiten</span>';
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'tt-img-modal-close';
+    closeBtn.title = 'Schließen (Esc)';
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    header.appendChild(closeBtn);
+
+    // Drop zone
+    const dropZone = document.createElement('div');
+    dropZone.className = 'tt-img-modal-dropzone';
+    dropZone.innerHTML = `
+        <div class="tt-img-modal-dropzone-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+        <div class="tt-img-modal-dropzone-text">Bild hierher ziehen</div>
+        <div class="tt-img-modal-dropzone-sub">oder</div>
+    `;
+    const pickBtn = document.createElement('button');
+    pickBtn.type = 'button';
+    pickBtn.className = 'tt-img-modal-pick-btn';
+    pickBtn.innerHTML = '<i class="fas fa-folder-open"></i> Datei auswählen';
+    dropZone.appendChild(pickBtn);
+
+    // URL row
+    const urlRow = document.createElement('div');
+    urlRow.className = 'tt-img-modal-url-row';
+    const urlLabel = document.createElement('label');
+    urlLabel.className = 'tt-img-modal-url-label';
+    urlLabel.textContent = 'oder Bild-URL';
     const urlInput = document.createElement('input');
-    urlInput.className    = 'tt-img-popover-url';
-    urlInput.type         = 'url';
-    urlInput.placeholder  = 'Bild-URL …';
-    urlInput.spellcheck   = false;
+    urlInput.type = 'url';
+    urlInput.className = 'tt-img-modal-url-input';
+    urlInput.placeholder = 'https://…';
+    urlInput.spellcheck = false;
     urlInput.autocomplete = 'off';
+    const urlApplyBtn = document.createElement('button');
+    urlApplyBtn.type = 'button';
+    urlApplyBtn.className = 'tt-img-modal-url-apply';
+    urlApplyBtn.innerHTML = '<i class="fas fa-check"></i> Übernehmen';
+    urlRow.append(urlLabel, urlInput, urlApplyBtn);
 
-    const confirmBtn = makePopoverBtn('fa-check',     'tt-img-popover-btn--confirm', 'URL übernehmen (Enter)');
-    const sep        = document.createElement('span');
-    sep.className    = 'tt-img-popover-sep';
-    const uploadBtn  = makePopoverBtn('fa-upload',    'tt-img-popover-btn--upload',  'Neues Bild hochladen');
-    const removeBtn  = makePopoverBtn('fa-trash-alt', 'tt-img-popover-btn--remove',  'Bild entfernen');
+    // Footer actions
+    const footer = document.createElement('div');
+    footer.className = 'tt-img-modal-footer';
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'tt-img-modal-remove-btn';
+    removeBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Bild entfernen';
+    footer.appendChild(removeBtn);
 
-    // Apply URL change
-    confirmBtn.addEventListener('click', () => {
-        const newSrc = urlInput.value.trim();
-        if (newSrc && ctx._editPos != null) {
-            ctx.editor.commands.setNodeSelection(ctx._editPos);
-            ctx.editor.chain().focus().updateAttributes('image', { src: newSrc }).run();
+    dialog.append(header, dropZone, urlRow, footer);
+    backdrop.appendChild(dialog);
+    document.body.appendChild(backdrop);
+
+    // ── Event wiring ──────────────────────────────────────────────────────
+
+    const close = () => hideImageModal(ctx);
+
+    closeBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', ev => { if (ev.target === backdrop) close(); });
+
+    document.addEventListener('keydown', ev => {
+        if (ev.key === 'Escape' && backdrop.classList.contains('tt-img-modal-backdrop--open')) {
+            close();
         }
-        hideImagePopover(ctx);
     });
 
-    urlInput.addEventListener('keydown', ev => {
-        if (ev.key === 'Enter')  { ev.preventDefault(); confirmBtn.click(); }
-        if (ev.key === 'Escape') { hideImagePopover(ctx); }
-    });
-
-    // Upload a new file to replace the image
-    uploadBtn.addEventListener('click', () => {
+    // File picker trigger
+    const triggerFilePicker = () => {
         const savedPos = ctx._editPos;
-        hideImagePopover(ctx);
         if (savedPos == null) return;
-        const fileInput    = document.createElement('input');
-        fileInput.type     = 'file';
-        fileInput.accept   = 'image/*';
-        fileInput.onchange = () => {
-            if (fileInput.files[0]) uploadAndReplaceImage(ctx, fileInput.files[0], savedPos);
+        const fi = document.createElement('input');
+        fi.type = 'file';
+        fi.accept = 'image/*';
+        fi.onchange = () => {
+            if (fi.files[0]) {
+                close();
+                uploadAndReplaceImage(ctx, fi.files[0], savedPos);
+            }
         };
-        fileInput.click();
+        fi.click();
+    };
+
+    pickBtn.addEventListener('click', triggerFilePicker);
+
+    // Drag & drop on the drop zone
+    dropZone.addEventListener('dragover', ev => {
+        ev.preventDefault();
+        dropZone.classList.add('tt-img-modal-dropzone--over');
+    });
+    dropZone.addEventListener('dragleave', ev => {
+        if (!dropZone.contains(ev.relatedTarget)) {
+            dropZone.classList.remove('tt-img-modal-dropzone--over');
+        }
+    });
+    dropZone.addEventListener('drop', ev => {
+        ev.preventDefault();
+        dropZone.classList.remove('tt-img-modal-dropzone--over');
+        const files = Array.from(ev.dataTransfer ? ev.dataTransfer.files : []).filter(f => f.type.startsWith('image/'));
+        if (files[0]) {
+            const savedPos = ctx._editPos;
+            close();
+            uploadAndReplaceImage(ctx, files[0], savedPos);
+        }
     });
 
-    // Remove the image node
+    // URL apply
+    const applyUrl = () => {
+        const src = urlInput.value.trim();
+        if (src && ctx._editPos != null) {
+            ctx.editor.commands.setNodeSelection(ctx._editPos);
+            ctx.editor.chain().focus().updateAttributes('image', { src }).run();
+        }
+        close();
+    };
+    urlApplyBtn.addEventListener('click', applyUrl);
+    urlInput.addEventListener('keydown', ev => {
+        if (ev.key === 'Enter') { ev.preventDefault(); applyUrl(); }
+    });
+
+    // Remove image
     removeBtn.addEventListener('click', () => {
         if (ctx._editPos != null) {
             ctx.editor.commands.setNodeSelection(ctx._editPos);
             ctx.editor.chain().focus().deleteSelection().run();
         }
-        hideImagePopover(ctx);
+        close();
     });
 
-    el.append(label, urlInput, confirmBtn, sep, uploadBtn, removeBtn);
-    document.body.appendChild(el);
-    return el;
+    // Store the urlInput reference for pre-population
+    backdrop._urlInput = urlInput;
+    return backdrop;
 }
 
-function positionImagePopover(popover, imgEl) {
-    popover.style.display = 'flex';
-    const pw   = popover.offsetWidth;
-    const ph   = popover.offsetHeight;
-    const rect = imgEl.getBoundingClientRect();
-
-    // Prefer below the image; fall back to above if not enough space
-    let top = rect.bottom + 8;
-    if (top + ph > window.innerHeight - 8) top = rect.top - ph - 8;
-    if (top < 8) top = 8;
-
-    let left = rect.left;
-    if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
-    if (left < 8) left = 8;
-
-    popover.style.top  = top  + 'px';
-    popover.style.left = left + 'px';
-}
-
-function showImagePopover(ctx, imgEl, nodePos) {
+function showImageModal(ctx, imgEl, nodePos) {
     ctx._editPos = nodePos;
-    const urlInput = ctx.imgPopover.querySelector('.tt-img-popover-url');
+    const urlInput = ctx.imgPopover._urlInput;
     urlInput.value = imgEl.getAttribute('src') || '';
-    positionImagePopover(ctx.imgPopover, imgEl);
-    // Focus the URL input so the user can edit immediately
-    urlInput.focus();
-    urlInput.select();
+    ctx.imgPopover.classList.add('tt-img-modal-backdrop--open');
+    // Focus the drop zone visually, URL input on next tick
+    setTimeout(() => urlInput.select(), 50);
 }
 
-function hideImagePopover(ctx) {
-    if (ctx.imgPopover) ctx.imgPopover.style.display = 'none';
+function hideImageModal(ctx) {
+    if (ctx.imgPopover) ctx.imgPopover.classList.remove('tt-img-modal-backdrop--open');
 }
+
+// Keep the old names as thin aliases so call sites below don't need changing
+function hideImagePopover(ctx) { hideImageModal(ctx); }
 
 // ── Build toolbar DOM ──────────────────────────────────────────────────────
 function buildToolbar(ctx) {
@@ -249,6 +357,28 @@ function buildToolbar(ctx) {
     for (const group of TOOLBAR) {
         const grpEl = document.createElement('span');
         grpEl.className = 'tiptap-toolbar-group';
+
+        if (group.select) {
+            // Code language selector
+            const sel = document.createElement('select');
+            sel.className = 'tiptap-code-lang-select';
+            sel.title = 'Code-Sprache';
+            sel.style.display = 'none';
+            for (const opt of CODE_LANGUAGES) {
+                const o = document.createElement('option');
+                o.value = opt.value;
+                o.textContent = opt.label;
+                sel.appendChild(o);
+            }
+            sel.addEventListener('change', () => {
+                const lang = sel.value;
+                ctx.editor.chain().focus().setCodeBlock({ language: lang || null }).run();
+            });
+            ctx.codeLangSelect = sel;
+            grpEl.appendChild(sel);
+            bar.appendChild(grpEl);
+            continue;
+        }
 
         for (const btn of group.buttons) {
             const el = document.createElement('button');
@@ -274,7 +404,8 @@ function buildToolbar(ctx) {
 
 // ── Update toolbar active / table-only visibility ─────────────────────────
 function updateToolbar(ctx) {
-    const inTable = ctx.editor.isActive('table');
+    const inTable    = ctx.editor.isActive('table');
+    const inCodeBlock = ctx.editor.isActive('codeBlock');
     for (const { el, btn } of ctx.buttons) {
         if (btn.tableOnly) {
             el.style.display = inTable ? '' : 'none';
@@ -283,12 +414,28 @@ function updateToolbar(ctx) {
             el.classList.toggle('is-active', btn.active(ctx.editor));
         }
     }
+    if (ctx.codeLangSelect) {
+        ctx.codeLangSelect.style.display = inCodeBlock ? '' : 'none';
+        if (inCodeBlock) {
+            const attrs = ctx.editor.getAttributes('codeBlock');
+            ctx.codeLangSelect.value = attrs.language || '';
+        }
+    }
 }
 
 // ── Mount one editor on a textarea ────────────────────────────────────────
+function sanitizeEditorHtml(html) {
+    if (!html) return html;
+    // Strip <blockquote> wrappers around <pre> (code blocks must not live inside blockquotes)
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    tmp.querySelectorAll('blockquote > pre').forEach(pre => pre.parentNode.replaceWith(pre));
+    return tmp.innerHTML;
+}
+
 function mountEditor(textarea) {
     const uploadUrl      = textarea.dataset.uploadUrl || '';
-    const initialContent = textarea.value || '';
+    const initialContent = sanitizeEditorHtml(textarea.value || '');
 
     // Wrapper
     const wrapper = document.createElement('div');
@@ -306,7 +453,7 @@ function mountEditor(textarea) {
     editorHost.className = 'tiptap-editor-host';
     wrapper.appendChild(editorHost);
 
-    const ctx = { editor: null, buttons: [], uploadUrl, imgPopover: null, _editPos: null };
+    const ctx = { editor: null, buttons: [], codeLangSelect: null, uploadUrl, imgPopover: null, _editPos: null, pendingUploads: 0, textarea, wrapper, uploadBadge: null };
 
     const editor = new Editor({
         element: editorHost,
@@ -347,40 +494,47 @@ function mountEditor(textarea) {
     const toolbar = buildToolbar(ctx);
     toolbarPlaceholder.replaceWith(toolbar);
 
+    // Upload status badge (shown during active uploads)
+    const uploadBadge = document.createElement('span');
+    uploadBadge.className = 'tiptap-upload-badge';
+    uploadBadge.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Bild wird hochgeladen…';
+    toolbar.appendChild(uploadBadge);
+    ctx.uploadBadge = uploadBadge;
+
     // Sync initial content to textarea
     textarea.value = editor.getHTML();
 
-    // ── Image edit popover ────────────────────────────────────────────────
-    ctx.imgPopover = buildImagePopover(ctx);
+    // ── Image edit modal ─────────────────────────────────────────────────
+    ctx.imgPopover = buildImageModal(ctx);
 
-    // Click on an existing image → show the edit popover
+    // Click on an existing image → open the edit modal
     editorHost.addEventListener('click', ev => {
         if (ev.target.tagName === 'IMG') {
             // Let ProseMirror process the click and create the NodeSelection first
             setTimeout(() => {
                 const sel = ctx.editor.state.selection;
                 if (sel && sel.node && sel.node.type.name === 'image') {
-                    showImagePopover(ctx, ev.target, sel.from);
+                    showImageModal(ctx, ev.target, sel.from);
                 }
             }, 0);
         } else {
-            hideImagePopover(ctx);
+            hideImageModal(ctx);
         }
     });
 
-    // Dismiss popover when clicking outside both the editor and the popover
+    // Dismiss modal when clicking outside both the editor and the modal
     document.addEventListener('click', ev => {
         if (
-            ctx.imgPopover.style.display !== 'none' &&
-            !ctx.imgPopover.contains(ev.target) &&
+            ctx.imgPopover.classList.contains('tt-img-modal-backdrop--open') &&
+            !ctx.imgPopover.querySelector('.tt-img-modal').contains(ev.target) &&
             !editorHost.contains(ev.target)
         ) {
-            hideImagePopover(ctx);
+            hideImageModal(ctx);
         }
     });
 
-    // Dismiss popover on scroll so it never drifts away from the image
-    document.addEventListener('scroll', () => hideImagePopover(ctx), { passive: true, capture: true });
+    // Dismiss modal on scroll so it stays in sync
+    document.addEventListener('scroll', () => hideImageModal(ctx), { passive: true, capture: true });
 
     // ── Drag & drop images into the editor ──────────────────────────────
     editorHost.addEventListener('drop', ev => {

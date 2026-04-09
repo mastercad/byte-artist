@@ -3,14 +3,16 @@
     <span class="draft-badge"><i class="fas fa-eye-slash"></i> Entwurf</span>
     {% endif %}
     <div class="blog-card-image">
-        <a href="/blog/{{ blog.seoLink }}">
+        {% if blog.previewPicture %}
+        <a href="/blog/{{ blog.seoLink ?: blog.id }}">
             <img src="/images/content/dynamisch/blogs/{{ blog.id }}/{{ blog.previewPicture }}"
                  alt="{{ blog.name }}" loading="lazy">
         </a>
+        {% endif %}
     </div>
     <div class="blog-card-body">
         <h2 class="blog-card-title">
-            <a href="/blog/{{ blog.seoLink }}">{{ blog.name }}</a>
+            <a href="/blog/{{ blog.seoLink ?: blog.id }}">{{ blog.name }}</a>
         </h2>
         <p class="blog-card-desc">{{ blog.shortDescription }}</p>
         {% if blog.blogTags|length %}
@@ -23,6 +25,6 @@
         <div class="blog-card-meta">
             <span class="mono"><i class="fas fa-calendar-alt"></i>&nbsp;{{ blog.created|date("d.m.Y", "Europe/Berlin") }}</span>
         </div>
-        <a href="/blog/{{ blog.seoLink }}" class="btn-ghost mt-2">Weiterlesen</a>
+        <a href="/blog/{{ blog.seoLink ?: blog.id }}" class="btn-ghost mt-2">Weiterlesen</a>
     </div>
 </article>

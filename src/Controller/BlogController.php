@@ -11,6 +11,7 @@ use App\Form\BlogType;
 use App\Repository\BlogRepository;
 use App\Service\File\Base64EncodedFile;
 use App\Service\Pagination;
+use App\Service\Seo\Generator\LinkFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -78,6 +79,7 @@ class BlogController extends AbstractController
     #[Route('/blog/create/{id}', name: 'blog_create', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function createAction(
         Request $request,
+        LinkFactory $seoLinkFactory,
         ?int $id = null
     ): Response {
         $tags = $this->em->getRepository(Tags::class)->findAll();
@@ -104,6 +106,13 @@ class BlogController extends AbstractController
         // For new entries with no submitted date, default to now.
         if (0 >= $id && empty($blogRequest['created'])) {
             $blog->setCreated(new \DateTime());
+        }
+
+        if (!empty($blogRequest['name'])) {
+            $blog->setName($blogRequest['name']);
+            $seoLinkGenerator = $seoLinkFactory->create(Blogs::class, 'name');
+            $seoLinkGenerator->extendWithSeoLink($blog);
+            $blogRequest['seoLink'] = $blog->getSeoLink();
         }
 
         $request->request->set('blog', $blogRequest);

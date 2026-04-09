@@ -73,10 +73,42 @@
     color: var(--tt-accent);
 }
 
+.tiptap-code-lang-select {
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--tt-border);
+    border-radius: 4px;
+    background: var(--tt-bg, #1a1a22);
+    color: var(--tt-text-2);
+    font-size: 11px;
+    font-family: var(--font-mono, monospace);
+    cursor: pointer;
+    outline: none;
+}
+.tiptap-code-lang-select:focus {
+    border-color: var(--tt-accent, #c89060);
+    color: var(--tt-text);
+}
+
 .tiptap-toolbar button i {
     font-size: 11px;
     pointer-events: none;
 }
+
+/* ── Upload in-progress badge ────────────────────────────────────────────── */
+.tiptap-upload-badge {
+    display: none;
+    margin-left: auto;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-family: var(--tt-font-mono, monospace);
+    color: var(--tt-accent, #c89060);
+    padding: 0 6px;
+    white-space: nowrap;
+}
+.tiptap-upload-badge.visible { display: flex; }
+.tiptap-upload-badge i { font-size: 11px; }
 
 /* ── Editor content area ─────────────────────────────────────────────────── */
 .tiptap-editor-host {
@@ -311,115 +343,212 @@
     outline-offset: -4px;
 }
 
-/* ── Image edit popover ──────────────────────────────────────────────────── */
-.tt-img-popover {
+/* ── Image edit modal ────────────────────────────────────────────────────── */
+.tt-img-modal-backdrop {
+    display: none;
     position: fixed;
+    inset: 0;
     z-index: 9999;
-    display: none; /* shown via JS */
-    align-items: center;
-    gap: 4px;
-    padding: 5px 8px;
-    min-width: 320px;
-    max-width: 540px;
-    background: var(--tt-bg);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: var(--tt-radius);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* Small notch / arrow pointing upward toward the image */
-.tt-img-popover::before {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 14px;
-    border: 6px solid transparent;
-    border-bottom-color: rgba(255, 255, 255, 0.14);
-}
-.tt-img-popover::after {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 15px;
-    border: 5px solid transparent;
-    border-bottom-color: var(--tt-bg);
-}
-
-.tt-img-popover-label {
-    flex-shrink: 0;
-    display: inline-flex;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(3px);
     align-items: center;
     justify-content: center;
-    width: 24px;
-    color: var(--tt-text-2);
-    font-size: 12px;
+}
+.tt-img-modal-backdrop--open {
+    display: flex;
 }
 
-.tt-img-popover-url {
+.tt-img-modal {
+    background: var(--tt-bg);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 10px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.75);
+    width: min(520px, 94vw);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+    animation: tt-modal-in 0.18s ease;
+}
+@keyframes tt-modal-in {
+    from { opacity: 0; transform: translateY(-10px) scale(0.97); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Header */
+.tt-img-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--tt-border);
+}
+.tt-img-modal-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--tt-text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.tt-img-modal-title i {
+    color: var(--tt-accent);
+    font-size: 15px;
+}
+.tt-img-modal-close {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--tt-text-2);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+}
+.tt-img-modal-close:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--tt-text);
+}
+
+/* Drop zone */
+.tt-img-modal-dropzone {
+    margin: 20px 20px 0;
+    border: 2px dashed rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    padding: 32px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
+    background: rgba(255, 255, 255, 0.025);
+}
+.tt-img-modal-dropzone:hover {
+    border-color: rgba(200, 144, 96, 0.55);
+    background: rgba(200, 144, 96, 0.04);
+}
+.tt-img-modal-dropzone--over {
+    border-color: var(--tt-accent) !important;
+    background: rgba(200, 144, 96, 0.1) !important;
+}
+.tt-img-modal-dropzone-icon {
+    font-size: 36px;
+    color: var(--tt-accent);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+.tt-img-modal-dropzone-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--tt-text);
+}
+.tt-img-modal-dropzone-sub {
+    font-size: 12px;
+    color: var(--tt-text-2);
+}
+
+/* File pick button inside drop zone */
+.tt-img-modal-pick-btn {
+    margin-top: 4px;
+    padding: 8px 20px;
+    border: 1px solid rgba(200, 144, 96, 0.45);
+    border-radius: 6px;
+    background: rgba(200, 144, 96, 0.1);
+    color: var(--tt-accent);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: background 0.15s, border-color 0.15s;
+}
+.tt-img-modal-pick-btn:hover {
+    background: rgba(200, 144, 96, 0.2);
+    border-color: var(--tt-accent);
+}
+
+/* URL row */
+.tt-img-modal-url-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 20px 0;
+}
+.tt-img-modal-url-label {
+    font-size: 12px;
+    color: var(--tt-text-2);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.tt-img-modal-url-input {
     flex: 1;
     min-width: 0;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid var(--tt-border);
-    border-radius: 4px;
+    border-radius: 5px;
     color: var(--tt-text);
     font-size: 12px;
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    padding: 5px 9px;
+    padding: 6px 10px;
     outline: none;
     transition: border-color 0.15s, background 0.15s;
 }
-.tt-img-popover-url:focus {
+.tt-img-modal-url-input:focus {
     border-color: var(--tt-accent);
-    background: rgba(200, 144, 96, 0.07);
+    background: rgba(200, 144, 96, 0.06);
 }
-
-.tt-img-popover-sep {
-    display: inline-block;
+.tt-img-modal-url-apply {
     flex-shrink: 0;
-    width: 1px;
-    height: 18px;
-    background: var(--tt-border);
-    margin: 0 2px;
-    pointer-events: none;
-}
-
-.tt-img-popover-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    border: none;
-    border-radius: 4px;
+    padding: 6px 13px;
+    border: 1px solid var(--tt-border);
+    border-radius: 5px;
     background: transparent;
-    cursor: pointer;
-    font-size: 11px;
-    transition: background 0.15s, color 0.15s;
-}
-
-.tt-img-popover-btn--confirm {
-    color: var(--tt-accent);
-}
-.tt-img-popover-btn--confirm:hover {
-    background: rgba(200, 144, 96, 0.18);
-    color: var(--tt-accent);
-}
-
-.tt-img-popover-btn--upload {
     color: var(--tt-text-2);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    white-space: nowrap;
 }
-.tt-img-popover-btn--upload:hover {
-    background: var(--tt-border);
-    color: var(--tt-text);
+.tt-img-modal-url-apply:hover {
+    background: rgba(200, 144, 96, 0.12);
+    color: var(--tt-accent);
+    border-color: rgba(200, 144, 96, 0.4);
 }
 
-.tt-img-popover-btn--remove {
-    color: rgba(239, 68, 68, 0.65);
+/* Footer */
+.tt-img-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 16px 20px 18px;
+    border-top: 1px solid var(--tt-border);
+    margin-top: 16px;
 }
-.tt-img-popover-btn--remove:hover {
-    background: rgba(239, 68, 68, 0.12);
+.tt-img-modal-remove-btn {
+    padding: 7px 15px;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: 6px;
+    background: transparent;
+    color: rgba(239, 68, 68, 0.75);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.tt-img-modal-remove-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
     color: #fca5a5;
+    border-color: rgba(239, 68, 68, 0.65);
 }
 

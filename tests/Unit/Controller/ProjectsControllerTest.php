@@ -392,6 +392,65 @@ class ProjectsControllerTest extends TestCase
         self::assertArrayHasKey('child', $result);
     }
 
+    // ------------------------------------------------------------------ showByIdAction
+
+    public function testShowByIdActionRendersShowTemplate(): void
+    {
+        $project = new Projects();
+        $project->setSeoLink('my-project');
+        $this->projectsRepo->method('find')->with(3)->willReturn($project);
+
+        $this->controller->showByIdAction(3);
+
+        self::assertSame('projects/show.html.twig', $this->controller->renderedView);
+        self::assertSame($project, $this->controller->renderedParams['project']);
+    }
+
+    public function testShowByIdActionThrowsNotFoundWhenProjectMissing(): void
+    {
+        $this->projectsRepo->method('find')->with(999)->willReturn(null);
+
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+
+        $this->controller->showByIdAction(999);
+    }
+
+    public function testShowByIdActionRendersTemplateWhenProjectHasNullSeoLink(): void
+    {
+        $project = new Projects();
+        // seoLink is null by default — template uses ?: fallback to project.id
+        $this->projectsRepo->method('find')->with(7)->willReturn($project);
+
+        $this->controller->showByIdAction(7);
+
+        self::assertSame('projects/show.html.twig', $this->controller->renderedView);
+        self::assertSame($project, $this->controller->renderedParams['project']);
+        self::assertNull($project->getSeoLink());
+    }
+
+    // ------------------------------------------------------------------ showBySeoNameAction
+
+    public function testShowBySeoNameActionRendersShowTemplate(): void
+    {
+        $project = new Projects();
+        $project->setSeoLink('my-project-slug');
+        $this->projectsRepo->method('findOneBy')->with(['seoLink' => 'my-project-slug'])->willReturn($project);
+
+        $this->controller->showBySeoNameAction('my-project-slug');
+
+        self::assertSame('projects/show.html.twig', $this->controller->renderedView);
+        self::assertSame($project, $this->controller->renderedParams['project']);
+    }
+
+    public function testShowBySeoNameActionThrowsNotFoundWhenProjectMissing(): void
+    {
+        $this->projectsRepo->method('findOneBy')->with(['seoLink' => 'ghost'])->willReturn(null);
+
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+
+        $this->controller->showBySeoNameAction('ghost');
+    }
+
     /**
      * @param FormError[]     $errors
      * @param FormInterface[] $children
@@ -560,26 +619,6 @@ class ProjectsControllerTest extends TestCase
         self::assertSame(7, $this->controller->renderedParams['id']);
     }
 
-    public function testShowByIdActionRendersShowTemplate(): void
-    {
-        $project = new Projects();
-        $this->projectsRepo->method('find')->with(5)->willReturn($project);
-
-        $this->controller->showByIdAction(5);
-
-        self::assertSame('projects/show.html.twig', $this->controller->renderedView);
-        self::assertSame($project, $this->controller->renderedParams['project']);
-    }
-    public function testShowBySeoNameActionRendersShowTemplate(): void
-    {
-        $project = new Projects();
-        $this->projectsRepo->method('findOneBy')->with(['seoLink' => 'cool-project'])->willReturn($project);
-
-        $this->controller->showBySeoNameAction('cool-project');
-
-        self::assertSame('projects/show.html.twig', $this->controller->renderedView);
-        self::assertSame($project, $this->controller->renderedParams['project']);
-    }
     public function testSaveActionNewProjectPersistsAndReturnsJsonWithId(): void
     {
         $form = $this->makeForm(true, true);

@@ -40,6 +40,7 @@ class BlogType extends AbstractType
                 [
                     'label' => 'Kurzbeschreibung',
                     'required' => false,
+                    'empty_data' => '',
                     'attr' => [
                         'placeholder' => 'Ein knapper Teaser-Text für Übersichtsseiten und Metadaten ...',
                         'class' => 'form-control',
@@ -52,6 +53,7 @@ class BlogType extends AbstractType
                 TextareaType::class,
                 [
                     'required' => false,
+                    'empty_data' => '',
                     'label' => false,
                     'attr' => [
                         'class' => 'tiptap-source',

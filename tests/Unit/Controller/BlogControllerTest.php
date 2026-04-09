@@ -291,6 +291,37 @@ class BlogControllerTest extends TestCase
         self::assertSame($blog, $this->controller->renderedParams['blog']);
     }
 
+    public function testShowActionThrowsNotFoundWhenBlogMissing(): void
+    {
+        $this->blogRepo->method('find')->with(999)->willReturn(null);
+
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+
+        $this->controller->showAction(999);
+    }
+
+    public function testShowActionRendersTemplateWhenBlogHasNullSeoLink(): void
+    {
+        $blog = new Blogs();
+        // seoLink is null by default — template uses ?: fallback to blog.id
+        $this->blogRepo->method('find')->with(7)->willReturn($blog);
+
+        $this->controller->showAction(7);
+
+        self::assertSame('blog/show.html.twig', $this->controller->renderedView);
+        self::assertSame($blog, $this->controller->renderedParams['blog']);
+        self::assertNull($blog->getSeoLink());
+    }
+
+    public function testDetailByNameActionThrowsNotFoundWhenBlogMissing(): void
+    {
+        $this->blogRepo->method('findOneBy')->with(['seoLink' => 'ghost-slug'])->willReturn(null);
+
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+
+        $this->controller->detailByNameAction('ghost-slug');
+    }
+
     // ------------------------------------------------------------------ uploadImageAction: content-type JSON
 
     public function testUploadImageActionParsesJsonContentType(): void
