@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Service\Pagination;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use PHPUnit\Framework\MockObject\MockObject;

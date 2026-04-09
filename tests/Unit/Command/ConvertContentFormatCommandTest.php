@@ -28,14 +28,14 @@ class ConvertContentFormatCommandTest extends BaseTestCase
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->repository    = $this->createMock(EntityRepository::class);
+        $this->repository = $this->createMock(EntityRepository::class);
 
         $this->entityManager
             ->method('getRepository')
             ->willReturn($this->repository);
 
         $this->command = new ConvertContentFormatCommand($this->entityManager);
-        $application   = new Application();
+        $application = new Application();
         $application->add($this->command);
         $this->commandTester = new CommandTester($application->find('app:convert-content-format'));
     }
@@ -308,6 +308,7 @@ class ConvertContentFormatCommandTest extends BaseTestCase
             ->method('setContent')
             ->with(self::callback(static function (string $html) use (&$capturedHtml): bool {
                 $capturedHtml = $html;
+
                 return true;
             }))
             ->willReturnSelf();
@@ -331,6 +332,7 @@ class ConvertContentFormatCommandTest extends BaseTestCase
             ->method('setDescription')
             ->with(self::callback(static function (?string $html) use (&$capturedHtml): bool {
                 $capturedHtml = $html;
+
                 return true;
             }))
             ->willReturnSelf();

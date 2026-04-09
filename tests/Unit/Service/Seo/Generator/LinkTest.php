@@ -48,7 +48,7 @@ class LinkTest extends TestCase
         // Call 1: base slug exists (different entity) → recurse to '-1'
         // Call 2: '-1' slug is free → stop
         $returnMap = [
-            'attention-this-is-a-testname-for-the-test-without-data-in-database'   => $dbEntityOne,
+            'attention-this-is-a-testname-for-the-test-without-data-in-database' => $dbEntityOne,
             'attention-this-is-a-testname-for-the-test-without-data-in-database-1' => null,
         ];
         $repositoryMock->method('findOneBy')
@@ -86,7 +86,7 @@ class LinkTest extends TestCase
         // Call 1: base slug taken by id=1 (different) → recurse to '-1'
         // Call 2: '-1' slug taken by id=10 (self) → self-match, accept '-1'
         $returnMap = [
-            'attention-this-is-a-testname-for-the-test-without-data-in-database'   => $dbEntityOne,
+            'attention-this-is-a-testname-for-the-test-without-data-in-database' => $dbEntityOne,
             'attention-this-is-a-testname-for-the-test-without-data-in-database-1' => $dbEntityTwo,
         ];
         $repositoryMock->method('findOneBy')
@@ -118,7 +118,7 @@ class LinkTest extends TestCase
 
         // Call 1: base taken → '-1'; Call 2: '-1' taken → '-2'; Call 3: '-2' taken → '-3'; Call 4: '-3' free
         $returnMap = [
-            'attention-this-is-a-testname-for-the-test-without-data-in-database'   => $dbEntityOne,
+            'attention-this-is-a-testname-for-the-test-without-data-in-database' => $dbEntityOne,
             'attention-this-is-a-testname-for-the-test-without-data-in-database-1' => $dbEntityTwo,
             'attention-this-is-a-testname-for-the-test-without-data-in-database-2' => $dbEntityThree,
             'attention-this-is-a-testname-for-the-test-without-data-in-database-3' => null,

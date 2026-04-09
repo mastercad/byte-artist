@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Controller;
 
-use App\Controller\ProjectsController;
-use App\Entity\ProjectTags;
 use App\Entity\Projects;
+use App\Entity\ProjectTags;
 use App\Entity\Tags;
 use App\Entity\User;
 use App\Repository\ProjectsRepository;
@@ -26,89 +25,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
-
-/**
- * Test subclass that exposes private methods and removes the Symfony
- * container dependency so no kernel is needed.
- */
-class TestableProjectsController extends ProjectsController
-{
-    public ?UserInterface $testUser = null;
-    public string $renderedView = '';
-    public array $renderedParams = [];
-    public ?FormInterface $formToReturn = null;
-    public bool $isGrantedResult = true;
-    public string $testPublicDir = '';
-    public ?object $lastFormData = null;
-
-    protected function getUser(): ?UserInterface
-    {
-        return $this->testUser;
-    }
-
-    protected function denyAccessUnlessGranted(
-        mixed $attribute,
-        mixed $subject = null,
-        string $message = 'Access Denied.'
-    ): void {
-        // no-op – access checks are covered by ProjectVoterTest
-    }
-
-    protected function isGranted(mixed $attribute, mixed $subject = null): bool
-    {
-        return $this->isGrantedResult;
-    }
-
-    protected function render(string $view, array $parameters = [], ?Response $response = null): Response
-    {
-        $this->renderedView = $view;
-        $this->renderedParams = $parameters;
-        return $response ?? new Response();
-    }
-
-    protected function createForm(string $type, mixed $data = null, array $options = []): FormInterface
-    {
-        $this->lastFormData = $data;
-        return $this->formToReturn;
-    }
-
-    protected function getPublicDir(): string
-    {
-        return $this->testPublicDir ?: sys_get_temp_dir();
-    }
-
-    protected function handleUploadFiles(Projects $project): static
-    {
-        return $this; // no-op – avoids filesystem operations in unit tests
-    }
-
-    protected function clearUploadFolder(): static
-    {
-        return $this; // no-op – avoids filesystem operations in unit tests
-    }
-
-    public string $testProjectDir = '';
-
-    public function getParameter(string $name): \UnitEnum|array|string|int|float|bool|null
-    {
-        if ($name === 'kernel.project_dir') {
-            return $this->testProjectDir ?: sys_get_temp_dir();
-        }
-        return null;
-    }
-
-    public function callConsiderTags(Projects $project, array $projectTags): Projects
-    {
-        return (new \ReflectionMethod(ProjectsController::class, 'considerTags'))
-            ->invoke($this, $project, $projectTags);
-    }
-
-    public function callExtractErrorsFromForm(FormInterface $form): array
-    {
-        return (new \ReflectionMethod(ProjectsController::class, 'extractErrorsFromForm'))
-            ->invoke($this, $form);
-    }
-}
 
 class ProjectsControllerTest extends TestCase
 {
@@ -133,11 +49,11 @@ class ProjectsControllerTest extends TestCase
 
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->em->method('getRepository')->willReturnCallback(
-            fn(string $class) => match ($class) {
+            fn (string $class) => match ($class) {
                 ProjectTags::class => $this->projectTagRepo,
-                Tags::class        => $this->tagRepo,
-                Projects::class    => $this->projectsRepo,
-                default            => throw new \InvalidArgumentException("Unexpected: $class"),
+                Tags::class => $this->tagRepo,
+                Projects::class => $this->projectsRepo,
+                default => throw new \InvalidArgumentException("Unexpected: $class"),
             }
         );
 
@@ -496,7 +412,7 @@ class ProjectsControllerTest extends TestCase
     // ------------------------------------------------------------------ helpers
 
     /**
-     * @param FormError[]    $errors
+     * @param FormError[]     $errors
      * @param FormInterface[] $children
      */
     private function makeMockForm(array $errors, array $children, string $name = 'form'): FormInterface
@@ -521,6 +437,7 @@ class ProjectsControllerTest extends TestCase
         $form->method('createView')->willReturn(new FormView());
         $form->method('getErrors')->willReturn(new FormErrorIterator($form, []));
         $form->method('all')->willReturn([]);
+
         return $form;
     }
 
@@ -530,7 +447,7 @@ class ProjectsControllerTest extends TestCase
         $linkGenerator = $this->createMock(Link::class);
         $linkGenerator->method('extendWithSeoLink')->willReturnCallback(
             static function (Projects $project) use (&$capturedProject): void {
-                if ($project->getSeoLink() === null) {
+                if (null === $project->getSeoLink()) {
                     $project->setSeoLink('my-project-seo');
                 }
             }
@@ -539,6 +456,7 @@ class ProjectsControllerTest extends TestCase
         /** @var MockObject&LinkFactory $factory */
         $factory = $this->createMock(LinkFactory::class);
         $factory->method('create')->willReturn($linkGenerator);
+
         return $factory;
     }
 
@@ -547,7 +465,7 @@ class ProjectsControllerTest extends TestCase
     public function testIndexActionRendersProjectsTemplateForAdmin(): void
     {
         $pagination = $this->createMock(Pagination::class);
-        $paginator  = $this->createMock(\Doctrine\ORM\Tools\Pagination\Paginator::class);
+        $paginator = $this->createMock(\Doctrine\ORM\Tools\Pagination\Paginator::class);
 
         $this->controller->isGrantedResult = true;
         $this->projectTagRepo->method('findAll')->willReturn([]);
@@ -568,7 +486,7 @@ class ProjectsControllerTest extends TestCase
     public function testIndexActionRendersVisibleProjectsOnlyForGuest(): void
     {
         $pagination = $this->createMock(Pagination::class);
-        $paginator  = $this->createMock(\Doctrine\ORM\Tools\Pagination\Paginator::class);
+        $paginator = $this->createMock(\Doctrine\ORM\Tools\Pagination\Paginator::class);
 
         $this->controller->isGrantedResult = false;
         $this->projectTagRepo->method('findAll')->willReturn([]);
@@ -588,7 +506,7 @@ class ProjectsControllerTest extends TestCase
     public function testTagActionRendersAdminQueryWhenGranted(): void
     {
         $pagination = $this->createMock(Pagination::class);
-        $paginator  = $this->createMock(\Doctrine\ORM\Tools\Pagination\Paginator::class);
+        $paginator = $this->createMock(\Doctrine\ORM\Tools\Pagination\Paginator::class);
 
         $this->controller->isGrantedResult = true;
         $this->projectTagRepo->method('findAll')->willReturn([]);
@@ -607,7 +525,7 @@ class ProjectsControllerTest extends TestCase
     public function testTagActionRendersVisibleProjectsQueryForGuest(): void
     {
         $pagination = $this->createMock(Pagination::class);
-        $paginator  = $this->createMock(\Doctrine\ORM\Tools\Pagination\Paginator::class);
+        $paginator = $this->createMock(\Doctrine\ORM\Tools\Pagination\Paginator::class);
 
         $this->controller->isGrantedResult = false;
         $this->projectTagRepo->method('findAll')->willReturn([]);
@@ -699,7 +617,7 @@ class ProjectsControllerTest extends TestCase
         self::assertSame($project, $this->controller->renderedParams['project']);
     }
 
-    // ------------------------------------------------------------------ saveAction: new project  
+    // ------------------------------------------------------------------ saveAction: new project
 
     public function testSaveActionNewProjectPersistsAndReturnsJsonWithId(): void
     {
@@ -765,7 +683,7 @@ class ProjectsControllerTest extends TestCase
 
         $request = new Request();
         $request->request->set('projects', [
-            'id'   => 0,
+            'id' => 0,
             'name' => 'Tagged Project',
             'projectTags' => [['tagName' => 'php']],
         ]);
@@ -860,7 +778,7 @@ class ProjectsControllerTest extends TestCase
 
         // Create a temp image directory that looks like the real one
         $tmpRoot = sys_get_temp_dir().'/proj_delete_img_'.uniqid();
-        $imgDir  = $tmpRoot.'/images/content/dynamisch/projects/10';
+        $imgDir = $tmpRoot.'/images/content/dynamisch/projects/10';
         mkdir($imgDir, 0777, true);
         $dummyFile = $imgDir.'/photo.jpg';
         file_put_contents($dummyFile, 'fake');
@@ -1098,10 +1016,10 @@ class ProjectsControllerTest extends TestCase
     // ------------------------------------------------------------------ clearUploadFolderAction
     public function testClearUploadFolderActionDeletesFilesAndReturnsSuccess(): void
     {
-        $tmpRoot = sys_get_temp_dir() . '/proj_clear_' . uniqid();
-        $uploadDir = $tmpRoot . '/public/images/upload/42/projects';
+        $tmpRoot = sys_get_temp_dir().'/proj_clear_'.uniqid();
+        $uploadDir = $tmpRoot.'/public/images/upload/42/projects';
         mkdir($uploadDir, 0777, true);
-        $dummyFile = $uploadDir . '/dummy.jpg';
+        $dummyFile = $uploadDir.'/dummy.jpg';
         file_put_contents($dummyFile, 'data');
 
         $this->controller->testProjectDir = $tmpRoot;
@@ -1118,14 +1036,14 @@ class ProjectsControllerTest extends TestCase
         @rmdir(dirname($uploadDir));
         @rmdir(dirname($uploadDir, 2));
         @rmdir(dirname($uploadDir, 3));
-        @rmdir($tmpRoot . '/public');
+        @rmdir($tmpRoot.'/public');
         @rmdir($tmpRoot);
     }
 
     public function testClearUploadFolderActionWithEmptyFolderReturnsSuccess(): void
     {
-        $tmpRoot = sys_get_temp_dir() . '/proj_clear_empty_' . uniqid();
-        $uploadDir = $tmpRoot . '/public/images/upload/42/projects';
+        $tmpRoot = sys_get_temp_dir().'/proj_clear_empty_'.uniqid();
+        $uploadDir = $tmpRoot.'/public/images/upload/42/projects';
         mkdir($uploadDir, 0777, true);
 
         $this->controller->testProjectDir = $tmpRoot;
@@ -1141,7 +1059,7 @@ class ProjectsControllerTest extends TestCase
         @rmdir(dirname($uploadDir));
         @rmdir(dirname($uploadDir, 2));
         @rmdir(dirname($uploadDir, 3));
-        @rmdir($tmpRoot . '/public');
+        @rmdir($tmpRoot.'/public');
         @rmdir($tmpRoot);
     }
 
@@ -1153,7 +1071,7 @@ class ProjectsControllerTest extends TestCase
         $uploadedFile = new UploadedFile($tmpFile, 'shot.png', 'image/png', null, true);
 
         // Do NOT pre-create the directory – this exercises the mkdir() branch
-        $tmpRoot = sys_get_temp_dir() . '/proj_mkd_' . uniqid();
+        $tmpRoot = sys_get_temp_dir().'/proj_mkd_'.uniqid();
         $this->controller->testPublicDir = $tmpRoot;
 
         $request = new Request();
@@ -1166,15 +1084,17 @@ class ProjectsControllerTest extends TestCase
         self::assertSame(1, $data['uploaded']);
 
         // Cleanup
-        array_map('unlink', glob($tmpRoot . '/images/upload/42/projects/*') ?: []);
+        array_map('unlink', glob($tmpRoot.'/images/upload/42/projects/*') ?: []);
         foreach ([
-            $tmpRoot . '/images/upload/42/projects',
-            $tmpRoot . '/images/upload/42',
-            $tmpRoot . '/images/upload',
-            $tmpRoot . '/images',
+            $tmpRoot.'/images/upload/42/projects',
+            $tmpRoot.'/images/upload/42',
+            $tmpRoot.'/images/upload',
+            $tmpRoot.'/images',
             $tmpRoot,
         ] as $dir) {
-            if (is_dir($dir)) rmdir($dir);
+            if (is_dir($dir)) {
+                rmdir($dir);
+            }
         }
     }
 
@@ -1186,7 +1106,7 @@ class ProjectsControllerTest extends TestCase
         $uploadedFile = new UploadedFile($tmpFile, 'preview.jpg', 'image/jpeg', null, true);
 
         // Do NOT pre-create the directory – this exercises the mkdir() branch
-        $tmpRoot = sys_get_temp_dir() . '/proj_prev_mkd_' . uniqid();
+        $tmpRoot = sys_get_temp_dir().'/proj_prev_mkd_'.uniqid();
         $this->controller->testPublicDir = $tmpRoot;
 
         $request = new Request();
@@ -1199,16 +1119,17 @@ class ProjectsControllerTest extends TestCase
         self::assertSame(1, $data['uploaded']);
 
         // Cleanup
-        array_map('unlink', glob($tmpRoot . '/images/upload/42/projects/*') ?: []);
+        array_map('unlink', glob($tmpRoot.'/images/upload/42/projects/*') ?: []);
         foreach ([
-            $tmpRoot . '/images/upload/42/projects',
-            $tmpRoot . '/images/upload/42',
-            $tmpRoot . '/images/upload',
-            $tmpRoot . '/images',
+            $tmpRoot.'/images/upload/42/projects',
+            $tmpRoot.'/images/upload/42',
+            $tmpRoot.'/images/upload',
+            $tmpRoot.'/images',
             $tmpRoot,
         ] as $dir) {
-            if (is_dir($dir)) rmdir($dir);
+            if (is_dir($dir)) {
+                rmdir($dir);
+            }
         }
     }
-
 }

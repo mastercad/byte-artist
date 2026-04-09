@@ -23,4 +23,8 @@
     <file>src/</file>
     <file>tests/</file>
 
+    <!-- Auto-generated reference / encrypted-secrets files: cannot be reformatted -->
+    <exclude-pattern>config/reference.php</exclude-pattern>
+    <exclude-pattern>config/secrets/</exclude-pattern>
+
 </ruleset>

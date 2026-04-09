@@ -27,7 +27,7 @@ class ConvertContentFormatCommand extends Command
     private const UBB_DETECTION_PATTERN = '/\[[A-Z][A-Z0-9]*[=:]?[^\]]*\]/i';
 
     private array $imagePathMap = [
-        'blogs'    => '/images/content/dynamisch/blogs/%d/',
+        'blogs' => '/images/content/dynamisch/blogs/%d/',
         'projects' => '/images/content/dynamisch/projects/%d/',
     ];
 
@@ -42,7 +42,7 @@ class ConvertContentFormatCommand extends Command
             ->addArgument(
                 'table',
                 InputArgument::REQUIRED,
-                'Table to process (' . implode('/', self::POSSIBLE_TABLES) . ')'
+                'Table to process ('.implode('/', self::POSSIBLE_TABLES).')'
             )
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Show what would be changed without writing to DB')
             ->addOption('force', null, InputOption::VALUE_NONE, 'Convert all entries, even those without detected UBB tags')
@@ -53,8 +53,8 @@ class ConvertContentFormatCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $tableName = $input->getArgument('table');
-        $dryRun    = (bool) $input->getOption('dry-run');
-        $force     = (bool) $input->getOption('force');
+        $dryRun = (bool) $input->getOption('dry-run');
+        $force = (bool) $input->getOption('force');
 
         if (!in_array($tableName, self::POSSIBLE_TABLES, true)) {
             $io->error(sprintf('Unknown table "%s". Allowed: %s', $tableName, implode(', ', self::POSSIBLE_TABLES)));
@@ -62,8 +62,8 @@ class ConvertContentFormatCommand extends Command
             return Command::FAILURE;
         }
 
-        $entityClass = 'App\\Entity\\' . ucfirst($tableName);
-        $entities    = $this->entityManager->getRepository($entityClass)->findAll();
+        $entityClass = 'App\\Entity\\'.ucfirst($tableName);
+        $entities = $this->entityManager->getRepository($entityClass)->findAll();
 
         $io->title(sprintf('Convert UBB → HTML for table "%s" (%d entries)', $tableName, count($entities)));
 
@@ -72,10 +72,10 @@ class ConvertContentFormatCommand extends Command
         }
 
         $converted = 0;
-        $skipped   = 0;
+        $skipped = 0;
 
         foreach ($entities as $entity) {
-            $id      = $entity->getId();
+            $id = $entity->getId();
             $content = $this->getContent($entity, $tableName);
 
             if (null === $content || '' === $content) {
@@ -92,7 +92,7 @@ class ConvertContentFormatCommand extends Command
             }
 
             $imagePath = sprintf($this->imagePathMap[$tableName], $id);
-            $replacer  = new Replace(true);
+            $replacer = new Replace(true);
             $replacer->setBilderPfad($imagePath);
 
             $html = $replacer->filter($content);
@@ -125,18 +125,18 @@ class ConvertContentFormatCommand extends Command
     private function getContent(object $entity, string $tableName): ?string
     {
         return match ($tableName) {
-            'blogs'    => $entity->getContent(),
+            'blogs' => $entity->getContent(),
             'projects' => $entity->getDescription(),
-            default    => null,
+            default => null,
         };
     }
 
     private function setContent(object $entity, string $tableName, string $html): void
     {
         match ($tableName) {
-            'blogs'    => $entity->setContent($html),
+            'blogs' => $entity->setContent($html),
             'projects' => $entity->setDescription($html),
-            default    => null,
+            default => null,
         };
     }
 }

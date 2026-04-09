@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Controller;
 
-use App\Controller\BlogController;
-use App\Entity\BlogTags;
 use App\Entity\Blogs;
+use App\Entity\BlogTags;
 use App\Entity\Tags;
 use App\Entity\User;
 use App\Repository\BlogRepository;
@@ -23,70 +22,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
-
-/**
- * Test subclass that exposes private methods and breaks the Symfony
- * container dependency so no kernel is needed.
- */
-class TestableBlogController extends BlogController
-{
-    public ?UserInterface $testUser = null;
-    public string $renderedView = '';
-    public array $renderedParams = [];
-    public ?FormInterface $formToReturn = null;
-    public bool $isGrantedResult = true;
-    public string $testPublicDir = '';
-
-    protected function getUser(): ?UserInterface
-    {
-        return $this->testUser;
-    }
-
-    protected function denyAccessUnlessGranted(
-        mixed $attribute,
-        mixed $subject = null,
-        string $message = 'Access Denied.'
-    ): void {
-        // no-op – access checks are covered by BlogVoterTest
-    }
-
-    protected function isGranted(mixed $attribute, mixed $subject = null): bool
-    {
-        return $this->isGrantedResult;
-    }
-
-    protected function render(string $view, array $parameters = [], ?Response $response = null): Response
-    {
-        $this->renderedView = $view;
-        $this->renderedParams = $parameters;
-        return $response ?? new Response();
-    }
-
-    public ?object $lastFormData = null;
-
-    protected function createForm(string $type, mixed $data = null, array $options = []): FormInterface
-    {
-        $this->lastFormData = $data;
-        return $this->formToReturn;
-    }
-
-    protected function getPublicDir(): string
-    {
-        return $this->testPublicDir;
-    }
-
-    public function callConsiderTags(Blogs $blog, array $blogTags): Blogs
-    {
-        return (new \ReflectionMethod(BlogController::class, 'considerTags'))
-            ->invoke($this, $blog, $blogTags);
-    }
-
-    public function callExtractErrorsFromForm(FormInterface $form): array
-    {
-        return (new \ReflectionMethod(BlogController::class, 'extractErrorsFromForm'))
-            ->invoke($this, $form);
-    }
-}
 
 class BlogControllerTest extends TestCase
 {
@@ -110,11 +45,11 @@ class BlogControllerTest extends TestCase
 
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->em->method('getRepository')->willReturnCallback(
-            fn(string $class) => match ($class) {
+            fn (string $class) => match ($class) {
                 BlogTags::class => $this->blogTagRepo,
-                Tags::class     => $this->tagRepo,
-                Blogs::class    => $this->blogRepo,
-                default         => throw new \InvalidArgumentException("Unexpected: $class"),
+                Tags::class => $this->tagRepo,
+                Blogs::class => $this->blogRepo,
+                default => throw new \InvalidArgumentException("Unexpected: $class"),
             }
         );
 
@@ -130,7 +65,7 @@ class BlogControllerTest extends TestCase
     public function testIndexActionRendersCorrectTemplate(): void
     {
         $pagination = $this->createMock(\App\Service\Pagination::class);
-        $paginator  = $this->createMock(\Doctrine\ORM\Tools\Pagination\Paginator::class);
+        $paginator = $this->createMock(\Doctrine\ORM\Tools\Pagination\Paginator::class);
 
         $this->blogTagRepo->method('findAll')->willReturn([]);
         $this->blogRepo->method('queryAllVisibleBlogs')->willReturn(
@@ -152,7 +87,7 @@ class BlogControllerTest extends TestCase
     public function testTagActionRendersCorrectTemplateWithTagSeoLink(): void
     {
         $pagination = $this->createMock(\App\Service\Pagination::class);
-        $paginator  = $this->createMock(\Doctrine\ORM\Tools\Pagination\Paginator::class);
+        $paginator = $this->createMock(\Doctrine\ORM\Tools\Pagination\Paginator::class);
 
         $this->blogTagRepo->method('findAll')->willReturn([]);
         $this->blogRepo->method('queryAllBlogsByTag')->willReturn(
@@ -825,6 +760,7 @@ class BlogControllerTest extends TestCase
         $form->method('createView')->willReturn(new FormView());
         $form->method('getErrors')->willReturn(new FormErrorIterator($form, []));
         $form->method('all')->willReturn([]);
+
         return $form;
     }
 

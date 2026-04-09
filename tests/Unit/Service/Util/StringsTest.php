@@ -7,204 +7,201 @@ use PHPUnit\Framework\TestCase;
 
 class StringsTest extends TestCase
 {
-  /**
-   * @dataProvider convertToCamelCaseProvider
-   *
-   * @param mixed $content
-   * @param mixed $expectation
-   * 
-   * @return void
-   */
-  public function testConvertToCamelCase($content, $separator, $expectation)
-  {
-    self::assertSame($expectation, Strings::convertToCamelCase($content, $separator));
-  }
+    /**
+     * @dataProvider convertToCamelCaseProvider
+     *
+     * @return void
+     */
+    public function testConvertToCamelCase($content, $separator, $expectation)
+    {
+        self::assertSame($expectation, Strings::convertToCamelCase($content, $separator));
+    }
 
-  public function convertToCamelCaseProvider()
-  {
-    yield 'nothing to convert in single word' => [
-      'content' => 'TestWord',
-      'separator' => '_',
-      'expectation' => 'TestWord'
-    ];
+    public function convertToCamelCaseProvider()
+    {
+        yield 'nothing to convert in single word' => [
+            'content' => 'TestWord',
+            'separator' => '_',
+            'expectation' => 'TestWord'
+        ];
 
-    yield 'replace single separator' => [
-      'content' => 'test_word',
-      'separator' => '_',
-      'expectation' => 'testWord'
-    ];
+        yield 'replace single separator' => [
+            'content' => 'test_word',
+            'separator' => '_',
+            'expectation' => 'testWord'
+        ];
 
-    yield 'replace multiple founds with mixed camel case' => [
-      'content' => 'test_word_With_teSdst_filE_',
-      'separator' => '_',
-      'expectation' => 'testWordWithTeSdstFilE_'
-    ];
+        yield 'replace multiple founds with mixed camel case' => [
+            'content' => 'test_word_With_teSdst_filE_',
+            'separator' => '_',
+            'expectation' => 'testWordWithTeSdstFilE_'
+        ];
 
-    yield 'replace multiple founds with regex reserved char' => [
-      'content' => 'test?word?With?teSdst?filE',
-      'separator' => '?',
-      'expectation' => 'testWordWithTeSdstFilE'
-    ];
+        yield 'replace multiple founds with regex reserved char' => [
+            'content' => 'test?word?With?teSdst?filE',
+            'separator' => '?',
+            'expectation' => 'testWordWithTeSdstFilE'
+        ];
 
-    yield 'replace string with only separators' => [
-      'content' => '?????????????????????',
-      'separator' => '?',
-      'expectation' => '?????????????????????'
-    ];
-  }
+        yield 'replace string with only separators' => [
+            'content' => '?????????????????????',
+            'separator' => '?',
+            'expectation' => '?????????????????????'
+        ];
+    }
 
-  /**
-   * @dataProvider convertFromCamelCaseProvider
-   *
-   * @param string $content
-   * @param string $separator
-   * @param string $expectation
-   *
-   * @return void
-   */
-  public function testConvertFromCamelCase($content, $separator, $expectation)
-  {
-    self::assertSame($expectation, Strings::convertFromCamelCase($content, $separator));
-  }
+    /**
+     * @dataProvider convertFromCamelCaseProvider
+     *
+     * @param string $content
+     * @param string $separator
+     * @param string $expectation
+     *
+     * @return void
+     */
+    public function testConvertFromCamelCase($content, $separator, $expectation)
+    {
+        self::assertSame($expectation, Strings::convertFromCamelCase($content, $separator));
+    }
 
-  public function convertFromCamelCaseProvider()
-  {
-    yield 'nothing to convert in single word' => [
-      'content' => 'Testword',
-      'separator' => '_',
-      'expectation' => 'testword'
-    ];
+    public function convertFromCamelCaseProvider()
+    {
+        yield 'nothing to convert in single word' => [
+            'content' => 'Testword',
+            'separator' => '_',
+            'expectation' => 'testword'
+        ];
 
-    yield 'replace single camel case' => [
-      'content' => 'TestWord',
-      'separator' => '_',
-      'expectation' => 'test_word'
-    ];
+        yield 'replace single camel case' => [
+            'content' => 'TestWord',
+            'separator' => '_',
+            'expectation' => 'test_word'
+        ];
 
-    yield 'replace in only uppercase string' => [
-      'content' => 'TESTWORD',
-      'separator' => '_',
-      'expectation' => 't_e_s_t_w_o_r_d'
-    ];
+        yield 'replace in only uppercase string' => [
+            'content' => 'TESTWORD',
+            'separator' => '_',
+            'expectation' => 't_e_s_t_w_o_r_d'
+        ];
 
-    yield 'replace in only uppercase string and regex reserved character' => [
-      'content' => 'TESTWORD',
-      'separator' => '*',
-      'expectation' => 't*e*s*t*w*o*r*d'
-    ];
-  }
+        yield 'replace in only uppercase string and regex reserved character' => [
+            'content' => 'TESTWORD',
+            'separator' => '*',
+            'expectation' => 't*e*s*t*w*o*r*d'
+        ];
+    }
 
-  /**
-   * @dataProvider makeStringLinkSaveProvider
-   *
-   * @param string $content
-   * @param string $expectation
-   *
-   * @return void
-   */
-  public function testMakeStringLinkSave($content, $expectation)
-  {
-    self::assertSame($expectation, Strings::makeStringLinkSave($content));
-  }
+    /**
+     * @dataProvider makeStringLinkSaveProvider
+     *
+     * @param string $content
+     * @param string $expectation
+     *
+     * @return void
+     */
+    public function testMakeStringLinkSave($content, $expectation)
+    {
+        self::assertSame($expectation, Strings::makeStringLinkSave($content));
+    }
 
-  public function makeStringLinkSaveProvider()
-  {
-    yield 'convert only single lowercase word' => [
-      'content' => 'testword',
-      'expectation' => 'testword'
-    ];
+    public function makeStringLinkSaveProvider()
+    {
+        yield 'convert only single lowercase word' => [
+            'content' => 'testword',
+            'expectation' => 'testword'
+        ];
 
-    yield 'convert only single camel case word' => [
-      'content' => 'TestWord',
-      'expectation' => 'testword'
-    ];
+        yield 'convert only single camel case word' => [
+            'content' => 'TestWord',
+            'expectation' => 'testword'
+        ];
 
-    yield 'convert two word' => [
-      'content' => 'Test Word',
-      'expectation' => 'test-word'
-    ];
+        yield 'convert two word' => [
+            'content' => 'Test Word',
+            'expectation' => 'test-word'
+        ];
 
-    yield 'convert complete sentence' => [
-      'content' => 'Attention: This is complete sentence who have to converted to link save format',
-      'expectation' => 'attention-this-is-complete-sentence-who-have-to-converted-to-link-save-format'
-    ];
+        yield 'convert complete sentence' => [
+            'content' => 'Attention: This is complete sentence who have to converted to link save format',
+            'expectation' => 'attention-this-is-complete-sentence-who-have-to-converted-to-link-save-format'
+        ];
 
-    yield 'strip leading and trailing dashes' => [
-      'content' => '-hello-',
-      'expectation' => 'hello'
-    ];
+        yield 'strip leading and trailing dashes' => [
+            'content' => '-hello-',
+            'expectation' => 'hello'
+        ];
 
-    yield 'collapse consecutive dashes' => [
-      'content' => 'hello---world',
-      'expectation' => 'hello-world'
-    ];
+        yield 'collapse consecutive dashes' => [
+            'content' => 'hello---world',
+            'expectation' => 'hello-world'
+        ];
 
-    yield 'all special characters results in single dash stripped to empty' => [
-      'content' => '!!!',
-      'expectation' => ''
-    ];
-  }
+        yield 'all special characters results in single dash stripped to empty' => [
+            'content' => '!!!',
+            'expectation' => ''
+        ];
+    }
 
-  // ------------------------------------------------------------------ replaceSpecialCharacters
+    // ------------------------------------------------------------------ replaceSpecialCharacters
 
-  /**
-   * @dataProvider replaceSpecialCharactersProvider
-   */
-  public function testReplaceSpecialCharacters(string $content, string $expectation): void
-  {
-    self::assertSame($expectation, Strings::replaceSpecialCharacters($content));
-  }
+    /**
+     * @dataProvider replaceSpecialCharactersProvider
+     */
+    public function testReplaceSpecialCharacters(string $content, string $expectation): void
+    {
+        self::assertSame($expectation, Strings::replaceSpecialCharacters($content));
+    }
 
-  public function replaceSpecialCharactersProvider(): iterable
-  {
-    yield 'lowercase ä replaced by ae' => [
-      'content' => 'Bär',
-      'expectation' => 'Baer'
-    ];
+    public function replaceSpecialCharactersProvider(): iterable
+    {
+        yield 'lowercase ä replaced by ae' => [
+            'content' => 'Bär',
+            'expectation' => 'Baer'
+        ];
 
-    yield 'lowercase ü replaced by ue' => [
-      'content' => 'Füße',
-      'expectation' => 'Fuesse'
-    ];
+        yield 'lowercase ü replaced by ue' => [
+            'content' => 'Füße',
+            'expectation' => 'Fuesse'
+        ];
 
-    yield 'lowercase ö replaced by oe' => [
-      'content' => 'Höhle',
-      'expectation' => 'Hoehle'
-    ];
+        yield 'lowercase ö replaced by oe' => [
+            'content' => 'Höhle',
+            'expectation' => 'Hoehle'
+        ];
 
-    yield 'ß replaced by ss' => [
-      'content' => 'Straße',
-      'expectation' => 'Strasse'
-    ];
+        yield 'ß replaced by ss' => [
+            'content' => 'Straße',
+            'expectation' => 'Strasse'
+        ];
 
-    yield 'uppercase Ü replaced by ue' => [
-      'content' => 'Über',
-      'expectation' => 'ueber'
-    ];
+        yield 'uppercase Ü replaced by ue' => [
+            'content' => 'Über',
+            'expectation' => 'ueber'
+        ];
 
-    yield 'uppercase Ä replaced by ae' => [
-      'content' => 'Ärger',
-      'expectation' => 'aerger'
-    ];
+        yield 'uppercase Ä replaced by ae' => [
+            'content' => 'Ärger',
+            'expectation' => 'aerger'
+        ];
 
-    yield 'uppercase Ö replaced by oe' => [
-      'content' => 'Öl',
-      'expectation' => 'oel'
-    ];
+        yield 'uppercase Ö replaced by oe' => [
+            'content' => 'Öl',
+            'expectation' => 'oel'
+        ];
 
-    yield 'mixed special characters all replaced' => [
-      'content' => 'äöüßÄÖÜ',
-      'expectation' => 'aeoeuessaeoeue'
-    ];
+        yield 'mixed special characters all replaced' => [
+            'content' => 'äöüßÄÖÜ',
+            'expectation' => 'aeoeuessaeoeue'
+        ];
 
-    yield 'string without special characters unchanged' => [
-      'content' => 'hello world',
-      'expectation' => 'hello world'
-    ];
+        yield 'string without special characters unchanged' => [
+            'content' => 'hello world',
+            'expectation' => 'hello world'
+        ];
 
-    yield 'empty string returns empty string' => [
-      'content' => '',
-      'expectation' => ''
-    ];
-  }
+        yield 'empty string returns empty string' => [
+            'content' => '',
+            'expectation' => ''
+        ];
+    }
 }
