@@ -1,7 +1,6 @@
 parameters:
-    autoload_files:
+    bootstrapFiles:
         - vendor/autoload.php
-        - bin/.phpunit/phpunit/vendor/autoload.php
     symfony:
         container_xml_path: var/cache/dev/App_KernelDevDebugContainer.xml
         console_application_loader: build/phpstan/console-loader.php

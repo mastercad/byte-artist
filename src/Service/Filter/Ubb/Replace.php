@@ -914,7 +914,7 @@ class Replace
             }
 
             $langDisplay = htmlspecialchars($sLanguage, ENT_QUOTES);
-            $langClass   = htmlspecialchars($highlighted->language, ENT_QUOTES);
+            $langClass = htmlspecialchars($highlighted->language, ENT_QUOTES);
 
             $sSource = '<div class="code-block">'
                 .'<div class="code-block-header">'

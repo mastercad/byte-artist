@@ -9,6 +9,8 @@ use App\Entity\BlogTags;
 use App\Entity\Tags;
 use App\Entity\User;
 use App\Repository\BlogRepository;
+use App\Service\Seo\Generator\Link;
+use App\Service\Seo\Generator\LinkFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -36,6 +38,8 @@ class BlogControllerTest extends TestCase
     private TestableBlogController $controller;
     /** @var MockObject&User */
     private MockObject $user;
+    /** @var MockObject&LinkFactory */
+    private MockObject $seoLinkFactory;
 
     protected function setUp(): void
     {
@@ -55,6 +59,18 @@ class BlogControllerTest extends TestCase
 
         $this->user = $this->createMock(User::class);
         $this->user->method('getId')->willReturn(42);
+
+        $linkGenerator = $this->createMock(Link::class);
+        $linkGenerator->method('extendWithSeoLink')->willReturnCallback(
+            function (object $entity): object {
+                if (method_exists($entity, 'setSeoLink') && !$entity->getSeoLink()) {
+                    $entity->setSeoLink('test-slug');
+                }
+                return $entity;
+            }
+        );
+        $this->seoLinkFactory = $this->createMock(LinkFactory::class);
+        $this->seoLinkFactory->method('create')->willReturn($linkGenerator);
 
         $this->controller = new TestableBlogController($this->em);
         $this->controller->testUser = $this->user;
@@ -110,7 +126,7 @@ class BlogControllerTest extends TestCase
         $this->controller->formToReturn = $form;
         $this->tagRepo->method('findAll')->willReturn([]);
 
-        $this->controller->createAction(new Request(), null);
+        $this->controller->createAction(new Request(), $this->seoLinkFactory);
 
         self::assertSame('blog/create.html.twig', $this->controller->renderedView);
     }
@@ -121,7 +137,7 @@ class BlogControllerTest extends TestCase
         $this->controller->formToReturn = $form;
         $this->tagRepo->method('findAll')->willReturn([]);
 
-        $this->controller->createAction(new Request(), null);
+        $this->controller->createAction(new Request(), $this->seoLinkFactory);
 
         // The Blogs entity passed to createForm should have a created date set
         $capturedBlog = $this->controller->lastFormData;
@@ -139,7 +155,7 @@ class BlogControllerTest extends TestCase
         $request = new Request();
         $request->request->set('blog', ['created' => '2023-01-15']);
 
-        $this->controller->createAction($request, null);
+        $this->controller->createAction($request, $this->seoLinkFactory);
 
         // created date was provided, so the auto-set branch is NOT taken;
         // entity's created remains null (form would set it, but mock doesn't)
@@ -164,7 +180,7 @@ class BlogControllerTest extends TestCase
         $this->controller->formToReturn = $form;
         $this->tagRepo->method('findAll')->willReturn([]);
 
-        $this->controller->createAction(new Request(), 7);
+        $this->controller->createAction(new Request(), $this->seoLinkFactory, 7);
 
         self::assertSame('blog/create.html.twig', $this->controller->renderedView);
     }
@@ -180,7 +196,7 @@ class BlogControllerTest extends TestCase
         $request = new Request([], [], [], [], [], ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);
         $request->headers->set('X-Requested-With', 'XMLHttpRequest');
 
-        $response = $this->controller->createAction($request, null);
+        $response = $this->controller->createAction($request, $this->seoLinkFactory);
 
         self::assertInstanceOf(JsonResponse::class, $response);
         self::assertSame(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
@@ -201,7 +217,7 @@ class BlogControllerTest extends TestCase
         $request = new Request([], [], [], [], [], ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);
         $request->headers->set('X-Requested-With', 'XMLHttpRequest');
 
-        $response = $this->controller->createAction($request, null);
+        $response = $this->controller->createAction($request, $this->seoLinkFactory);
 
         self::assertInstanceOf(JsonResponse::class, $response);
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
@@ -223,7 +239,7 @@ class BlogControllerTest extends TestCase
         $request = new Request([], [], [], [], [], ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);
         $request->headers->set('X-Requested-With', 'XMLHttpRequest');
 
-        $response = $this->controller->createAction($request, null);
+        $response = $this->controller->createAction($request, $this->seoLinkFactory);
 
         self::assertInstanceOf(JsonResponse::class, $response);
         self::assertSame(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
@@ -243,7 +259,7 @@ class BlogControllerTest extends TestCase
         $this->em->expects(self::atLeastOnce())->method('persist');
         $this->em->expects(self::atLeastOnce())->method('flush');
 
-        $response = $this->controller->createAction(new Request(), null);
+        $response = $this->controller->createAction(new Request(), $this->seoLinkFactory);
 
         self::assertSame('blog/create.html.twig', $this->controller->renderedView);
     }
@@ -260,7 +276,7 @@ class BlogControllerTest extends TestCase
         $request->request->set('blog', ['blogTags' => [['tagName' => 'php']]]);
 
         // No exception – just verifies the branch is entered
-        $this->controller->createAction($request, null);
+        $this->controller->createAction($request, $this->seoLinkFactory);
 
         self::assertSame('blog/create.html.twig', $this->controller->renderedView);
     }

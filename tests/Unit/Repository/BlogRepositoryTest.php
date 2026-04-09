@@ -55,16 +55,16 @@ class BlogRepositoryTest extends TestCase
         $repo->findLatest(0, 25);
     }
 
-    public function testFindLatestOrdersByModifiedDescThenCreatedDesc(): void
+    public function testFindLatestOrdersByCreatedDescThenModifiedDesc(): void
     {
         [$repo, $mockQb] = $this->makeRepo();
         $mockQb->expects(self::once())
             ->method('orderBy')
-            ->with('b.modified', 'DESC')
+            ->with('b.created', 'DESC')
             ->willReturnSelf();
         $mockQb->expects(self::once())
             ->method('addOrderBy')
-            ->with('b.created', 'DESC')
+            ->with('b.modified', 'DESC')
             ->willReturnSelf();
 
         $repo->findLatest(0, 10);
@@ -122,16 +122,16 @@ class BlogRepositoryTest extends TestCase
 
     // ------------------------------------------------------------------ queryAllVisibleBlogs
 
-    public function testQueryAllVisibleBlogsOrdersByModifiedThenCreated(): void
+    public function testQueryAllVisibleBlogsOrdersByCreatedThenModified(): void
     {
         [$repo, $mockQb] = $this->makeRepo();
         $mockQb->expects(self::once())
             ->method('orderBy')
-            ->with('b.modified', 'DESC')
+            ->with('b.created', 'DESC')
             ->willReturnSelf();
         $mockQb->expects(self::once())
             ->method('addOrderBy')
-            ->with('b.created', 'DESC')
+            ->with('b.modified', 'DESC')
             ->willReturnSelf();
 
         $repo->queryAllVisibleBlogs();
