@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Blogs;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -75,6 +76,10 @@ class BlogType extends AbstractType
                 ['required' => false]
             )
             ->add('blogTags', HiddenType::class, ['mapped' => false, 'required' => false])
+            ->add('isPublic', CheckboxType::class, [
+                'label' => 'Öffentlich sichtbar',
+                'required' => false,
+            ])
             ->add('created', DateTimeType::class, [
                 'label' => 'Datum',
                 'widget' => 'single_text',

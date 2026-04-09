@@ -193,7 +193,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    {{ encore_entry_link_tags('editor') }}
+    {{ vite_entry_link_tags('editor') }}
     <style>
     @keyframes btn-dirty-pulse {
         0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.8); }
@@ -236,14 +236,32 @@
         text-decoration: none; font-size: .9rem;
     }
     .unsaved-dialog-actions a:hover { background: rgba(239,68,68,.28); }
+    /* ── Field validation errors ─────────────────────────────── */
+    .is-invalid {
+        border-color: rgba(239,68,68,.7) !important;
+        box-shadow: 0 0 0 2px rgba(239,68,68,.25) !important;
+    }
+    .seo-url-preview:has(.is-invalid) {
+        border-color: rgba(239,68,68,.7);
+        box-shadow: 0 0 0 2px rgba(239,68,68,.25);
+    }
+    .field-error-msg {
+        margin: 5px 0 0;
+        font-size: .82rem;
+        color: #fca5a5;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .field-error-msg::before { content: '\26A0\FE0F\00A0'; }
     </style>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('editor') }}
+    {{ vite_entry_script_tags('editor') }}
     <script>
-    (function() {
+    document.addEventListener('DOMContentLoaded', function() {
         'use strict';
 
         let publicPicturePath = '{{ publicPicturePath }}';
@@ -374,6 +392,35 @@
         }
 
         // ── Save ────────────────────────────────────────────────────────
+        function clearFieldErrors() {
+            $('.field-error-msg').remove();
+            $('.is-invalid').removeClass('is-invalid');
+        }
+
+        function showFieldErrors(errors, prefix) {
+            clearFieldErrors();
+            var firstInput = null;
+            Object.keys(errors).forEach(function(field) {
+                var msgs = errors[field];
+                var text = Array.isArray(msgs)
+                    ? msgs.filter(function(m) { return typeof m === 'string'; }).join(' ')
+                    : (typeof msgs === 'string' ? msgs : '');
+                if (!text) return;
+                var $input = $('#' + prefix + '_' + field);
+                if (!$input.length) return;
+                $input.addClass('is-invalid');
+                var $anchor = $input.closest('.seo-url-preview').length
+                    ? $input.closest('.seo-url-preview')
+                    : $input;
+                $('<p class="field-error-msg"></p>').text(text).insertAfter($anchor);
+                if (!firstInput) { firstInput = $input[0]; }
+            });
+            if (firstInput) {
+                var section = firstInput.closest('.editor-section, .form-group, .sidebar-card');
+                if (section) { section.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            }
+        }
+
         function save() {
             // Filter out the empty projectTags hidden field – it conflicts with the
             // array-notation entries added by extendDataWithTags (PHP would keep the
@@ -386,6 +433,7 @@
             $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Speichern...');
 
             $.post('/project/save', data, function(response) {
+                clearFieldErrors();
                 $btn.prop('disabled', false).removeClass('btn-save--dirty').html('<i class="fas fa-check"></i> Gespeichert');
                 isDirty = false;
                 $('#autosave-hint').text('Zuletzt gespeichert: ' + new Date().toLocaleTimeString('de-DE'));
@@ -397,17 +445,22 @@
                 }, 3000);
             }).fail(function(jqXHR) {
                 $btn.prop('disabled', false).html('<i class="fas fa-cloud-upload-alt"></i> Speichern');
-                let msg = 'Fehler beim Speichern.';
-                if (jqXHR.responseJSON) {
-                    if (jqXHR.responseJSON.id) {
-                        $('#projects_id').val(jqXHR.responseJSON.id);
+                if (jqXHR.status === 422 && jqXHR.responseJSON) {
+                    showFieldErrors(jqXHR.responseJSON, 'projects');
+                    showToast('Bitte fülle alle Pflichtfelder korrekt aus.', 'error');
+                } else {
+                    let msg = 'Fehler beim Speichern.';
+                    if (jqXHR.responseJSON) {
+                        if (jqXHR.responseJSON.id) {
+                            $('#projects_id').val(jqXHR.responseJSON.id);
+                        }
+                        let errs = $.extend({}, jqXHR.responseJSON);
+                        delete errs.id;
+                        let text = Object.values(errs).flat().join('\n');
+                        if (text) { msg = text; }
                     }
-                    let errs = $.extend({}, jqXHR.responseJSON);
-                    delete errs.id;
-                    let text = Object.values(errs).flat().join('\n');
-                    if (text) { msg = text; }
+                    showToast(msg, 'error');
                 }
-                showToast(msg, 'error');
             });
         }
 
@@ -470,7 +523,7 @@
                 }
             });
         });
-    })();
+    });
     </script>
 {% endblock %}
 

@@ -6,7 +6,7 @@
         <meta name="description" content="Andreas Kempe — Software Architect aus Dresden. Über 35 Jahre Erfahrung in der Softwareentwicklung. Open-Source Projekte, Blog, Erfahrungen.">
         <title>{% block title %}byte-artist.de{% endblock %}</title>
         {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
+            {{ vite_entry_link_tags('app') }}
         {% endblock %}
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
@@ -64,7 +64,7 @@
         </footer>
 
         {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
+            {{ vite_entry_script_tags('app') }}
         {% endblock %}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
                 integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp"

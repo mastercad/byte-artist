@@ -2,13 +2,14 @@
  * byte-artist.de — Main Application JS
  */
 
-require('../css/app.css');
+import '../css/app.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
-const $ = window.$ = window.jQuery = jQuery = require('jquery');
-require('jquery-ui/dist/jquery-ui');
-require('lazyload');
-require('@fortawesome/fontawesome-free/css/all.min.css');
-require('@fortawesome/fontawesome-free/js/all.js');
+import $ from 'jquery';
+import 'jquery-ui/dist/jquery-ui';
+
+// jQuery global für plain-script vendor-Plugins (magnific-popup, Galerien)
+window.$ = window.jQuery = $;
 
 /* ─── Scroll Reveal ─── */
 function initScrollReveal() {

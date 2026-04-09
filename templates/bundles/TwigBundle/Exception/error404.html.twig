@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}byte-artist.de | 404 – Seite nicht gefunden{% endblock %}
+
+{% block body %}
+<main class="page-main">
+    <div class="error-page">
+        <div class="section-tag error-code-tag">// nicht gefunden</div>
+        <div class="error-code">404</div>
+        <h1 class="error-title">Seite nicht gefunden</h1>
+        <p class="error-desc">
+            Die angeforderte Seite existiert nicht, wurde verschoben oder gelöscht.
+            Vielleicht hilft ein Blick auf die Startseite oder die Projekte weiter.
+        </p>
+        <div class="error-actions">
+            <a href="{{ path('index') }}" class="btn-primary">
+                <i class="fas fa-home"></i>&nbsp; Zur Startseite
+            </a>
+            <a href="{{ path('projects') }}" class="btn-secondary">Projekte</a>
+            <a href="{{ path('blog') }}" class="btn-secondary">Blog</a>
+        </div>
+    </div>
+</main>
+{% endblock %}

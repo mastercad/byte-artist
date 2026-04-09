@@ -45,8 +45,30 @@ class BlogRepository extends ServiceEntityRepository
     public function queryAllVisibleBlogs(): \Doctrine\ORM\Query
     {
         return $this->createQueryBuilder('b')
+            ->where('b.isPublic = 1')
             ->orderBy('b.modified', 'DESC')
             ->addOrderBy('b.created', 'DESC')
+            ->getQuery();
+    }
+
+    public function queryAllBlogs(): \Doctrine\ORM\Query
+    {
+        return $this->createQueryBuilder('b')
+            ->orderBy('b.modified', 'DESC')
+            ->addOrderBy('b.created', 'DESC')
+            ->getQuery();
+    }
+
+    public function queryVisibleBlogsByTag($seoLink): \Doctrine\ORM\Query
+    {
+        return $this->createQueryBuilder('b')
+            ->innerJoin('App\\Entity\\BlogTags', 'bt', Join::WITH, 'bt.blog = b')
+            ->innerJoin('App\\Entity\\Tags', 't', Join::WITH, 't = bt.tag')
+            ->where('t.seoLink = :seoLink')
+            ->andWhere('b.isPublic = 1')
+            ->orderBy('b.modified', 'DESC')
+            ->addOrderBy('b.created', 'DESC')
+            ->setParameter('seoLink', $seoLink)
             ->getQuery();
     }
 

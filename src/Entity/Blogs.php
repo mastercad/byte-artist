@@ -55,6 +55,9 @@ class Blogs
     #[ORM\JoinColumn(name: 'modifier', referencedColumnName: 'id', nullable: true)]
     private $modifier;
 
+    #[ORM\Column(name: 'is_public', type: 'boolean', nullable: false, options: ['default' => true])]
+    private bool $isPublic = true;
+
     #[ORM\OneToMany(targetEntity: BlogTags::class, mappedBy: 'blog', cascade: ['persist'])]
     private $blogTags;
 
@@ -196,6 +199,18 @@ class Blogs
     public function setModifier(?User $modifier): self
     {
         $this->modifier = $modifier;
+
+        return $this;
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->isPublic;
+    }
+
+    public function setIsPublic(bool $isPublic): self
+    {
+        $this->isPublic = $isPublic;
 
         return $this;
     }

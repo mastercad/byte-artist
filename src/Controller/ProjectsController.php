@@ -454,6 +454,14 @@ class ProjectsController extends AbstractController
     {
         $project = $this->em->getRepository(Projects::class)->find($projectId);
 
+        if (!$project) {
+            throw $this->createNotFoundException('Projekt nicht gefunden.');
+        }
+
+        if (!$project->isPublic() && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
         $this->denyAccessUnlessGranted('show', $project);
 
         return $this->render('projects/show.html.twig', ['project' => $project]);
@@ -463,6 +471,14 @@ class ProjectsController extends AbstractController
     public function showBySeoNameAction(string $projectSeoName): Response
     {
         $project = $this->em->getRepository(Projects::class)->findOneBy(['seoLink' => $projectSeoName]);
+
+        if (!$project) {
+            throw $this->createNotFoundException('Projekt nicht gefunden.');
+        }
+
+        if (!$project->isPublic() && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
 
         $this->denyAccessUnlessGranted('show', $project);
 

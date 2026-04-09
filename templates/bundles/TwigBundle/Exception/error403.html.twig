@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}byte-artist.de | 403 – Kein Zugriff{% endblock %}
+
+{% block body %}
+<main class="page-main">
+    <div class="error-page">
+        <div class="section-tag error-code-tag">// zugriff verweigert</div>
+        <div class="error-code">403</div>
+        <h1 class="error-title">Kein Zugriff</h1>
+        <p class="error-desc">
+            {% if app.user is null %}
+                Du bist nicht angemeldet. Einige Inhalte sind nur für angemeldete Nutzer sichtbar.
+            {% else %}
+                Dieser Bereich ist für deinen Account nicht zugänglich.
+            {% endif %}
+        </p>
+        <div class="error-actions">
+            {% if app.user is null %}
+                <a href="{{ path('app_login') }}" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>&nbsp; Anmelden
+                </a>
+                <a href="{{ path('index') }}" class="btn-secondary">
+                    <i class="fas fa-home"></i>&nbsp; Zur Startseite
+                </a>
+            {% else %}
+                <a href="{{ path('index') }}" class="btn-primary">
+                    <i class="fas fa-home"></i>&nbsp; Zur Startseite
+                </a>
+            {% endif %}
+            <a href="{{ path('blog') }}" class="btn-secondary">Blog</a>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -20,15 +20,13 @@ services:
         ipv4_address: 172.1.2.2
 
   mysql:
-    image: mysql
+    image: mysql:8.4
     restart: always
     user:
       1000:1000
     container_name: byte_artist_mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root
-
-    command: --default-authentication-plugin=mysql_native_password
     volumes:
       - .docker/data/db:/var/lib/mysql
 #    network_mode: host

@@ -35,7 +35,9 @@ class BlogController extends AbstractController
         $blogTags = $this->em->getRepository(BlogTags::class)->findAll();
         /** @var BlogRepository $blogRepository */
         $blogRepository = $this->em->getRepository(Blogs::class);
-        $query = $blogRepository->queryAllVisibleBlogs();
+        $query = $this->isGranted('ROLE_ADMIN')
+            ? $blogRepository->queryAllBlogs()
+            : $blogRepository->queryAllVisibleBlogs();
         $blogs = $pagination->paginate($query, $request, self::ITEMS_PER_PAGE);
 
         return $this->render(
@@ -57,7 +59,9 @@ class BlogController extends AbstractController
         $blogTags = $this->em->getRepository(BlogTags::class)->findAll();
         /** @var BlogRepository $blogRepository */
         $blogRepository = $this->em->getRepository(Blogs::class);
-        $query = $blogRepository->queryAllBlogsByTag($tagSeoLink);
+        $query = $this->isGranted('ROLE_ADMIN')
+            ? $blogRepository->queryAllBlogsByTag($tagSeoLink)
+            : $blogRepository->queryVisibleBlogsByTag($tagSeoLink);
         $blogs = $pagination->paginate($query, $request, self::ITEMS_PER_PAGE);
 
         return $this->render(
@@ -213,6 +217,15 @@ class BlogController extends AbstractController
     public function showAction(int $id): Response
     {
         $blog = $this->em->getRepository(Blogs::class)->find($id);
+
+        if (!$blog) {
+            throw $this->createNotFoundException('Blogbeitrag nicht gefunden.');
+        }
+
+        if (!$blog->isPublic() && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
         $this->denyAccessUnlessGranted('show', $blog);
 
         return $this->render('blog/show.html.twig', ['blog' => $blog]);
@@ -222,6 +235,15 @@ class BlogController extends AbstractController
     public function detailByNameAction(string $name): Response
     {
         $blog = $this->em->getRepository(Blogs::class)->findOneBy(['seoLink' => $name]);
+
+        if (!$blog) {
+            throw $this->createNotFoundException('Blogbeitrag nicht gefunden.');
+        }
+
+        if (!$blog->isPublic() && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
         $this->denyAccessUnlessGranted('show', $blog);
 
         return $this->render('blog/show.html.twig', ['blog' => $blog]);

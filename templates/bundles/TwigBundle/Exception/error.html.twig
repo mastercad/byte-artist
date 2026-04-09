@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}byte-artist.de | {{ status_code }} – {{ status_text }}{% endblock %}
+
+{% block body %}
+<main class="page-main">
+    <div class="error-page">
+        <div class="section-tag error-code-tag">// fehler</div>
+        <div class="error-code">{{ status_code }}</div>
+        <h1 class="error-title">{{ status_text }}</h1>
+        <p class="error-desc">
+            Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es später erneut
+            oder kehre zur Startseite zurück.
+        </p>
+        <div class="error-actions">
+            <a href="{{ path('index') }}" class="btn-primary">
+                <i class="fas fa-home"></i>&nbsp; Zur Startseite
+            </a>
+            <a href="{{ path('projects') }}" class="btn-secondary">Projekte</a>
+            <a href="{{ path('blog') }}" class="btn-secondary">Blog</a>
+        </div>
+    </div>
+</main>
+{% endblock %}

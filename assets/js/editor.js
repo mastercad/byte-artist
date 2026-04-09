@@ -178,6 +178,7 @@ function mountEditor(textarea) {
         extensions: [
             StarterKit.configure({
                 heading: { levels: [2, 3, 4] },
+                link: false,
             }),
             TextAlign.configure({ types: ['heading', 'paragraph'] }),
             Table.configure({ resizable: false }),
