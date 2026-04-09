@@ -125,6 +125,19 @@ jobs:
             mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content"
             mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var"
 
+      - name: Create .env.local
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+          password: ${{ secrets.WEB_USER_PASSWORD }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA,DATABASE_URL
+          script: |
+            echo "APP_ENV=prod" > "${{ matrix.server.path }}/releases/${GITHUB_SHA}/.env.local"
+
       - name: Composer install
         uses: appleboy/ssh-action@master
         env:
@@ -137,20 +150,6 @@ jobs:
           envs: GITHUB_SHA
           script: |
             cd "${{ matrix.server.path }}/releases/${GITHUB_SHA}" && composer install --no-dev --no-interaction --prefer-dist --no-progress
-
-      - name: Download ckeditor
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA
-          script: |
-            rm -r "${{ matrix.server.path }}/releases/${GITHUB_SHA}/assets/build/ckeditor/*"
-            php "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" ckeditor:install "${{ matrix.server.path }}/releases/${GITHUB_SHA}/assets/build/ckeditor" --clear=drop --release=custom --custom-build-id=ee064e47ec8943be855b785fa9c7146d
 
       - name: Install assets
         uses: appleboy/ssh-action@master
