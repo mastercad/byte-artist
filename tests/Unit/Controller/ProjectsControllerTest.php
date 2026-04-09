@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Controller;
 
+use App\Controller\ProjectsController;
 use App\Entity\Projects;
 use App\Entity\ProjectTags;
 use App\Entity\Tags;
@@ -64,8 +65,6 @@ class ProjectsControllerTest extends TestCase
         $this->controller->testUser = $this->user;
     }
 
-    // ------------------------------------------------------------------ considerTags: tag with existing id (keep)
-
     public function testConsiderTagsKeepsTagThatHasKnownId(): void
     {
         $project = new Projects();
@@ -97,8 +96,6 @@ class ProjectsControllerTest extends TestCase
         $this->controller->callConsiderTags($project, [['id' => '7']]);
     }
 
-    // ------------------------------------------------------------------ considerTags: 'undefined' / empty id falls through
-
     public function testConsiderTagsWithUndefinedIdFallsThroughToTagIdCheck(): void
     {
         $project = new Projects();
@@ -129,8 +126,6 @@ class ProjectsControllerTest extends TestCase
             ['id' => '', 'tagId' => '99'],
         ]);
     }
-
-    // ------------------------------------------------------------------ considerTags: tag by tagId
 
     public function testConsiderTagsByTagIdLooksUpExistingTagEntityAndCreatesProjectTag(): void
     {
@@ -183,8 +178,6 @@ class ProjectsControllerTest extends TestCase
         ]);
     }
 
-    // ------------------------------------------------------------------ considerTags: tag by name (found)
-
     public function testConsiderTagsByNameUsesExistingTagWhenFoundInDb(): void
     {
         $project = new Projects();
@@ -203,8 +196,6 @@ class ProjectsControllerTest extends TestCase
 
         self::assertCount(1, $result->getProjectTags());
     }
-
-    // ------------------------------------------------------------------ considerTags: tag by name (not found → create)
 
     public function testConsiderTagsByNameCreatesNewTagEntityWhenNotFoundInDb(): void
     {
@@ -239,8 +230,6 @@ class ProjectsControllerTest extends TestCase
             ['tagName' => '  php  '],
         ]);
     }
-
-    // ------------------------------------------------------------------ considerTags: empty tagName skipped
 
     public function testConsiderTagsSkipsTagWithEmptyTagName(): void
     {
@@ -280,8 +269,6 @@ class ProjectsControllerTest extends TestCase
         ]);
     }
 
-    // ------------------------------------------------------------------ considerTags: stale tags removed
-
     public function testConsiderTagsRemovesStaleOldTagsNotInSubmittedList(): void
     {
         $project = new Projects();
@@ -319,8 +306,6 @@ class ProjectsControllerTest extends TestCase
         ]);
     }
 
-    // ------------------------------------------------------------------ considerTags: multiple mixed tags
-
     public function testConsiderTagsHandlesMultipleTagsOfDifferentTypes(): void
     {
         $project = new Projects();
@@ -343,8 +328,6 @@ class ProjectsControllerTest extends TestCase
 
         self::assertCount(2, $project->getProjectTags());
     }
-
-    // ------------------------------------------------------------------ extractErrorsFromForm
 
     public function testExtractErrorsFromFormReturnsEmptyArrayForFormWithNoErrors(): void
     {
@@ -409,8 +392,6 @@ class ProjectsControllerTest extends TestCase
         self::assertArrayHasKey('child', $result);
     }
 
-    // ------------------------------------------------------------------ helpers
-
     /**
      * @param FormError[]     $errors
      * @param FormInterface[] $children
@@ -425,8 +406,6 @@ class ProjectsControllerTest extends TestCase
 
         return $form;
     }
-    // ------------------------------------------------------------------ helpers
-
     private function makeForm(bool $submitted, bool $valid): FormInterface
     {
         /** @var MockObject&FormInterface $form */
@@ -459,8 +438,6 @@ class ProjectsControllerTest extends TestCase
 
         return $factory;
     }
-
-    // ------------------------------------------------------------------ indexAction
 
     public function testIndexActionRendersProjectsTemplateForAdmin(): void
     {
@@ -501,8 +478,6 @@ class ProjectsControllerTest extends TestCase
         self::assertSame('projects/index.html.twig', $this->controller->renderedView);
     }
 
-    // ------------------------------------------------------------------ tagAction
-
     public function testTagActionRendersAdminQueryWhenGranted(): void
     {
         $pagination = $this->createMock(Pagination::class);
@@ -540,8 +515,6 @@ class ProjectsControllerTest extends TestCase
         self::assertSame('symfony', $this->controller->renderedParams['tagSeoLink']);
     }
 
-    // ------------------------------------------------------------------ createAction
-
     public function testCreateActionRendersNewProjectForm(): void
     {
         $form = $this->makeForm(false, false);
@@ -553,8 +526,6 @@ class ProjectsControllerTest extends TestCase
         self::assertSame('projects/create.html.twig', $this->controller->renderedView);
         self::assertNull($this->controller->renderedParams['id']);
     }
-
-    // ------------------------------------------------------------------ editByIdAction
 
     public function testEditByIdActionFetchesProjectAndRendersForm(): void
     {
@@ -571,8 +542,6 @@ class ProjectsControllerTest extends TestCase
         self::assertSame('projects/create.html.twig', $this->controller->renderedView);
         self::assertSame(4, $this->controller->renderedParams['id']);
     }
-
-    // ------------------------------------------------------------------ editBySeoNameAction
 
     public function testEditBySeoNameActionFetchesProjectAndRendersForm(): void
     {
@@ -591,8 +560,6 @@ class ProjectsControllerTest extends TestCase
         self::assertSame(7, $this->controller->renderedParams['id']);
     }
 
-    // ------------------------------------------------------------------ showByIdAction
-
     public function testShowByIdActionRendersShowTemplate(): void
     {
         $project = new Projects();
@@ -603,9 +570,6 @@ class ProjectsControllerTest extends TestCase
         self::assertSame('projects/show.html.twig', $this->controller->renderedView);
         self::assertSame($project, $this->controller->renderedParams['project']);
     }
-
-    // ------------------------------------------------------------------ showBySeoNameAction
-
     public function testShowBySeoNameActionRendersShowTemplate(): void
     {
         $project = new Projects();
@@ -616,9 +580,6 @@ class ProjectsControllerTest extends TestCase
         self::assertSame('projects/show.html.twig', $this->controller->renderedView);
         self::assertSame($project, $this->controller->renderedParams['project']);
     }
-
-    // ------------------------------------------------------------------ saveAction: new project
-
     public function testSaveActionNewProjectPersistsAndReturnsJsonWithId(): void
     {
         $form = $this->makeForm(true, true);
@@ -747,8 +708,6 @@ class ProjectsControllerTest extends TestCase
         self::assertArrayHasKey('error', $data);
     }
 
-    // ------------------------------------------------------------------ deleteAction
-
     public function testDeleteActionRemovesEntityAndReturnsSuccess(): void
     {
         $project = new Projects();
@@ -800,8 +759,6 @@ class ProjectsControllerTest extends TestCase
         @rmdir($tmpRoot);
     }
 
-    // ------------------------------------------------------------------ imageBrowserAction
-
     public function testImageBrowserActionReturnsGalleryTemplate(): void
     {
         $tmpRoot = sys_get_temp_dir().'/proj_browser_'.uniqid();
@@ -825,8 +782,6 @@ class ProjectsControllerTest extends TestCase
         @rmdir($tmpRoot.'/images');
         @rmdir($tmpRoot);
     }
-
-    // ------------------------------------------------------------------ uploadImageAction
 
     public function testUploadImageActionUploadsRegularFile(): void
     {
@@ -911,8 +866,6 @@ class ProjectsControllerTest extends TestCase
         rmdir($tmpRoot);
     }
 
-    // ------------------------------------------------------------------ uploadPreviewAction
-
     public function testUploadPreviewActionUploadsRegularFileAsPreview(): void
     {
         $tmpFile = tempnam(sys_get_temp_dir(), 'proj_preview_');
@@ -968,8 +921,6 @@ class ProjectsControllerTest extends TestCase
         rmdir($tmpRoot);
     }
 
-    // ------------------------------------------------------------------ generatePublicPicturePath (private via side-effect)
-
     public function testSaveActionIncludesPublicPicturePathInCreateRender(): void
     {
         $form = $this->makeForm(false, false);
@@ -1001,8 +952,6 @@ class ProjectsControllerTest extends TestCase
         self::assertTrue(array_key_exists('publicPicturePath', $this->controller->renderedParams));
         self::assertNull($this->controller->renderedParams['publicPicturePath']);
     }
-
-    // ------------------------------------------------------------------ getPublicDir production path
     public function testGetPublicDirReturnsPathEndingInPublic(): void
     {
         // Call the real production getPublicDir() bypassing the test-subclass override
@@ -1012,8 +961,6 @@ class ProjectsControllerTest extends TestCase
         self::assertStringEndsWith('/public', $result);
         self::assertDirectoryExists($result);
     }
-
-    // ------------------------------------------------------------------ clearUploadFolderAction
     public function testClearUploadFolderActionDeletesFilesAndReturnsSuccess(): void
     {
         $tmpRoot = sys_get_temp_dir().'/proj_clear_'.uniqid();
@@ -1062,8 +1009,6 @@ class ProjectsControllerTest extends TestCase
         @rmdir($tmpRoot.'/public');
         @rmdir($tmpRoot);
     }
-
-    // ------------------------------------------------------------------ mkdir branch in uploadImageAction
     public function testUploadImageActionCreatesDirectoryIfMissing(): void
     {
         $tmpFile = tempnam(sys_get_temp_dir(), 'proj_mkd_');
@@ -1097,8 +1042,6 @@ class ProjectsControllerTest extends TestCase
             }
         }
     }
-
-    // ------------------------------------------------------------------ mkdir branch in uploadPreviewAction
     public function testUploadPreviewActionCreatesDirectoryIfMissing(): void
     {
         $tmpFile = tempnam(sys_get_temp_dir(), 'proj_prev_mkd_');
