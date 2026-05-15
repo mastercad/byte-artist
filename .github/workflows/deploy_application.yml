@@ -13,6 +13,7 @@ name: "Deploy Application"
 #                           mysql://root:PASSWORD@mysql:3306/byte_artist
 #                           ?serverVersion=8.4&charset=utf8mb4
 #   MYSQL_DATABASE        – (optional) DB name, default: byte_artist
+#   GHCR_TOKEN            – GitHub token with read:packages scope
 # ─────────────────────────────────────────────────────────────────────────────
 
 on:
@@ -66,9 +67,9 @@ jobs:
               git clone https://github.com/${{ github.repository }}.git "${DEPLOY_PATH}"
             fi
             cd "${DEPLOY_PATH}"
-            git fetch --ff-only origin main
+            git fetch origin main
             git checkout main
-            git pull --ff-only
+            git pull --ff-only origin main
 
             # ── 2. Write .env.docker from secrets (idempotent) ────────────────
             #    Permissions 600 so only the deploy user can read the secrets.
