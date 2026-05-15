@@ -78,6 +78,38 @@ jobs:
       - name: PHPUnit (with coverage)
         run: ./bin/phpunit --configuration phpunit.xml.dist
 
+      - name: Cleanup Report Results
+        shell: bash
+        run: |
+           [ -f build/reports/junit.xml ] && sed -i 's/\(.*file="\).*byte-artist\/\(.*"\)/\1\2/g' build/reports/junit.xml || true
+           [ -f build/reports/coverage-clover.xml ] && sed -i 's/\(.*name="\).*byte-artist\/\(.*"\)/\1\2/g' build/reports/coverage-clover.xml || true
+
+      - name: Upload Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unit Test Results
+          path: |
+            build/reports/junit.xml
+            build/reports/coverage-clover.xml
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: build/reports/junit.xml
+          github_token: ${{ github.token }}
+
+      - name: output reports content for debug
+        run: ls -lisa ./build/reports/ || true
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v3
+        continue-on-error: true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+
   # ── JavaScript: vitest ─────────────────────────────────────────────────────
   js:
     name: "JS QA"
@@ -98,99 +130,4 @@ jobs:
 
       - name: Run Vitest
         run: npm test
-#      run: ls -lisa bin/.phpunit/phpunit-7.5-0/vendor/symfony/phpunit-bridge
-#      ln -s ../../../../../vendor/symfony/phpunit-bridge /var/www/app/bin/.phpunit/phpunit-7.5-0/vendor/symfony/phpunit-bridge
 
-#    - name: Test Reporter
-#      uses: dorny/test-reporter@v1.4.3
-#      with:
-#        # Name or regex of artifact containing test results
-##        artifact: # optional
-#        # Name of the check run
-#        name: phpunit test results
-#        # Coma separated list of paths to test results
-#
-##        Supports wildcards via [fast-glob](https://github.com/mrmlnc/fast-glob)
-##        All matched result files must be of same format
-#
-#        path: ./build/reports/junit.xml
-#          # Format of test results. Supported options:
-##          - dart-json
-##          - dotnet-trx
-##          - flutter-json
-##          - java-junit
-##          - jest-junit
-##          - mocha-json
-#
-#        reporter: all
-#          # Limits which test suites are listed. Supported options:
-##          - all
-##          - only-failed
-#
-#        list-suites: all # default is all
-#          # Limits which test cases are listed. Supported options:
-##        - all
-##        - only-failed
-##        - none
-#
-#        list-tests: all # default is all
-#        # Limits number of created annotations with error message and stack trace captured during test execution.
-#        # Must be less or equal to 50.
-#        max-annotations: 10 # default is 10
-#        # Set this action as failed if test report contain any failed test
-#        fail-on-error: true # default is true
-#        # Relative path under $GITHUB_WORKSPACE where the repository was checked out
-#        working-directory: . # optional
-#        # GitHub Access Token
-#        token: ${{ github.token }} # optional, default is ${{ github.token }}
-
-    - name: Cleanup Report Results
-      shell: bash
-      run: |
-         [ -f build/reports/junit.xml ] && sed -i 's/\(.*file="\).*byte-artist\/\(.*"\)/\1\2/g' build/reports/junit.xml || true
-         [ -f build/reports/coverage-clover.xml ] && sed -i 's/\(.*name="\).*byte-artist\/\(.*"\)/\1\2/g' build/reports/coverage-clover.xml || true
-
-    - name: Upload Unit Test Results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: Unit Test Results
-        path: |
-          build/reports/junit.xml
-          build/reports/coverage-clover.xml
-
-    - name: Publish Unit Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
-      with:
-        files: build/reports/junit.xml
-        github_token: ${{ github.token }}
-
-    - name: output reports content for debug
-      run: ls -lisa ./build/reports/ || true
-
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@v3
-      continue-on-error: true
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # You may pin to the exact commit or the version.
-      # uses: SonarSource/sonarcloud-github-action@de2e56b42aa84d0b1c5b622644ac17e505c9a049
-#      with:
-        # Additional arguments to the sonarcloud scanner
-#        args: # optional
-        # Set the sonar.projectBaseDir analysis property
-#        projectBaseDir: # optional, default is .
-
-#    - name: tag-version
-#      # You may pin to the exact commit or the version.
-#      # uses: juliansangillo/tag-version@0ca10cb901a4e3273715c4443e5dec5ad8f40328
-#      uses: juliansangillo/tag-version@v1.5
-#      with:
-#        # The branch to use for stable releases in production. Default is master
-#        production-branch: main # optional, default is master
-#        # The branch to use for test deployments. Default is test
-#        test-branch: test # optional, default is test
-#        # The branch to use for dev deployments. Default is develop
-#        dev-branch: development # optional, default is develop
