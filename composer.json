@@ -18,7 +18,7 @@
         "friendsofsymfony/ckeditor-bundle": "^2.1",
         "knpuniversity/oauth2-client-bundle": "^2.0",
         "league/oauth2-facebook": "^2.0",
-        "league/oauth2-google": "^3.0",
+        "league/oauth2-google": "^5.0",
         "pentatrion/vite-bundle": "^7.0",
         "scrivo/highlight.php": "^9.18",
         "symfony/console": "^7.2",
