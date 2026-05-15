@@ -30,7 +30,7 @@ RUN npm run build
 # =============================================================================
 # Stage 3 – Production PHP-FPM (alpine, lean)
 # =============================================================================
-FROM php:8.2-fpm-alpine AS production
+FROM php:8.5-fpm-alpine AS production
 
 # Runtime shared libs + fcgi for healthcheck
 RUN apk add --no-cache \
