@@ -1,0 +1,132 @@
+name: "Bootstrap New Server"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# One-time setup for a fresh Debian/Ubuntu server.
+# Run manually from GitHub → Actions → Bootstrap New Server → Run workflow.
+#
+# Required GitHub Secrets (same as deploy_application.yml):
+#   DEPLOY_SSH_HOST, DEPLOY_SSH_USER, DEPLOY_SSH_KEY, DEPLOY_SSH_PORT,
+#   DEPLOY_PATH, APP_SECRET, MYSQL_ROOT_PASSWORD, DATABASE_URL, MYSQL_DATABASE
+#
+# The workflow:
+#   1. Installs Docker Engine + Compose plugin via the official script
+#   2. Clones this repository into DEPLOY_PATH
+#   3. Writes .env.docker from secrets
+#   4. Pulls images from GHCR and starts all containers
+#   5. Creates the DB schema and runs migrations
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type 'bootstrap' to confirm you want to provision a new server."
+        required: true
+        default: ''
+
+jobs:
+  bootstrap:
+    name: "Provision server"
+    runs-on: ubuntu-latest
+
+    # Safety guard: only run when explicitly confirmed.
+    if: inputs.confirm == 'bootstrap'
+
+    steps:
+      - name: Bootstrap via SSH
+        uses: appleboy/ssh-action@v1
+        env:
+          DEPLOY_PATH:         ${{ secrets.DEPLOY_PATH }}
+          APP_SECRET:          ${{ secrets.APP_SECRET }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          DATABASE_URL:        ${{ secrets.DATABASE_URL }}
+          MYSQL_DATABASE:      ${{ secrets.MYSQL_DATABASE }}
+          GHCR_TOKEN:          ${{ secrets.GHCR_TOKEN }}
+          GHCR_USER:           ${{ github.actor }}
+          REPO_URL:            https://github.com/${{ github.repository }}.git
+        with:
+          host:     ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key:      ${{ secrets.DEPLOY_SSH_KEY }}
+          port:     ${{ secrets.DEPLOY_SSH_PORT || 22 }}
+          # Longer timeout for package installation
+          command_timeout: 10m
+          envs: DEPLOY_PATH,APP_SECRET,MYSQL_ROOT_PASSWORD,DATABASE_URL,MYSQL_DATABASE,GHCR_TOKEN,GHCR_USER,REPO_URL
+          script: |
+            set -euo pipefail
+
+            # ── 1. Install Docker Engine (official install script) ─────────────
+            if ! command -v docker &>/dev/null; then
+              echo "Installing Docker..."
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get update -qq
+              apt-get install -y -qq curl ca-certificates gnupg
+              curl -fsSL https://get.docker.com | sh
+              # Add the deploy user to the docker group so sudo is not required.
+              usermod -aG docker "${USER:-root}"
+              echo "Docker installed: $(docker --version)"
+            else
+              echo "Docker already installed: $(docker --version)"
+            fi
+
+            # Ensure Docker Compose plugin is available.
+            docker compose version || {
+              echo "Installing Docker Compose plugin..."
+              apt-get install -y -qq docker-compose-plugin
+            }
+
+            # ── 2. Clone repository ───────────────────────────────────────────
+            if [ -d "${DEPLOY_PATH}/.git" ]; then
+              echo "Repository already cloned. Pulling latest…"
+              git -C "${DEPLOY_PATH}" pull --ff-only
+            else
+              echo "Cloning repository into ${DEPLOY_PATH}…"
+              mkdir -p "${DEPLOY_PATH}"
+              git clone "${REPO_URL}" "${DEPLOY_PATH}"
+            fi
+
+            cd "${DEPLOY_PATH}"
+
+            # ── 3. Write .env.docker ──────────────────────────────────────────
+            cat > .env.docker <<EOF
+            APP_ENV=prod
+            APP_SECRET=${APP_SECRET}
+            MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE=${MYSQL_DATABASE:-byte_artist}
+            DATABASE_URL=${DATABASE_URL}
+            HTTP_PORT=80
+            EOF
+            chmod 600 .env.docker
+
+            # ── 4. Log in to GHCR ─────────────────────────────────────────────
+            printf '%s' "${GHCR_TOKEN}" | \
+              docker login ghcr.io -u "${GHCR_USER}" --password-stdin
+
+            # ── 5. Pull images and start all containers ────────────────────────
+            docker compose --env-file .env.docker pull
+            docker compose --env-file .env.docker up -d
+
+            # ── 6. Wait for PHP-FPM to become healthy ─────────────────────────
+            echo "Waiting for PHP container to be healthy…"
+            for i in $(seq 1 24); do
+              STATUS=$(docker inspect --format='{{.State.Health.Status}}' byte_artist_php 2>/dev/null || echo "starting")
+              if [ "${STATUS}" = "healthy" ]; then
+                echo "PHP container is healthy."
+                break
+              fi
+              echo "  attempt ${i}/24 – status: ${STATUS}"
+              sleep 5
+            done
+
+            # ── 7. DB schema + migrations ─────────────────────────────────────
+            docker compose --env-file .env.docker exec -T php \
+              bin/console doctrine:migrations:migrate \
+              --no-interaction --allow-no-migration
+
+            # ── 8. Warm up cache ──────────────────────────────────────────────
+            docker compose --env-file .env.docker exec -T php \
+              bin/console cache:warmup --env=prod
+
+            echo ""
+            echo "Bootstrap complete. Running containers:"
+            docker compose --env-file .env.docker ps

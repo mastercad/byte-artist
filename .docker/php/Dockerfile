@@ -1,62 +1,100 @@
-FROM php:8.2-fpm-bookworm
+# =============================================================================
+# Stage 1 – Composer dependencies (production, no dev packages)
+# =============================================================================
+FROM composer:2 AS vendor
 
-# Host UID/GID passed in via docker-compose build args.
-# www-data is remapped to these IDs so files created inside the container
-# are owned by the same user on the host — no root-owned files on volumes.
-ARG USER_ID=1000
-ARG GROUP_ID=1000
+WORKDIR /app
+COPY composer.json composer.lock symfony.lock ./
+RUN composer install \
+    --no-dev \
+    --no-scripts \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-interaction \
+    --no-progress
 
-# System dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl git unzip zip vim acl locales \
-    libzip-dev zlib1g-dev libicu-dev libonig-dev libxml2-dev \
-    && rm -rf /var/lib/apt/lists/*
+# =============================================================================
+# Stage 2 – Frontend assets (Vite build)
+# =============================================================================
+FROM node:20-alpine AS assets
 
-# PHP extensions
-RUN docker-php-ext-configure intl \
-    && docker-php-ext-install \
-        pdo pdo_mysql zip intl mbstring opcache xml
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --prefer-offline
 
-# Xdebug 3.x
-RUN pecl install xdebug && docker-php-ext-enable xdebug
+COPY assets/   assets/
+COPY public/   public/
+COPY vite.config.js ./
+RUN npm run build
 
-# Node.js 20 LTS + Yarn
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && rm -rf /var/lib/apt/lists/* \
-    && npm install -g yarn
+# =============================================================================
+# Stage 3 – Production PHP-FPM (alpine, lean)
+# =============================================================================
+FROM php:8.2-fpm-alpine AS production
 
-# Composer 2 (via official image — no insecure flags)
-COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+# Runtime shared libs + fcgi for healthcheck
+RUN apk add --no-cache \
+        acl fcgi libzip icu-libs oniguruma libxml2 \
+    && apk add --no-cache --virtual .build-deps \
+        libzip-dev icu-dev oniguruma-dev libxml2-dev \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install -j"$(nproc)" \
+        pdo pdo_mysql zip intl mbstring opcache xml \
+    && apk del .build-deps \
+    && rm -rf /tmp/* /var/cache/apk/*
 
-# PHP configuration
-COPY php.ini /usr/local/etc/php/conf.d/php.ini
-COPY xdebug.ini /usr/local/etc/php/conf.d/docker-xdebug.ini
-COPY php-fpm-pool.conf /usr/local/etc/php-fpm.d/www.conf
+COPY .docker/php/php.ini          /usr/local/etc/php/conf.d/00-app.ini
+COPY .docker/php/php-prod.ini     /usr/local/etc/php/conf.d/01-app-env.ini
+COPY .docker/php/php-fpm-pool.conf /usr/local/etc/php-fpm.d/www.conf
 
-RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
+WORKDIR /var/www/byte_artist
 
-# Remap www-data to the host UID/GID.
-# If another user/group already owns these IDs, remove them first.
-RUN if getent passwd ${USER_ID} > /dev/null 2>&1 \
-        && [ "$(getent passwd ${USER_ID} | cut -d: -f1)" != "www-data" ]; then \
-        userdel "$(getent passwd ${USER_ID} | cut -d: -f1)"; \
-    fi \
-    && if getent group ${GROUP_ID} > /dev/null 2>&1 \
-        && [ "$(getent group ${GROUP_ID} | cut -d: -f1)" != "www-data" ]; then \
-        groupdel "$(getent group ${GROUP_ID} | cut -d: -f1)"; \
-    fi \
-    && groupmod -g ${GROUP_ID} www-data \
-    && usermod  -u ${USER_ID} -g ${GROUP_ID} www-data
+# Application source (vendor and public/build overridden below)
+COPY --chown=www-data:www-data . .
 
-WORKDIR /var/www/byte_artist/
+# Inject production vendor and compiled assets
+COPY --from=vendor --chown=www-data:www-data /app/vendor          ./vendor
+COPY --from=assets --chown=www-data:www-data /app/public/build    ./public/build
 
-RUN mkdir -p var && chown -R www-data:www-data var
+# Ensure writable runtime directories
+RUN mkdir -p var/cache var/log public/uploads \
+    && chown -R www-data:www-data var public/uploads
 
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY .docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
+USER www-data
 EXPOSE 9000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["php-fpm"]
+
+# =============================================================================
+# Stage 4 – Development target (adds Xdebug, Composer, Node, UID remapping)
+# =============================================================================
+FROM production AS development
+
+USER root
+
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+# shadow provides groupmod/usermod to remap www-data → host UID so volume
+# files are owned by the developer, not uid 82 (alpine default www-data).
+RUN apk add --no-cache shadow git curl nodejs npm \
+    && npm install -g yarn \
+    && groupmod -g "${GROUP_ID}" www-data \
+    && usermod  -u "${USER_ID}" www-data \
+    && apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS linux-headers \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug \
+    && apk del .phpize-deps \
+    && rm -rf /tmp/* /var/cache/apk/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+
+# Dev overrides: display_errors on, opcache revalidation enabled
+COPY .docker/php/php-dev.ini   /usr/local/etc/php/conf.d/01-app-env.ini
+COPY .docker/php/xdebug.ini    /usr/local/etc/php/conf.d/02-xdebug.ini
+
+USER www-data

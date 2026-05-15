@@ -1,317 +1,119 @@
-name: Deploy Application
+name: "Deploy Application"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Required GitHub Secrets:
+#   DEPLOY_SSH_HOST       – server hostname or IP
+#   DEPLOY_SSH_USER       – SSH login user
+#   DEPLOY_SSH_KEY        – SSH private key (ED25519 recommended)
+#   DEPLOY_SSH_PORT       – SSH port (default: 22)
+#   DEPLOY_PATH           – absolute path on server (e.g. /opt/byte-artist)
+#   APP_SECRET            – Symfony APP_SECRET (≥32 random characters)
+#   MYSQL_ROOT_PASSWORD   – MySQL root password
+#   DATABASE_URL          – full DSN, e.g.
+#                           mysql://root:PASSWORD@mysql:3306/byte_artist
+#                           ?serverVersion=8.4&charset=utf8mb4
+#   MYSQL_DATABASE        – (optional) DB name, default: byte_artist
+# ─────────────────────────────────────────────────────────────────────────────
 
 on:
-  pull_request:
-    types: [closed]
-    branches: [ main ]
-  workflow_dispatch:
+  # Auto-deploy after images are built successfully.
   workflow_run:
-    workflows: ["Quality Assurance"]
+    workflows: ["Build & Push Docker Images"]
     types: [completed]
     branches: [main]
+  # Manual trigger: lets you deploy any image tag to any server.
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Docker image tag to deploy (default: latest)"
+        required: false
+        default: 'latest'
 
 jobs:
-  create-deployment-artifacts:
-    name: Create deployment artifacts
+  deploy:
+    name: "Deploy via Docker Compose"
     runs-on: ubuntu-latest
-    outputs:
-      deployment-matrix: ${{ steps.export-deployment-matrix.outputs.deployment-matrix }}
 
     if: >
       github.event_name == 'workflow_dispatch' ||
-      github.event.pull_request.merged == true ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
-    steps:
-    - name: Configure PHP 8.3
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.3'
-        extensions: imagick, swoole, zip, mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo
-        tools: composer:v2
-
-    - uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22.22.1'
-
-    - name: Install JS dependencies and build assets
-      run: |
-        npm ci
-        npm run build
-
-#    - name: provide secrets
-#      env:
-#        SYMFONY_DECRYPTION_SECRET: ${{ secrets.SYMFONY_DECRYPTION_SECRET }}
-#      run: php bin/console secrets:decrypt-to-local --force --env=prod
-
-#    - name: Compile CSS and Javascript
-#      run: |
-#        npm install
-#        npm run prod
-
-    - name: Create deployment artifact
-      env:
-        GITHUB_SHA: ${{ github.sha }}
-      run: tar -cpzf /tmp/"${GITHUB_SHA}".tar.gz --one-file-system --exclude=.git* --exclude=node_modules --exclude=tests --exclude=var --exclude=./build --exclude=.docker --exclude=docker-compose.yml --exclude=phpcs.xml* --exclude=phpmd.xml --exclude=phpstan* --exclude=phpunit.xml* --exclude=.php-cs* --exclude=sonar-project.properties .
-
-    - name: Store artifact for distribution
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-build
-        path: /tmp/${{ github.sha }}.tar.gz
-
-    - name: Export deployment matrix
-      id: export-deployment-matrix
-      run: |
-        JSON="$(cat ./deployment-config.json | tr -d '\n\r')"
-        echo "deployment-matrix=$JSON" >> "$GITHUB_OUTPUT"
-
-  prepare-release-on-servers:
-    name: "${{ matrix.server.name }}: Prepare release"
-    runs-on: ubuntu-latest
-    needs: create-deployment-artifacts
-    strategy:
-      matrix:
-        server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
+      github.event.workflow_run.conclusion == 'success'
 
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: app-build
-
-      - name: Upload
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          source: ${{ github.sha }}.tar.gz
-          target: ${{ matrix.server.path }}/artifacts
-          overwrite: true
-
-      - name: Extract archive
-        uses: appleboy/ssh-action@master
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
         env:
-          GITHUB_SHA: ${{ github.sha }}
+          DEPLOY_PATH:          ${{ secrets.DEPLOY_PATH }}
+          APP_SECRET:           ${{ secrets.APP_SECRET }}
+          MYSQL_ROOT_PASSWORD:  ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          DATABASE_URL:         ${{ secrets.DATABASE_URL }}
+          MYSQL_DATABASE:       ${{ secrets.MYSQL_DATABASE }}
+          IMAGE_TAG:            ${{ inputs.image_tag || 'latest' }}
+          GHCR_TOKEN:           ${{ secrets.GHCR_TOKEN }}
+          GHCR_USER:            ${{ github.actor }}
+          REPO_OWNER:           ${{ github.repository_owner }}
         with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA
+          host:     ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key:      ${{ secrets.DEPLOY_SSH_KEY }}
+          port:     ${{ secrets.DEPLOY_SSH_PORT || 22 }}
+          envs: DEPLOY_PATH,APP_SECRET,MYSQL_ROOT_PASSWORD,DATABASE_URL,MYSQL_DATABASE,IMAGE_TAG,GHCR_TOKEN,GHCR_USER,REPO_OWNER
           script: |
-            mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
-            tar xzf ${{ matrix.server.path }}/artifacts/${GITHUB_SHA}.tar.gz -C "${{ matrix.server.path }}/releases/${GITHUB_SHA}"
+            set -euo pipefail
 
-      - name: Cleanup directories
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA
-          script: |
-            rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var/log"
-            rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content/dynamisch"
-            rm -rf "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/upload"
+            # ── 1. Ensure deploy directory exists and repo is present ─────────
+            mkdir -p "${DEPLOY_PATH}"
+            if [ ! -d "${DEPLOY_PATH}/.git" ]; then
+              git clone https://github.com/${{ github.repository }}.git "${DEPLOY_PATH}"
+            fi
+            cd "${DEPLOY_PATH}"
+            git fetch --ff-only origin main
+            git checkout main
+            git pull --ff-only
 
-      - name: Create directories
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA
-          script: |
-            mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/public/images/content"
-            mkdir -p "${{ matrix.server.path }}/releases/${GITHUB_SHA}/var"
+            # ── 2. Write .env.docker from secrets (idempotent) ────────────────
+            #    Permissions 600 so only the deploy user can read the secrets.
+            cat > .env.docker <<EOF
+            APP_ENV=prod
+            APP_SECRET=${APP_SECRET}
+            MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE=${MYSQL_DATABASE:-byte_artist}
+            DATABASE_URL=${DATABASE_URL}
+            HTTP_PORT=80
+            EOF
+            chmod 600 .env.docker
 
-      - name: Link shared directories
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-          BASE_PATH: ${{ matrix.server.path }}
-          RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA,BASE_PATH,RELEASE_PATH
-          script: |
-            mkdir -p "$BASE_PATH/shared/public/images/upload"
-            mkdir -p "$BASE_PATH/shared/public/images/content/dynamisch"
-            mkdir -p "$BASE_PATH/shared/var/log"
-            ln -sfn "$BASE_PATH/shared/public/images/upload" "$RELEASE_PATH/public/images/upload"
-            ln -sfn "$BASE_PATH/shared/public/images/content/dynamisch" "$RELEASE_PATH/public/images/content/dynamisch"
-            ln -sfn "$BASE_PATH/shared/var/log" "$RELEASE_PATH/var/log"
+            # ── 3. Log in to GHCR so docker compose pull works ────────────────
+            printf '%s' "${GHCR_TOKEN}" | \
+              docker login ghcr.io -u "${GHCR_USER}" --password-stdin
 
-      - name: Create .env.local
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA,DATABASE_URL
-          script: |
-            echo "APP_ENV=prod" > "${{ matrix.server.path }}/releases/${GITHUB_SHA}/.env.local"
+            # ── 4. Pull new images ────────────────────────────────────────────
+            docker compose --env-file .env.docker pull
 
-      - name: Composer install
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA
-          script: |
-            cd "${{ matrix.server.path }}/releases/${GITHUB_SHA}" && composer install --no-dev --no-interaction --prefer-dist --no-progress
+            # ── 5. Recreate containers with zero-downtime flag ────────────────
+            docker compose --env-file .env.docker up -d --remove-orphans
 
-      - name: Install assets
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA
-          script: |
-            chmod +x "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console"
-            php "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" assets:install public
+            # ── 6. Wait for PHP-FPM to become healthy (max 60 s) ─────────────
+            for i in $(seq 1 12); do
+              STATUS=$(docker inspect --format='{{.State.Health.Status}}' byte_artist_php 2>/dev/null || echo "starting")
+              if [ "${STATUS}" = "healthy" ]; then
+                echo "PHP container is healthy."
+                break
+              fi
+              echo "Waiting for PHP container (attempt ${i}/12, status: ${STATUS})…"
+              sleep 5
+            done
 
-      - name: Provide secrets
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA
-          script: |
-            export SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }} && "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" secrets:decrypt-to-local --force --env=prod
+            # ── 7. Database migrations ────────────────────────────────────────
+            docker compose --env-file .env.docker exec -T php \
+              bin/console doctrine:migrations:migrate \
+              --no-interaction --allow-no-migration
 
-      - name: Run database migrations
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA
-          script: |
-            php "${{ matrix.server.path }}/releases/${GITHUB_SHA}/bin/console" doctrine:migrations:migrate --no-interaction --allow-no-migration
+            # ── 8. Cache warm-up ──────────────────────────────────────────────
+            docker compose --env-file .env.docker exec -T php \
+              bin/console cache:warmup --env=prod
 
-  run-before-hooks:
-    name: "${{ matrix.server.name }}: Before hook"
-    runs-on: ubuntu-latest
-    needs: [ create-deployment-artifacts, prepare-release-on-servers ]
-    strategy:
-      matrix:
-        server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
-    steps:
-    - name: Run before hooks
-      uses: appleboy/ssh-action@master
-      env:
-        GITHUB_SHA: ${{ github.sha }}
-        RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
-        ACTIVE_RELEASE_PATH: ${{ matrix.server.path }}/current
-        BASE_PATH: ${{ matrix.server.path }}
-      with:
-        host: ${{ matrix.server.ip }}
-        username: ${{ matrix.server.username }}
-        password: ${{ secrets.WEB_USER_PASSWORD }}
-        port: ${{ matrix.server.port }}
-        envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,BASE_PATH
-        script: |
-          ${{ matrix.server.beforeHooks }}
+            # ── 9. Remove dangling images to free disk space ──────────────────
+            docker image prune -f
 
-  activate-release:
-    name: "${{ matrix.server.name }}: Activate release"
-    runs-on: ubuntu-latest
-    needs: [ create-deployment-artifacts, prepare-release-on-servers, run-before-hooks ]
-    strategy:
-      matrix:
-        server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
-    steps:
-      - name: Activate release
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-          RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
-          ACTIVE_RELEASE_PATH: ${{ matrix.server.path }}/current
-          BASE_PATH: ${{ matrix.server.path }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,BASE_PATH,ENV_PATH
-          script: |
-            ln -sfn "$RELEASE_PATH" "$ACTIVE_RELEASE_PATH"
+            echo "Deployment complete."
 
-  run-after-hooks:
-    name: "${{ matrix.server.name }}: After hook"
-    runs-on: ubuntu-latest
-    needs: [ create-deployment-artifacts, prepare-release-on-servers, run-before-hooks, activate-release ]
-    strategy:
-      matrix:
-        server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
-    steps:
-      - name: Run after hooks
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-          RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
-          ACTIVE_RELEASE_PATH: ${{ matrix.server.path }}/current
-          BASE_PATH: ${{ matrix.server.path }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,STORAGE_PATH,BASE_PATH
-          script: |
-            ${{ matrix.server.afterHooks }}
-
-  clean-up:
-    name: "${{ matrix.server.name }}: Clean up"
-    runs-on: ubuntu-latest
-    needs: [ create-deployment-artifacts, prepare-release-on-servers, run-before-hooks, activate-release, run-after-hooks ]
-    strategy:
-      matrix:
-        server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
-    steps:
-      - name: Run after hooks
-        uses: appleboy/ssh-action@master
-        env:
-          RELEASES_PATH: ${{ matrix.server.path }}/releases
-          ARTIFACTS_PATH: ${{ matrix.server.path }}/artifacts
-        with:
-          host: ${{ matrix.server.ip }}
-          username: ${{ matrix.server.username }}
-          password: ${{ secrets.WEB_USER_PASSWORD }}
-          port: ${{ matrix.server.port }}
-          envs: RELEASE_PATH,ARTIFACTS_PATH
-          script: |
-            cd ${{ matrix.server.path }}/releases && ls -t -1 | tail -n +6 | xargs rm -rf
-            cd ${{ matrix.server.path }}/artifacts && ls -t -1 | tail -n +6 | xargs rm -rf

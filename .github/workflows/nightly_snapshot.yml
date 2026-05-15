@@ -8,13 +8,13 @@ jobs:
   Tag:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: fregante/daily-version-action@v1
+      - uses: actions/checkout@v4
+      - uses: fregante/daily-version-action@v2
         with:
           prefix: v
         name: Create tag if necessary
         id: daily-version
-    outputs: # Shares the action’s outputs to the Next jobs
+    outputs:
       created: ${{ steps.daily-version.outputs.created }}
       version: ${{ steps.daily-version.outputs.version }}
 
@@ -23,4 +23,4 @@ jobs:
     if: needs.Tag.outputs.created
     runs-on: ubuntu-latest
     steps:
-      - run: echo It looks like ${{ needs.Tag.outputs.version }} was created!
+      - run: echo "Nightly snapshot ${{ needs.Tag.outputs.version }} created."

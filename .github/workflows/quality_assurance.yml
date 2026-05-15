@@ -2,122 +2,102 @@ name: "Quality Assurance"
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
     types: [opened, synchronize, reopened]
 
 jobs:
-  quality-assurance:
-    name: "Quality Assurance"
+  # ── PHP: lint, static analysis, unit + integration tests ───────────────────
+  php:
+    name: "PHP QA"
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: byte_artist_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 --password=root"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # PHPUnit picks this up (no force="true" on DATABASE_URL in phpunit.xml.dist)
+      DATABASE_URL: "mysql://root:root@127.0.0.1:3306/byte_artist_test"
+
     steps:
-    - name: Setup PHP with PECL extension
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.3'
-        coverage: xdebug
-        extensions: imagick, swoole, zip, mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: xdebug
+          extensions: zip, mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, pdo
 
-    # Optionally: unshallow as a separate operation
-#    - name: Unshallow
-#      run: git fetch --prune --unshallow
-#    - uses: actions/checkout@v2
+      - name: Validate composer.json / composer.lock
+        run: composer validate --strict
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
-#    - name: Cache Composer packages
-#      id: composer-cache
-#      uses: actions/cache@v2
-#      with:
-#        path: vendor
-#        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-#        restore-keys: |
-#          ${{ runner.os }}-php-
+      - name: Install Composer dependencies
+        run: composer install --no-dev --no-interaction --prefer-dist --no-progress
 
-    - name: Prepare environment
-      run: echo 'APP_ENV=dev' > .env.local
+      - name: Install dev dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
 
-    - name: Install dependencies
-      run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Prepare Symfony environment
+        run: |
+          echo "APP_ENV=test" > .env.local
+          echo "APP_SECRET=ci_secret_for_testing_only_32ch" >> .env.local
 
-    - name: provide secrets
-      env:
-        SYMFONY_DECRYPTION_SECRET: ${{ secrets.SYMFONY_DECRYPTION_SECRET }}
-      run: php bin/console secrets:decrypt-to-local --force --env=prod
-      continue-on-error: true
+      - name: PHP Security Checker
+        uses: StephaneBour/actions-php-security-checker@1.1
 
-    - name: PHP Security Checker
-      # You may pin to the exact commit or the version.
-      # uses: StephaneBour/actions-php-security-checker@7f98a3edeb22cd897f900592481157b4248355d5
-      uses: StephaneBour/actions-php-security-checker@1.1
-#      with:
-        # Path to composer.lock
-#        composer-lock: # optional, default is ./composer.lock
+      - name: PHP CodeSniffer
+        run: ./bin/phpcs --standard=phpcs.xml.dist src/
 
-    - name: php-codesniffer
-      run: ./bin/phpcs --standard=phpcs.xml.dist src/
+      - name: PHP CS Fixer (dry-run)
+        run: |
+          cp .php-cs-fixer.dist.php .php-cs-fixer.php
+          ./bin/php-cs-fixer fix --dry-run --diff src
 
-    # - name: Run test suite
-    #   run: composer run-script test
+      - name: PHPUnit (with coverage)
+        run: ./bin/phpunit --configuration phpunit.xml.dist
 
-#    - name: PHPStan (php-actions)
-#      # You may pin to the exact commit or the version.
-#      # uses: php-actions/phpstan@e1ce60d6e66d508e78ddeefac1ec81570b8ef27d
-#      uses: php-actions/phpstan@v2
-#      with:
-#        # What version of PHPStan to use
-##        version: # optional, default is latest
-#        # What version of PHP to use
-##        php_version: # optional, default is latest
-#        # Space separated list of extensions to configure with the PHP build
-##        php_extensions: # optional
-#        # The command to run (analyse [default], clear-result-cache, dump-deps, help, list, worker)
-#        command: analyse
-#        # Path(s) with source code to run analysis on
-#        path: src
-#        # Configuration file location
-##        configuration: # optional
-#        # Level of rule options - the higher, the stricter
-##        level: # optional
-#        # Path to a file with a list of paths to run analysis on
-##        paths_file: # optional
-#        # Project's additional autoload file path
-##        autoload_file: # optional
-#        # Format in which to print the result of the analysis
-##        error_format: # optional
-#        # Path to a file where the baseline should be saved
-##        generate_baseline: # optional
-#        # Memory limit for analysis
-##        memory_limit: # optional
-#        # Extra arguments to pass to the phpstan binary
-##        args: # optional
+  # ── JavaScript: vitest ─────────────────────────────────────────────────────
+  js:
+    name: "JS QA"
+    runs-on: ubuntu-latest
 
-    - name: prepare php-cs-fixer config
-      run: cp .php-cs-fixer.dist.php .php-cs-fixer.php
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: PHP Code Style Fixer (php-cs-fixer)
-      run: ./bin/php-cs-fixer fix --dry-run --diff src
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-    - name: PHPUnit
-#      uses: chindit/actions-phpunit-symfony@1.0.0
-#      uses: php-actions/phpunit@v2
-#      with:
-#        version: 7.5
-#        configuration: ./phpunit.xml.dist
-#        memory_limit: 256M
-#        php_extensions: xdebug
-      run: ./bin/phpunit
+      - name: Install JS dependencies
+        run: npm ci
 
-#    - name: DEBUG OUTPUT PHPUNIT SYMLINK
+      - name: Run Vitest
+        run: npm test
 #      run: ls -lisa bin/.phpunit/phpunit-7.5-0/vendor/symfony/phpunit-bridge
 #      ln -s ../../../../../vendor/symfony/phpunit-bridge /var/www/app/bin/.phpunit/phpunit-7.5-0/vendor/symfony/phpunit-bridge
 

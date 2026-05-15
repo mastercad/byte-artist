@@ -1,0 +1,51 @@
+# Development overrides – auto-loaded by `docker compose` alongside docker-compose.yml.
+# Do NOT commit secrets here. Use .env.local for local credentials.
+
+services:
+
+  # ── nginx: serve live code via volume ────────────────────────────────────
+  nginx:
+    volumes:
+      - .:/var/www/byte_artist:delegated
+
+  # ── PHP-FPM: development target with Xdebug, Composer, Node ─────────────
+  php:
+    build:
+      target: development
+      args:
+        USER_ID:  "${USER_ID:-1000}"
+        GROUP_ID: "${GROUP_ID:-1000}"
+    container_name: byte_artist_php_dev
+    # Mount project root so code changes are reflected immediately.
+    # vendor/ is NOT excluded here – install it on the host or inside the container.
+    volumes:
+      - .:/var/www/byte_artist:delegated
+    environment:
+      APP_ENV:      dev
+      APP_DEBUG:    "1"
+      XDEBUG_MODE:  "${XDEBUG_MODE:-off}"
+    # Allow Xdebug to reach the IDE on the host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # ── MySQL: expose port for local DB tools ────────────────────────────────
+  mysql:
+    container_name: byte_artist_mysql_dev
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+
+  # ── phpMyAdmin (dev only) ─────────────────────────────────────────────────
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: byte_artist_phpmyadmin
+    restart: "no"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - "${PMA_PORT:-8081}:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - byte_artist_net
