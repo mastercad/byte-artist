@@ -7,7 +7,8 @@ tmp-phpqa
 /build/coverage
 /build/reports
 /public/images/content/dynamisch
-public/images/upload
+/public/images/upload
+/public/upload
 /.docker/data/
 /bin
 .php_cs.cache
