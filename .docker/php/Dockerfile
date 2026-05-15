@@ -16,7 +16,7 @@ RUN composer install \
 # =============================================================================
 # Stage 2 – Frontend assets (Vite build)
 # =============================================================================
-FROM node:20-alpine AS assets
+FROM node:26-alpine AS assets
 
 WORKDIR /app
 COPY package.json package-lock.json ./
