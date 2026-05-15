@@ -15,7 +15,7 @@ RUN npm run build
 # =============================================================================
 # Stage 2 – Production nginx (alpine, ~25 MB total)
 # =============================================================================
-FROM nginx:1.27-alpine
+FROM nginx:1.31-alpine
 
 RUN rm -f /etc/nginx/conf.d/default.conf
 
