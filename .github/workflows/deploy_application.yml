@@ -88,10 +88,10 @@ jobs:
               docker login ghcr.io -u "${GHCR_USER}" --password-stdin
 
             # ── 4. Pull new images ────────────────────────────────────────────
-            docker compose --env-file .env.docker pull
+            docker compose -f docker-compose.yml --env-file .env.docker pull
 
             # ── 5. Recreate containers with zero-downtime flag ────────────────
-            docker compose --env-file .env.docker up -d --remove-orphans
+            docker compose -f docker-compose.yml --env-file .env.docker up -d --remove-orphans
 
             # ── 6. Wait for PHP-FPM to become healthy (max 60 s) ─────────────
             for i in $(seq 1 12); do
@@ -105,12 +105,12 @@ jobs:
             done
 
             # ── 7. Database migrations ────────────────────────────────────────
-            docker compose --env-file .env.docker exec -T php \
+            docker compose -f docker-compose.yml --env-file .env.docker exec -T php \
               bin/console doctrine:migrations:migrate \
               --no-interaction --allow-no-migration
 
             # ── 8. Cache warm-up ──────────────────────────────────────────────
-            docker compose --env-file .env.docker exec -T php \
+            docker compose -f docker-compose.yml --env-file .env.docker exec -T php \
               bin/console cache:warmup --env=prod
 
             # ── 9. Remove dangling images to free disk space ──────────────────
