@@ -52,13 +52,12 @@ jobs:
           GHCR_TOKEN:           ${{ secrets.GHCR_TOKEN }}
           GHCR_USER:            ${{ github.actor }}
           REPO_OWNER:           ${{ github.repository_owner }}
-          HTTP_PORT:            ${{ secrets.HTTP_PORT }}
         with:
           host:     ${{ secrets.DEPLOY_SSH_HOST }}
           username: ${{ secrets.DEPLOY_SSH_USER }}
           key:      ${{ secrets.DEPLOY_SSH_KEY }}
           port:     ${{ secrets.DEPLOY_SSH_PORT || 22 }}
-          envs: DEPLOY_PATH,APP_SECRET,MYSQL_ROOT_PASSWORD,DATABASE_URL,MYSQL_DATABASE,IMAGE_TAG,GHCR_TOKEN,GHCR_USER,REPO_OWNER,HTTP_PORT
+          envs: DEPLOY_PATH,APP_SECRET,MYSQL_ROOT_PASSWORD,DATABASE_URL,MYSQL_DATABASE,IMAGE_TAG,GHCR_TOKEN,GHCR_USER,REPO_OWNER
           script: |
             set -euo pipefail
 
@@ -72,16 +71,13 @@ jobs:
             git checkout main
             git pull --ff-only origin main
 
-            # ── 2. Write .env.docker from secrets (idempotent) ────────────────
+            # ── 2. Write .env.docker from dist template + secrets (idempotent) ──
             #    Permissions 600 so only the deploy user can read the secrets.
-            cat > .env.docker <<EOF
-            APP_ENV=prod
-            APP_SECRET=${APP_SECRET}
-            MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-            MYSQL_DATABASE=${MYSQL_DATABASE:-byte_artist}
-            DATABASE_URL=${DATABASE_URL}
-            HTTP_PORT=${HTTP_PORT:-80}
-            EOF
+            cp .env.docker.dist .env.docker
+            sed -i "s|^APP_SECRET=.*|APP_SECRET=${APP_SECRET}|" .env.docker
+            sed -i "s|^MYSQL_ROOT_PASSWORD=.*|MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}|" .env.docker
+            sed -i "s|^MYSQL_DATABASE=.*|MYSQL_DATABASE=${MYSQL_DATABASE:-byte_artist}|" .env.docker
+            sed -i "s|^DATABASE_URL=.*|DATABASE_URL=${DATABASE_URL}|" .env.docker
             chmod 600 .env.docker
 
             # ── 3. Log in to GHCR so docker compose pull works ────────────────
