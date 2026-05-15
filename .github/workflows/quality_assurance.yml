@@ -53,16 +53,16 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Install Composer dependencies
-        run: composer install --no-dev --no-interaction --prefer-dist --no-progress
-
-      - name: Install dev dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
-
       - name: Prepare Symfony environment
         run: |
           echo "APP_ENV=test" > .env.local
           echo "APP_SECRET=ci_secret_for_testing_only_32ch" >> .env.local
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --no-interaction --prefer-dist --no-progress --no-scripts
+
+      - name: Install dev dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
 
       - name: PHP Security Checker
         uses: StephaneBour/actions-php-security-checker@1.1
