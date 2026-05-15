@@ -57,13 +57,14 @@ COPY --from=vendor --chown=www-data:www-data /app/vendor          ./vendor
 COPY --from=assets --chown=www-data:www-data /app/public/build    ./public/build
 
 # Ensure writable runtime directories
-RUN mkdir -p var/cache var/log public/uploads \
-    && chown -R www-data:www-data var public/uploads
+RUN mkdir -p var/cache var/log public/uploads public/images \
+    && chown -R www-data:www-data var public/uploads public/images
 
 COPY .docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-USER www-data
+# Entrypoint runs as root to chown directories; php-fpm workers drop to
+# www-data via the pool config (user = www-data / group = www-data).
 EXPOSE 9000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
@@ -96,5 +97,3 @@ COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 # Dev overrides: display_errors on, opcache revalidation enabled
 COPY .docker/php/php-dev.ini   /usr/local/etc/php/conf.d/01-app-env.ini
 COPY .docker/php/xdebug.ini    /usr/local/etc/php/conf.d/02-xdebug.ini
-
-USER www-data
