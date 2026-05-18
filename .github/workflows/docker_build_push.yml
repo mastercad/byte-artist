@@ -73,7 +73,7 @@ jobs:
 
       # ── Build & push: PHP-FPM ──────────────────────────────────────────────
       - name: Build & push PHP image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: .docker/php/Dockerfile
@@ -87,7 +87,7 @@ jobs:
 
       # ── Build & push: nginx ────────────────────────────────────────────────
       - name: Build & push nginx image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: .docker/nginx/Dockerfile
