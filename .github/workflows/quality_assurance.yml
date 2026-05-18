@@ -65,7 +65,7 @@ jobs:
         run: composer install --no-interaction --prefer-dist --no-progress
 
       - name: PHP Security Checker
-        uses: StephaneBour/actions-php-security-checker@1.1
+        uses: StephaneBour/actions-php-security-checker@1.2
 
       - name: PHP CodeSniffer
         run: ./bin/phpcs --standard=phpcs.xml.dist src/
