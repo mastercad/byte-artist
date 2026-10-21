@@ -30,7 +30,7 @@ RUN npm run build
 # =============================================================================
 # Stage 3 – Production PHP-FPM (alpine, lean)
 # =============================================================================
-FROM php:8.2-fpm-alpine AS production
+FROM php:8.5.12-fpm-alpine AS production
 
 # Runtime shared libs + fcgi for healthcheck
 RUN apk add --no-cache \
@@ -39,7 +39,7 @@ RUN apk add --no-cache \
         libzip-dev icu-dev oniguruma-dev libxml2-dev \
     && docker-php-ext-configure intl \
     && docker-php-ext-install -j"$(nproc)" \
-        pdo pdo_mysql zip intl mbstring opcache xml \
+        pdo_mysql zip intl \
     && apk del .build-deps \
     && rm -rf /tmp/* /var/cache/apk/*
 
